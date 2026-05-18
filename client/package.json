@@ -23,7 +23,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "https://zaply.in.net",
+  "proxy": "http://23.22.249.239",
   "browserslist": {
     "production": [
       ">0.2%",
