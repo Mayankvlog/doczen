@@ -35,15 +35,24 @@ export default function History() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchHistory = async (p) => {
     setLoading(true);
+    setError(null);
     try {
       const { data } = await historyAPI.getAll(p);
-      setHistory(data.history || []);
-      setTotalPages(data.pages || 1);
-    } catch {
+      if (data && data.history && Array.isArray(data.history)) {
+        setHistory(data.history);
+        setTotalPages(Math.max(1, data.pages || 1));
+      } else {
+        setHistory([]);
+        setError('Invalid data format received');
+      }
+    } catch (err) {
+      console.error('Error fetching history:', err);
       setHistory([]);
+      setError(err.message || 'Failed to fetch history');
     } finally {
       setLoading(false);
     }
@@ -56,13 +65,15 @@ export default function History() {
   const handleClearAll = async () => {
     if (!window.confirm(t('history.confirmClear', 'Are you sure you want to clear all history?'))) return;
     setDeleting(true);
+    setError(null);
     try {
       await historyAPI.clearAll();
       setHistory([]);
       setPage(1);
       setTotalPages(1);
-    } catch {
-      // silently fail
+    } catch (err) {
+      console.error('Error clearing history:', err);
+      setError(err.message || 'Failed to clear history');
     } finally {
       setDeleting(false);
     }
@@ -72,8 +83,10 @@ export default function History() {
     try {
       await historyAPI.delete(id);
       setHistory((prev) => prev.filter((item) => item._id !== id));
-    } catch {
-      // silently fail
+      setError(null);
+    } catch (err) {
+      console.error('Error deleting history entry:', err);
+      setError(err.message || 'Failed to delete entry');
     }
   };
 
@@ -116,6 +129,13 @@ export default function History() {
         )}
       </div>
 
+      {/* Error Message */}
+      {error && (
+        <div className="mb-6 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 px-4 py-3">
+          <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+        </div>
+      )}
+
       {/* Table */}
       <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden">
         {loading ? (
@@ -147,50 +167,58 @@ export default function History() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                {history.map((item) => (
-                  <tr key={item._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                    <td className="px-5 py-4">
-                      <span className="inline-flex items-center rounded-lg bg-indigo-100 dark:bg-indigo-900/50 px-2.5 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300 capitalize">
-                        {actionLabels[item.action] || item.action?.replace(/-/g, ' ')}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4 text-sm text-gray-700 dark:text-gray-300 max-w-[200px] truncate">
-                      {item.fileName || item.outputFiles?.[0]?.originalName || item.inputFiles?.[0]?.originalName || t('history.untitled', 'Untitled')}
-                    </td>
-                    <td className="hidden sm:table-cell px-5 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                      {item.createdAt ? new Date(item.createdAt).toLocaleDateString(lang || 'en-US', {
-                        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
-                      }) : '—'}
-                    </td>
-                    <td className="px-5 py-4">
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          item.status === 'completed'
-                            ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
-                            : item.status === 'failed'
-                            ? 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300'
-                            : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300'
-                        }`}
-                      >
-                        {t('tool.status.' + (item.status || 'pending'), item.status || 'pending')}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                      {(() => { const fs = item.fileSize || item.outputFiles?.[0]?.size || item.inputFiles?.[0]?.size; return fs ? `${(fs / 1024 / 1024).toFixed(1)} MB` : '—'; })()}
-                    </td>
-                    <td className="px-5 py-4">
-                      <button
-                        onClick={() => handleDelete(item._id)}
-                        className="text-gray-400 hover:text-red-500 transition-colors"
-                        title={t('history.deleteTitle', 'Delete entry')}
-                      >
-                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {history && Array.isArray(history) && history.map((item) => {
+                  if (!item || !item._id) return null;
+                  const displayFileName = item.fileName || item.outputFiles?.[0]?.originalName || item.inputFiles?.[0]?.originalName || t('history.untitled', 'Untitled');
+                  const displayFileSize = item.fileSize || item.outputFiles?.[0]?.size || item.inputFiles?.[0]?.size || 0;
+                  const displayStatus = item.status || 'pending';
+                  const displayDate = item.createdAt ? new Date(item.createdAt).toLocaleDateString(lang || 'en-US', {
+                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+                  }) : '—';
+
+                  return (
+                    <tr key={item._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                      <td className="px-5 py-4">
+                        <span className="inline-flex items-center rounded-lg bg-indigo-100 dark:bg-indigo-900/50 px-2.5 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300 capitalize">
+                          {actionLabels[item.action] || item.action?.replace(/-/g, ' ') || 'Unknown'}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 text-sm text-gray-700 dark:text-gray-300 max-w-[200px] truncate">
+                        {displayFileName}
+                      </td>
+                      <td className="hidden sm:table-cell px-5 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                        {displayDate}
+                      </td>
+                      <td className="px-5 py-4">
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            displayStatus === 'completed'
+                              ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
+                              : displayStatus === 'failed'
+                              ? 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300'
+                              : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300'
+                          }`}
+                        >
+                          {t('tool.status.' + displayStatus, displayStatus)}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                        {displayFileSize ? `${(displayFileSize / 1024 / 1024).toFixed(1)} MB` : '—'}
+                      </td>
+                      <td className="px-5 py-4">
+                        <button
+                          onClick={() => handleDelete(item._id)}
+                          className="text-gray-400 hover:text-red-500 transition-colors"
+                          title={t('history.deleteTitle', 'Delete entry')}
+                        >
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

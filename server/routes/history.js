@@ -5,25 +5,38 @@ const { protect } = require('../middleware/auth');
 
 router.get('/', protect, async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
     const skip = (page - 1) * limit;
+
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    }
 
     const history = await History.find({ user: req.user._id })
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     const total = await History.countDocuments({ user: req.user._id });
+    const pages = Math.max(1, Math.ceil(total / limit));
 
     res.json({
-      history,
+      success: true,
+      history: history || [],
       page,
-      pages: Math.ceil(total / limit),
-      total
+      pages,
+      total,
+      limit
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('History fetch error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error', 
+      error: error.message 
+    });
   }
 });
 

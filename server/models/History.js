@@ -20,6 +20,10 @@ const historySchema = new mongoose.Schema({
       'metadata', 'getPageCount'
     ]
   },
+  fileName: {
+    type: String,
+    default: 'Untitled'
+  },
   inputFiles: [{
     originalName: String,
     storedName: String,
