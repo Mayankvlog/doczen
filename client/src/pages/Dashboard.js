@@ -71,8 +71,6 @@ export default function Dashboard() {
     );
   }
 
-  const filesToday = user?.dailyFileCount ?? 0;
-  const dailyLimit = user?.dailyLimit ?? 1000;
   return (
     <>
     <SEO
@@ -91,26 +89,6 @@ export default function Dashboard() {
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           {t('dashboard.subtitle', "Here's what's happening with your documents today.")}
         </p>
-      </div>
-
-      {/* Stats */}
-      <div className="mb-8 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('dashboard.filesToday', 'Files Today')}</span>
-          <span className="text-xs font-medium text-gray-400">{filesToday}/{dailyLimit}</span>
-        </div>
-        <div className="mt-2">
-          <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">{filesToday}</span>
-            <span className="text-sm text-gray-400">/ {dailyLimit}</span>
-          </div>
-          <div className="mt-2 h-2 rounded-full bg-gray-100 dark:bg-gray-800">
-            <div
-              className="h-2 rounded-full bg-indigo-500 transition-all"
-              style={{ width: `${Math.min((filesToday / dailyLimit) * 100, 100)}%` }}
-            />
-          </div>
-        </div>
       </div>
 
       {/* Quick Actions */}
