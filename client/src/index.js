@@ -132,7 +132,7 @@ addTranslations('en', {
   'faq.q4': 'How long does processing take?',
   'faq.a4': 'Most operations complete within seconds. Complex conversions may take a bit longer, but we optimize everything for speed.',
   'faq.q5': 'Is there a daily limit?',
-  'faq.a5': 'No registration needed — guests can process up to 10 files per hour. Create a free account for higher limits and history tracking.',
+  'faq.a5': 'No limits at all! Process as many files as you need, completely free.',
   'faq.q6': 'What happens to my data?',
   'faq.a6': 'All uploaded files are automatically deleted from our servers within 24 hours. You can also manually delete your history at any time.',
   'cta.header': 'Ready to Simplify Your PDF Workflow?',

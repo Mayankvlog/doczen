@@ -17,18 +17,7 @@ async function getPdfjs() {
   return _pdfjsLib;
 }
 
-const guestRateLimit = new Map();
-const GUEST_MAX_FILES = 10000;
-const GUEST_WINDOW_MS = 60 * 60 * 1000;
 
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, entry] of guestRateLimit.entries()) {
-    if (now > entry.resetAt) {
-      guestRateLimit.delete(ip);
-    }
-  }
-}, 10 * 60 * 1000);
 
 const File = require('../models/File');
 const History = require('../models/History');
@@ -182,26 +171,6 @@ const scheduleFileCleanup = (filePath, delayMs = 24 * 60 * 60 * 1000) => {
 
 const isDbConnected = () => mongoose.connection.readyState === 1;
 
-const checkLimits = async (req) => {
-  if (!req.user) {
-    const ip = req.ip || req.connection?.remoteAddress || 'unknown';
-    const now = Date.now();
-    if (!guestRateLimit.has(ip)) {
-      guestRateLimit.set(ip, { count: 0, resetAt: now + GUEST_WINDOW_MS });
-    }
-    const entry = guestRateLimit.get(ip);
-    if (now > entry.resetAt) {
-      entry.count = 0;
-      entry.resetAt = now + GUEST_WINDOW_MS;
-    }
-    if (entry.count >= GUEST_MAX_FILES) {
-      return { allowed: false, message: 'Guest limit reached. Please sign up for unlimited access.' };
-    }
-    entry.count++;
-  }
-  return { allowed: true };
-};
-
 const normalizeFiles = (req) => {
   if (req.files && req.files.length > 0) return req.files;
   if (req.file) return [req.file];
@@ -229,14 +198,6 @@ const processRequest = async (req, res, action, processFn, options = {}) => {
             message: `Invalid file type "${f.mimetype}" for ${action}. Expected: ${allowedTypes.join(' or ')}`
           });
         }
-      }
-    }
-
-    if (isDbConnected()) {
-      const limitCheck = await checkLimits(req);
-      if (!limitCheck.allowed) {
-        cleanupFiles(sourcePaths);
-        return res.status(429).json({ success: false, message: limitCheck.message });
       }
     }
 
@@ -906,14 +867,6 @@ exports.getPageCount = async (req, res) => {
 
     sourcePaths = req.files.map(f => f.path);
 
-    if (isDbConnected()) {
-      const limitCheck = await checkLimits(req);
-      if (!limitCheck.allowed) {
-        cleanupFiles(sourcePaths);
-        return res.status(429).json({ success: false, message: limitCheck.message });
-      }
-    }
-
     const filePath = req.files[0].path;
     const data = await fs.promises.readFile(filePath);
     const pdfDoc = await PDFDocument.load(data);
@@ -1021,12 +974,6 @@ exports.htmlToPdf = async (req, res) => {
   let sourcePaths = [];
   let outputPath = null;
   try {
-    if (isDbConnected()) {
-      const limitCheck = await checkLimits(req);
-      if (!limitCheck.allowed) {
-        return res.status(429).json({ success: false, message: limitCheck.message });
-      }
-    }
     const textContent = req.body.content || '';
     if (!textContent.trim()) {
       return res.status(400).json({ success: false, message: 'HTML/text content is required' });
@@ -1208,13 +1155,6 @@ exports.compare = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please upload two PDF files to compare' });
     }
     sourcePaths = req.files.map(f => f.path);
-    if (isDbConnected()) {
-      const limitCheck = await checkLimits(req);
-      if (!limitCheck.allowed) {
-        cleanupFiles(sourcePaths);
-        return res.status(429).json({ success: false, message: limitCheck.message });
-      }
-    }
     const result = await comparePDFs(req.files[0].path, req.files[1].path);
     
     sourcePaths.forEach(path => scheduleFileCleanup(path, 30 * 60 * 1000));

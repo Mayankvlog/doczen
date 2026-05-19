@@ -21,19 +21,16 @@ export const AuthProvider = ({ children }) => {
       const storedUser = localStorage.getItem('user');
       if (token && storedUser) {
         try {
-          const { dailyFileCount, dailyLimit, lastFileDate, ...cleanUser } = JSON.parse(storedUser);
-          setUser(cleanUser);
+          setUser(JSON.parse(storedUser));
           const { data } = await authAPI.refresh();
-          const { dailyFileCount: dfc, dailyLimit: dl, lastFileDate: lfd, ...cleanData } = data;
           localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify(cleanData));
-          setUser(cleanData);
+          localStorage.setItem('user', JSON.stringify(data));
+          setUser(data);
         } catch {
           try {
             const { data } = await authAPI.getProfile();
-            const { dailyFileCount, dailyLimit, lastFileDate, ...cleanData } = data;
-            localStorage.setItem('user', JSON.stringify(cleanData));
-            setUser(cleanData);
+            localStorage.setItem('user', JSON.stringify(data));
+            setUser(data);
           } catch {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
@@ -48,20 +45,18 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const { data } = await authAPI.login({ email, password });
-    const { dailyFileCount, dailyLimit, lastFileDate, ...cleanUser } = data;
     localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(cleanUser));
-    setUser(cleanUser);
-    return cleanUser;
+    localStorage.setItem('user', JSON.stringify(data));
+    setUser(data);
+    return data;
   };
 
   const register = async (name, email, password) => {
     const { data } = await authAPI.register({ name, email, password });
-    const { dailyFileCount, dailyLimit, lastFileDate, ...cleanUser } = data;
     localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(cleanUser));
-    setUser(cleanUser);
-    return cleanUser;
+    localStorage.setItem('user', JSON.stringify(data));
+    setUser(data);
+    return data;
   };
 
   const logout = async () => {
@@ -78,11 +73,10 @@ export const AuthProvider = ({ children }) => {
   const refreshProfile = async () => {
     try {
       const { data } = await authAPI.getProfile();
-      const { dailyFileCount, dailyLimit, lastFileDate, ...cleanData } = data;
-      const updatedUser = { ...user, ...cleanData };
+      const updatedUser = { ...user, ...data };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
-      return cleanData;
+      return data;
     } catch {
       return user;
     }
