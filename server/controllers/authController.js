@@ -41,8 +41,6 @@ const userResponse = (user, token) => ({
   email: user.email,
   storageUsed: user.storageUsed,
   storageLimit: user.storageLimit,
-  dailyFileCount: user.dailyFileCount,
-  dailyLimit: user.dailyLimit,
   token
 });
 
@@ -83,15 +81,6 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
-    }
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (!user.lastFileDate || user.lastFileDate < today) {
-      user.dailyFileCount = 0;
-      user.lastFileDate = new Date();
-    }
-    if (user.dailyLimit !== 1000) {
-      user.dailyLimit = 1000;
     }
     const refreshToken = generateRefreshToken();
     user.refreshToken = refreshToken;
@@ -145,20 +134,10 @@ exports.getProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (!user.lastFileDate || user.lastFileDate < today) {
-      user.dailyFileCount = 0;
-      user.lastFileDate = new Date();
-    }
-    if (user.dailyLimit !== 1000) {
-      user.dailyLimit = 1000;
-    }
     await user.save();
     res.json({
       _id: user._id, name: user.name, email: user.email,
       storageUsed: user.storageUsed, storageLimit: user.storageLimit,
-      dailyFileCount: user.dailyFileCount, dailyLimit: user.dailyLimit,
       createdAt: user.createdAt
     });
   } catch (error) {
@@ -204,25 +183,3 @@ exports.changePassword = async (req, res) => {
   }
 };
 
-exports.checkDailyLimit = async (userId) => {
-  const user = await User.findById(userId);
-  if (!user) return { allowed: false, reason: 'User not found' };
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  if (!user.lastFileDate || user.lastFileDate < today) {
-    user.dailyFileCount = 0;
-    user.lastFileDate = new Date();
-  }
-  if (user.dailyLimit !== 1000) {
-    user.dailyLimit = 1000;
-  }
-  await user.save();
-  if (user.dailyFileCount >= user.dailyLimit) {
-    return { allowed: false, reason: 'Daily limit reached' };
-  }
-  return { allowed: true, user };
-};
-
-exports.incrementFileCount = async (userId) => {
-  await User.findByIdAndUpdate(userId, { $inc: { dailyFileCount: 1 } });
-};

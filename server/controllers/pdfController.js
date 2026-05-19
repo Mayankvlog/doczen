@@ -32,7 +32,6 @@ setInterval(() => {
 
 const File = require('../models/File');
 const History = require('../models/History');
-const { checkDailyLimit, incrementFileCount } = require('./authController');
 const {
   mergePDFs, splitPDF, compressPDF, rotatePDF,
   protectPDF, unlockPDF, addPageNumbers, addWatermark,
@@ -184,12 +183,7 @@ const scheduleFileCleanup = (filePath, delayMs = 24 * 60 * 60 * 1000) => {
 const isDbConnected = () => mongoose.connection.readyState === 1;
 
 const checkLimits = async (req) => {
-  if (req.user && isDbConnected()) {
-    const limitCheck = await checkDailyLimit(req.user._id);
-    if (!limitCheck.allowed) {
-      return { allowed: false, message: limitCheck.reason };
-    }
-  } else if (!req.user) {
+  if (!req.user) {
     const ip = req.ip || req.connection?.remoteAddress || 'unknown';
     const now = Date.now();
     if (!guestRateLimit.has(ip)) {
@@ -275,14 +269,6 @@ const processRequest = async (req, res, action, processFn, options = {}) => {
         });
       }
       scheduleFileCleanup(outputPath, 60 * 60 * 1000);
-    }
-
-    if (req.user && isDbConnected()) {
-      try {
-        await incrementFileCount(req.user._id);
-      } catch (e) {
-        console.error('Failed to increment file count:', e.message);
-      }
     }
 
     sourcePaths.forEach(p => scheduleFileCleanup(p, 30 * 60 * 1000));

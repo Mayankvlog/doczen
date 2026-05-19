@@ -29,18 +29,6 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 100 * 1024 * 1024
   },
-  dailyFileCount: {
-    type: Number,
-    default: 0
-  },
-  dailyLimit: {
-    type: Number,
-    default: 1000
-  },
-  lastFileDate: {
-    type: Date,
-    default: Date.now
-  },
   refreshToken: {
     type: String,
     default: null
