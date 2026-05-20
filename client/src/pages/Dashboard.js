@@ -45,7 +45,7 @@ export default function Dashboard() {
 
   const [recentActivity, setRecentActivity] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
-  const [stats, setStats] = useState({ today: 0, total: 0, dailyLimit: 1000, percentageUsed: 0, isLimitReached: false });
+  const [stats, setStats] = useState({ total: 0, percentageUsed: 0, isLimitReached: false });
   const [loadingStats, setLoadingStats] = useState(true);
   const [statsError, setStatsError] = useState(null);
 
@@ -59,12 +59,12 @@ export default function Dashboard() {
         if (statsData && statsData.success && statsData.stats) {
           setStats(statsData.stats);
         } else {
-          setStats({ today: 0, total: 0, dailyLimit: 1000, percentageUsed: 0, isLimitReached: false });
+          setStats({ total: 0, percentageUsed: 0, isLimitReached: false });
         }
       } catch (error) {
         console.error('Stats fetch error:', error);
         setStatsError(error.message || 'Failed to load stats');
-        setStats({ today: 0, total: 0, dailyLimit: 1000, percentageUsed: 0, isLimitReached: false });
+        setStats({ total: 0, percentageUsed: 0, isLimitReached: false });
       } finally {
         setLoadingStats(false);
       }
@@ -119,40 +119,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Files Today Card */}
-        <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                {t('dashboard.filesToday', 'Files Today')}
-              </p>
-              {loadingStats ? (
-                <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-              ) : (
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {stats.today}/{stats.dailyLimit}
-                </p>
-              )}
-            </div>
-            <div className="text-3xl">📄</div>
-          </div>
-          {!loadingStats && (
-            <div className="mt-4 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
-              <div
-                className={`h-full transition-all duration-300 ${
-                  stats.percentageUsed >= 80
-                    ? 'bg-red-500'
-                    : stats.percentageUsed >= 50
-                    ? 'bg-yellow-500'
-                    : 'bg-green-500'
-                }`}
-                style={{ width: `${Math.min(100, stats.percentageUsed)}%` }}
-              />
-            </div>
-          )}
-        </div>
-
+      <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Total Files Card */}
         <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">

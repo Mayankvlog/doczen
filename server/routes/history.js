@@ -33,9 +33,7 @@ router.get('/stats/daily', protect, async (req, res) => {
     res.json({
       success: true,
       stats: {
-        today: todayCount,
         total: totalCount,
-        dailyLimit: dailyLimit,
         isLimitReached: isLimitReached,
         percentageUsed: Math.round((todayCount / dailyLimit) * 100)
       }
