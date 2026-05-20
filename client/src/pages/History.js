@@ -112,7 +112,7 @@ export default function History() {
     try {
       await historyAPI.delete(id);
 
-      fetchHistory(page);
+      setHistory(prev => prev.filter(item => item._id !== id));
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message || 'Failed to delete entry';
       setError(errorMessage);

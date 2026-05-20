@@ -82,17 +82,11 @@ export default function Dashboard() {
 
       console.log("Dashboard history response:", response.data);
 
-      const historyData =
-        response?.data?.histories ||
-        response?.data?.history ||
-        response?.data?.data ||
-        [];
+      const historyData = Array.isArray(response?.data?.history)
+        ? response.data.history
+        : [];
 
-      if (Array.isArray(historyData)) {
-        setRecentActivity(historyData);
-      } else {
-        setRecentActivity([]);
-      }
+      setRecentActivity(historyData);
 
     } catch (error) {
       console.error("Dashboard history fetch failed:", error);

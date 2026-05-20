@@ -6,6 +6,11 @@ const API_BASE = process.env.REACT_APP_API_URL || '';
 const api = axios.create({
   baseURL: `${API_BASE}/api`,
   withCredentials: true,
+  headers: {
+    "Cache-Control": "no-cache",
+    Pragma: "no-cache",
+    Expires: "0",
+  },
 });
 
 let isRefreshing = false;
