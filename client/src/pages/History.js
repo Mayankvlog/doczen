@@ -63,30 +63,81 @@ export default function History() {
   }, [page]);
 
   const handleClearAll = async () => {
-    if (!window.confirm(t('history.confirmClear', 'Are you sure you want to clear all history?'))) return;
+    if (!window.confirm(t('history.confirmClear', 'Are you sure you want to clear all history?'))) {
+      console.log('Clear all history cancelled by user');
+      return;
+    }
+
     setDeleting(true);
     setError(null);
+    console.log('Starting clear all history...');
+
     try {
-      await historyAPI.clearAll();
+      const response = await historyAPI.clearAll();
+
+      // Verify the response
+      if (!response.data || !response.data.success) {
+        console.error('Invalid response from clear all:', response.data);
+        throw new Error(response.data?.message || 'Failed to clear history - invalid server response');
+      }
+
+      console.log('Clear all history successful:', response.data);
+
+      // Only clear state AFTER successful server response
       setHistory([]);
       setPage(1);
       setTotalPages(1);
+      setError(null);
     } catch (err) {
       console.error('Error clearing history:', err);
-      setError(err.message || 'Failed to clear history');
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to clear history';
+      setError(errorMessage);
+      // Optionally refetch to show current state from server
+      setTimeout(() => {
+        console.log('Refetching history after clear failure...');
+        fetchHistory(page);
+      }, 500);
     } finally {
       setDeleting(false);
     }
   };
 
   const handleDelete = async (id) => {
+    if (!id) {
+      console.error('No ID provided for delete operation');
+      setError('Invalid entry ID');
+      return;
+    }
+
+    console.log('Deleting history entry:', id);
+    setError(null);
+
     try {
-      await historyAPI.delete(id);
-      setHistory((prev) => prev.filter((item) => item._id !== id));
-      setError(null);
+      const response = await historyAPI.delete(id);
+
+      // Verify the response
+      if (!response.data || !response.data.success) {
+        console.error('Invalid response from delete:', response.data);
+        throw new Error(response.data?.message || 'Failed to delete entry - invalid server response');
+      }
+
+      console.log('Delete history entry successful:', response.data);
+
+      // Only remove from state AFTER successful server response
+      setHistory((prev) => {
+        const updated = prev.filter((item) => item._id !== id);
+        console.log(`Removed entry from state, remaining: ${updated.length}`);
+        return updated;
+      });
     } catch (err) {
       console.error('Error deleting history entry:', err);
-      setError(err.message || 'Failed to delete entry');
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to delete entry';
+      setError(errorMessage);
+      // Optionally refetch to show current state from server
+      setTimeout(() => {
+        console.log('Refetching history after delete failure...');
+        fetchHistory(page);
+      }, 500);
     }
   };
 

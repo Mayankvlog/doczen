@@ -499,8 +499,32 @@ export const pdfAPI = {
 export const historyAPI = {
   getAll: (page = 1) => api.get(`/history?page=${page}`),
   getOne: (id) => api.get(`/history/${id}`),
-  delete: (id) => api.delete(`/history/${id}`),
-  clearAll: () => api.delete('/history'),
+  delete: (id) => {
+    if (!id) {
+      return Promise.reject(new Error('History entry ID is required'));
+    }
+    return api.delete(`/history/${id}`).then(response => {
+      if (!response.data || !response.data.success) {
+        throw new Error(response.data?.message || 'Failed to delete history entry');
+      }
+      return response;
+    }).catch(error => {
+      console.error('Delete history entry failed:', error);
+      throw error;
+    });
+  },
+  clearAll: () => {
+    return api.delete('/history').then(response => {
+      if (!response.data || !response.data.success) {
+        throw new Error(response.data?.message || 'Failed to clear history');
+      }
+      console.log('History cleared successfully:', response.data);
+      return response;
+    }).catch(error => {
+      console.error('Clear history failed:', error);
+      throw error;
+    });
+  },
   getStats: () => api.get('/history/stats/daily'),
 };
 
