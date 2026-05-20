@@ -87,15 +87,6 @@ const ensureOutputFile = (outputPath) => {
 
 const validateOutputFile = ensureOutputFile;
 
-let _isDbConnected = false;
-
-const setDbConnected = (status) => {
-  _isDbConnected = status;
-  console.log('DB Connection Status:', status);
-};
-
-const isDbConnected = () => _isDbConnected;
-
 const createHistory = async (userId, action, inputFiles, outputFiles, status, error = null) => {
   try {
     // Validate required parameters
@@ -208,8 +199,6 @@ const scheduleFileCleanup = (filePath, delayMs = 24 * 60 * 60 * 1000) => {
     } catch (e) { /* ignore */ }
   }, delayMs);
 };
-
-const isDbConnected = () => mongoose.connection.readyState === 1;
 
 const normalizeFiles = (req) => {
   if (req.files && req.files.length > 0) return req.files;
