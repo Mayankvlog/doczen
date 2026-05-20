@@ -217,6 +217,10 @@ const processRequest = async (req, res, action, processFn, options = {}) => {
 
     sourcePaths = req.files.map(f => f.path);
 
+    if (req.user && !isDbConnected()) {
+      console.warn(`WARNING: DB not connected. History will NOT be saved for ${action} by user ${req.user._id}`);
+    }
+
     const allowedTypes = expectedMimeTypes[action];
     if (allowedTypes) {
       for (const f of req.files) {

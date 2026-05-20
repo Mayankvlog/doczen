@@ -2,11 +2,16 @@ const express = require('express');
 const router = express.Router();
 const History = require('../models/History');
 const { protect } = require('../middleware/auth');
+const { isDbConnected } = require('../config/db');
 const fs = require('fs');
 const path = require('path');
 
 router.get('/stats/daily', protect, async (req, res) => {
   try {
+    if (!isDbConnected()) {
+      return res.status(503).json({ success: false, message: 'Database not connected. Stats unavailable.' });
+    }
+
     if (!req.user || !req.user._id) {
       return res.status(401).json({ success: false, message: 'User not authenticated' });
     }
@@ -52,6 +57,10 @@ router.get('/stats/daily', protect, async (req, res) => {
 
 router.get('/', protect, async (req, res) => {
   try {
+    if (!isDbConnected()) {
+      return res.status(503).json({ success: false, message: 'Database not connected. History unavailable.' });
+    }
+
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
     const skip = (page - 1) * limit;
@@ -89,6 +98,10 @@ router.get('/', protect, async (req, res) => {
 
 router.get('/:id', protect, async (req, res) => {
   try {
+    if (!isDbConnected()) {
+      return res.status(503).json({ success: false, message: 'Database not connected.' });
+    }
+
     const entry = await History.findOne({
       _id: req.params.id,
       user: req.user._id
@@ -107,6 +120,10 @@ router.get('/:id', protect, async (req, res) => {
 // Delete individual history entry by ID
 router.delete('/:id', protect, async (req, res) => {
   try {
+    if (!isDbConnected()) {
+      return res.status(503).json({ success: false, message: 'Database not connected. Cannot delete.' });
+    }
+
     // Validate user authentication
     if (!req.user || !req.user._id) {
       return res.status(401).json({ success: false, message: 'User not authenticated' });
@@ -189,6 +206,10 @@ router.delete('/:id', protect, async (req, res) => {
 // Delete all history entries for user
 router.delete('/', protect, async (req, res) => {
   try {
+    if (!isDbConnected()) {
+      return res.status(503).json({ success: false, message: 'Database not connected. Cannot clear history.' });
+    }
+
     // Validate user authentication
     if (!req.user || !req.user._id) {
       return res.status(401).json({ success: false, message: 'User not authenticated' });

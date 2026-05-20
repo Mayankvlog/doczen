@@ -75,7 +75,6 @@ export default function History() {
     try {
       const response = await historyAPI.clearAll();
 
-      // Verify the response
       if (!response.data || !response.data.success) {
         console.error('Invalid response from clear all:', response.data);
         throw new Error(response.data?.message || 'Failed to clear history - invalid server response');
@@ -83,18 +82,14 @@ export default function History() {
 
       console.log('Clear all history successful:', response.data);
 
-      // Only clear state AFTER successful server response
-      setHistory([]);
-      setPage(1);
-      setTotalPages(1);
-      setError(null);
+      // Force fresh server fetch to confirm deletion — do NOT rely on local state only
+      await fetchHistory(1);
     } catch (err) {
       console.error('Error clearing history:', err);
       const errorMessage = err.response?.data?.message || err.message || 'Failed to clear history';
       setError(errorMessage);
-      // Optionally refetch to show current state from server
+      // Refetch to show actual server state (delete may have partially failed)
       setTimeout(() => {
-        console.log('Refetching history after clear failure...');
         fetchHistory(page);
       }, 500);
     } finally {
