@@ -50,8 +50,7 @@ export default function Dashboard() {
   const [statsError, setStatsError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      // Fetch stats
+    const fetchStats = async () => {
       setLoadingStats(true);
       setStatsError(null);
       try {
@@ -68,37 +67,55 @@ export default function Dashboard() {
       } finally {
         setLoadingStats(false);
       }
-
-      // Fetch recent activity
-      setLoadingHistory(true);
-      try {
-        const response = await historyAPI.getAll(1);
-        const data = response.data;
-
-        console.log("Dashboard History API Response:", data);
-
-        if (data && data.success) {
-          const historyData =
-            data.histories ||
-            data.history ||
-            data.data ||
-            [];
-
-          setRecentActivity(historyData.slice(0, 5));
-        } else {
-          setRecentActivity([]);
-        }
-      } catch (error) {
-        console.error('Dashboard history fetch error:', error);
-        setRecentActivity([]);
-      } finally {
-        setLoadingHistory(false);
-      }
     };
 
     if (user && user._id) {
-      fetchData();
+      fetchStats();
     }
+  }, [user]);
+
+  const fetchRecentActivity = async () => {
+    try {
+      setLoadingHistory(true);
+
+      const response = await historyAPI.getAll(1);
+
+      console.log("Dashboard history response:", response.data);
+
+      const historyData =
+        response?.data?.histories ||
+        response?.data?.history ||
+        response?.data?.data ||
+        [];
+
+      if (Array.isArray(historyData)) {
+        setRecentActivity(historyData);
+      } else {
+        setRecentActivity([]);
+      }
+
+    } catch (error) {
+      console.error("Dashboard history fetch failed:", error);
+      setRecentActivity([]);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user && user._id) {
+      fetchRecentActivity();
+    }
+
+    const handleHistoryCleared = () => {
+      setRecentActivity([]);
+    };
+
+    window.addEventListener("historyCleared", handleHistoryCleared);
+
+    return () => {
+      window.removeEventListener("historyCleared", handleHistoryCleared);
+    };
   }, [user]);
 
   if (authLoading) {

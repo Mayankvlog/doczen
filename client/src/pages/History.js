@@ -87,6 +87,9 @@ export default function History() {
       setHistory([]);
       setPage(1);
       setTotalPages(1);
+
+      window.dispatchEvent(new Event("historyCleared"));
+      localStorage.removeItem("history");
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message || 'Failed to clear history';
       setError(errorMessage);
