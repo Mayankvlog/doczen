@@ -68,9 +68,9 @@ export default function History() {
     setError(null);
     try {
       await historyAPI.clearAll();
-      setHistory([]);
       setPage(1);
-      setTotalPages(1);
+      // Re-fetch history to verify the deletion
+      await fetchHistory(1);
     } catch (err) {
       console.error('Error clearing history:', err);
       setError(err.message || 'Failed to clear history');
