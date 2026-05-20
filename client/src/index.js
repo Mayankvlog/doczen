@@ -505,7 +505,7 @@ addTranslations('en', {
   'tool.toast.compressed': 'PDF compressed successfully!',
   'tool.seo.defaultTitle': 'Free Online PDF Editor - Merge, Split, Compress & Convert PDFs',
   'tool.seo.defaultDesc': 'Doczen is a free online PDF editor. Merge PDFs, split PDFs, compress PDF files, convert PDF to Word, JPG, PPT, Excel and more. No registration required for basic tools.',
-  'tool.seo.defaultKeywords': 'free PDF editor, online PDF tool, merge PDF online, split PDF online, compress PDF, PDF converter, PDF to Word, PDF to JPG, Doczen',
+  'tool.seo.defaultKeywords': 'free PDF editor, online PDF tool, merge PDF, split PDF, combine PDF, extract PDF, compress PDF, convert PDF, Word to PDF, Excel to PDF, Powerpoint to PDF, PDF to JPG, JPG to PDF, PDF converter, PDF to Word, Doczen',
   'tool.seo.loginTitle': 'Login - Doczen PDF Editor',
   'tool.seo.loginDesc': 'Sign in to your Doczen account to access all PDF tools, manage your files, and view your processing history.',
   'tool.seo.loginKeywords': 'login, sign in, Doczen account, PDF editor login',

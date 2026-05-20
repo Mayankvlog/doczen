@@ -32,11 +32,11 @@ export default function SEO({
   noIndex = false
 }) {
   const { lang } = useLanguage();
-  const pageTitle = title ? `${title} | Doczen - Free Online PDF Editor` : `${SITE_NAME} - Free Online PDF Editor`;
+  const pageTitle = title ? `${title} | Doczen` : `${SITE_NAME} - Free Online PDF Editor`;
   const url = canonical ? `${BASE_URL}${canonical}` : BASE_URL;
   const pageKeywords = keywords
     ? `${keywords}, PDF editor, online PDF, free PDF tools, Doczen`
-    : 'PDF editor, online PDF, free PDF tools, merge PDF, split PDF, compress PDF, convert PDF, Doczen';
+    : 'PDF editior, online PDF, Free pdf editior ,free PDF tools, merge PDF, split PDF, combine PDF, extract PDF, compress PDF, convert PDF, Word to PDF, Excel to PDF, Powerpoint to PDF, PDF to JPG, JPG to PDF, Doczen';
   const locale = LOCALE_MAP[lang] || 'en_US';
 
   return (
