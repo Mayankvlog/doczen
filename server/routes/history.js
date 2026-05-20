@@ -104,71 +104,12 @@ router.get('/:id', protect, async (req, res) => {
   }
 });
 
-router.delete('/:id', protect, async (req, res) => {
-  try {
-    const entry = await History.findOne({
-      _id: req.params.id,
-      user: req.user._id
-    });
-
-    if (!entry) {
-      return res.status(404).json({ message: 'History entry not found' });
-    }
-
-    // Delete associated files from filesystem
-    const uploadsDir = path.join(__dirname, '../uploads');
-    
-    // Delete output files
-    if (entry.outputFiles && Array.isArray(entry.outputFiles)) {
-      for (const file of entry.outputFiles) {
-        if (file.path) {
-          const filePath = path.isAbsolute(file.path) ? file.path : path.join(uploadsDir, file.path);
-          try {
-            if (fs.existsSync(filePath)) {
-              fs.unlinkSync(filePath);
-            }
-          } catch (err) {
-            console.error('Error deleting file:', filePath, err);
-          }
-        }
-      }
-    }
-    
-    // Delete input files
-    if (entry.inputFiles && Array.isArray(entry.inputFiles)) {
-      for (const file of entry.inputFiles) {
-        if (file.storedName) {
-          const filePath = path.join(uploadsDir, file.storedName);
-          try {
-            if (fs.existsSync(filePath)) {
-              fs.unlinkSync(filePath);
-            }
-          } catch (err) {
-            console.error('Error deleting file:', filePath, err);
-          }
-        }
-      }
-    }
-
-    // Delete the database entry
-    await History.deleteOne({ _id: req.params.id, user: req.user._id });
-
-    res.json({ message: 'History entry deleted' });
-  } catch (error) {
-    console.error('Error deleting history entry:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
 router.delete('/', protect, async (req, res) => {
   try {
-    // First, get all history entries for this user to delete their files
     const historyEntries = await History.find({ user: req.user._id });
-    
-    // Delete all associated files from filesystem
+
     const uploadsDir = path.join(__dirname, '../uploads');
     for (const entry of historyEntries) {
-      // Delete output files
       if (entry.outputFiles && Array.isArray(entry.outputFiles)) {
         for (const file of entry.outputFiles) {
           if (file.path) {
@@ -183,7 +124,6 @@ router.delete('/', protect, async (req, res) => {
           }
         }
       }
-      // Delete input files
       if (entry.inputFiles && Array.isArray(entry.inputFiles)) {
         for (const file of entry.inputFiles) {
           if (file.storedName) {
@@ -199,12 +139,63 @@ router.delete('/', protect, async (req, res) => {
         }
       }
     }
-    
-    // Then delete all database entries
+
     await History.deleteMany({ user: req.user._id });
     res.json({ message: 'History cleared' });
   } catch (error) {
     console.error('Error clearing history:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+router.delete('/:id', protect, async (req, res) => {
+  try {
+    const entry = await History.findOne({
+      _id: req.params.id,
+      user: req.user._id
+    });
+
+    if (!entry) {
+      return res.status(404).json({ message: 'History entry not found' });
+    }
+
+    const uploadsDir = path.join(__dirname, '../uploads');
+
+    if (entry.outputFiles && Array.isArray(entry.outputFiles)) {
+      for (const file of entry.outputFiles) {
+        if (file.path) {
+          const filePath = path.isAbsolute(file.path) ? file.path : path.join(uploadsDir, file.path);
+          try {
+            if (fs.existsSync(filePath)) {
+              fs.unlinkSync(filePath);
+            }
+          } catch (err) {
+            console.error('Error deleting file:', filePath, err);
+          }
+        }
+      }
+    }
+
+    if (entry.inputFiles && Array.isArray(entry.inputFiles)) {
+      for (const file of entry.inputFiles) {
+        if (file.storedName) {
+          const filePath = path.join(uploadsDir, file.storedName);
+          try {
+            if (fs.existsSync(filePath)) {
+              fs.unlinkSync(filePath);
+            }
+          } catch (err) {
+            console.error('Error deleting file:', filePath, err);
+          }
+        }
+      }
+    }
+
+    await History.deleteOne({ _id: req.params.id, user: req.user._id });
+
+    res.json({ message: 'History entry deleted' });
+  } catch (error) {
+    console.error('Error deleting history entry:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
