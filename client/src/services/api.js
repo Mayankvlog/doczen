@@ -503,7 +503,7 @@ export const pdfAPI = {
 };
 
 export const historyAPI = {
-  getAll: (page = 1) => api.get(`/history?page=${page}&t=${Date.now()}`),
+  getAll: (page = 1) => api.get(`/history?page=${page}&_=${Date.now()}`),
   getOne: (id) => api.get(`/history/${id}`),
   delete: (id) => {
     if (!id) {

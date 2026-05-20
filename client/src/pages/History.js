@@ -105,7 +105,7 @@ export default function History() {
       setTotalPages(1);
 
       window.dispatchEvent(new Event("historyCleared"));
-      localStorage.removeItem("history");
+
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message || 'Failed to clear history';
       setError(errorMessage);
@@ -123,19 +123,21 @@ export default function History() {
       return;
     }
 
+    const previousHistory = history;
+    setHistory(prev => prev.filter(item => item._id !== id));
     setError(null);
 
     try {
       await historyAPI.delete(id);
-
-      setHistory(prev => prev.filter(item => item._id !== id));
       window.dispatchEvent(new Event("historyCleared"));
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to delete entry';
-      setError(errorMessage);
-      setTimeout(() => {
-        fetchHistory(page);
-      }, 500);
+      if (err.response?.status === 404) {
+        window.dispatchEvent(new Event("historyCleared"));
+      } else {
+        setHistory(previousHistory);
+        const errorMessage = err.response?.data?.message || err.message || 'Failed to delete entry';
+        setError(errorMessage);
+      }
     }
   };
 

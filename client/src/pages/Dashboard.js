@@ -72,6 +72,13 @@ export default function Dashboard() {
     if (user && user._id) {
       fetchStats();
     }
+
+    const refreshStats = () => { fetchStats(); };
+    window.addEventListener("historyCleared", refreshStats);
+
+    return () => {
+      window.removeEventListener("historyCleared", refreshStats);
+    };
   }, [user]);
 
   const fetchRecentActivity = async () => {
