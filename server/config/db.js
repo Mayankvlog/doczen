@@ -9,6 +9,23 @@ const setDbConnected = (status) => {
 
 const isDbConnected = () => dbConnected;
 
+mongoose.connection.on('connected', () => {
+  console.log('Mongoose connection established');
+  setDbConnected(true);
+});
+mongoose.connection.on('reconnected', () => {
+  console.log('Mongoose reconnected');
+  setDbConnected(true);
+});
+mongoose.connection.on('disconnected', () => {
+  console.log('Mongoose disconnected');
+  setDbConnected(false);
+});
+mongoose.connection.on('error', (err) => {
+  console.error('Mongoose connection error:', err.message);
+  setDbConnected(false);
+});
+
 const connectDB = async () => {
   const uri = process.env.MONGO_URI;
   if (!uri) {

@@ -952,6 +952,13 @@ exports.repair = async (req, res) => {
     const outputPath = getOutputPath(req.files[0].originalname, 'repaired');
     await repairPDF(filePath, outputPath);
     const outStat = fs.statSync(outputPath);
+    if (req.user) {
+      await createHistory(req.user._id, 'repair',
+        req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
+        [{ originalName: `repaired_${req.files[0].originalname}`, storedName: path.basename(outputPath), size: outStat.size, path: outputPath }],
+        'completed'
+      );
+    }
     return {
       __sendFile: true,
       message: 'PDF repaired successfully',
@@ -975,6 +982,13 @@ exports.pdfToPdfa = async (req, res) => {
     };
     await pdfToPdfa(filePath, outputPath, options);
     const outStat = fs.statSync(outputPath);
+    if (req.user) {
+      await createHistory(req.user._id, 'pdfToPdfa',
+        req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
+        [{ originalName: `pdfa_${req.files[0].originalname}`, storedName: path.basename(outputPath), size: outStat.size, path: outputPath }],
+        'completed'
+      );
+    }
     return {
       __sendFile: true,
       message: 'PDF converted to PDF/A successfully',
@@ -1006,6 +1020,13 @@ exports.writeMetadata = async (req, res) => {
     };
     const result = await setMetadata(filePath, outputPath, metadata);
     const outStat = fs.statSync(outputPath);
+    if (req.user) {
+      await createHistory(req.user._id, 'metadata',
+        req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
+        [{ originalName: `metadata_${req.files[0].originalname}`, storedName: path.basename(outputPath), size: outStat.size, path: outputPath }],
+        'completed'
+      );
+    }
     return {
       __sendFile: true,
       message: 'Metadata updated successfully',
@@ -1024,6 +1045,13 @@ exports.flatten = async (req, res) => {
     const outputPath = getOutputPath(req.files[0].originalname, 'flattened');
     await flattenPDF(filePath, outputPath);
     const outStat = fs.statSync(outputPath);
+    if (req.user) {
+      await createHistory(req.user._id, 'flatten',
+        req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
+        [{ originalName: `flattened_${req.files[0].originalname}`, storedName: path.basename(outputPath), size: outStat.size, path: outputPath }],
+        'completed'
+      );
+    }
     return {
       __sendFile: true,
       message: 'PDF flattened successfully',
@@ -1062,6 +1090,14 @@ exports.htmlToPdf = async (req, res) => {
       });
     }
 
+    if (req.user) {
+      await createHistory(req.user._id, 'htmlToPdf',
+        [],
+        [{ originalName: 'converted.pdf', storedName: path.basename(outputPath), size: outStat.size, path: outputPath }],
+        'completed'
+      );
+    }
+
     res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
     return res.download(outputPath, 'converted.pdf', (err) => {
       cleanupFiles([...(outputPath ? [outputPath] : [])]);
@@ -1083,6 +1119,13 @@ exports.redact = async (req, res) => {
     const redactions = JSON.parse(req.body.redactions || '[]');
     await redactText(filePath, outputPath, redactions);
     const outStat = fs.statSync(outputPath);
+    if (req.user) {
+      await createHistory(req.user._id, 'redact',
+        req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
+        [{ originalName: `redacted_${req.files[0].originalname}`, storedName: path.basename(outputPath), size: outStat.size, path: outputPath }],
+        'completed'
+      );
+    }
     return {
       __sendFile: true,
       message: 'PDF redacted successfully',
@@ -1100,6 +1143,13 @@ exports.removeAnnotations = async (req, res) => {
     const outputPath = getOutputPath(req.files[0].originalname, 'cleaned');
     await removeAnnotations(filePath, outputPath);
     const outStat = fs.statSync(outputPath);
+    if (req.user) {
+      await createHistory(req.user._id, 'removeAnnotations',
+        req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
+        [{ originalName: `cleaned_${req.files[0].originalname}`, storedName: path.basename(outputPath), size: outStat.size, path: outputPath }],
+        'completed'
+      );
+    }
     return {
       __sendFile: true,
       message: 'Annotations removed successfully',
@@ -1141,6 +1191,13 @@ exports.removeWatermark = async (req, res) => {
         throw error;
       }
       const outStat = fs.statSync(outputPath);
+      if (req.user) {
+        await createHistory(req.user._id, 'removeWatermark',
+          req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
+          [{ originalName: `clean_${req.files[0].originalname}`, storedName: path.basename(outputPath), size: outStat.size, path: outputPath }],
+          'completed'
+        );
+      }
       return {
         __sendFile: true,
         message: result.message || 'No watermark detected',

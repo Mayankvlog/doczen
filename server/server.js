@@ -42,8 +42,6 @@ setInterval(cleanupOldFiles, 60 * 60 * 1000);
 
 const connectDB = require('./config/db');
 
-connectDB();
-
 const app = express();
 
 app.use(cors({
@@ -109,8 +107,10 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, () => {
-  console.log(`Doczen server running on port ${PORT}`);
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Doczen server running on port ${PORT}`);
+  });
 });
 
 module.exports = app;
