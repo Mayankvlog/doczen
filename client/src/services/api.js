@@ -7,9 +7,10 @@ const api = axios.create({
   baseURL: `${API_BASE}/api`,
   withCredentials: true,
   headers: {
-    "Cache-Control": "no-cache",
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
     Pragma: "no-cache",
     Expires: "0",
+    "Surrogate-Control": "no-store",
   },
 });
 
@@ -502,7 +503,7 @@ export const pdfAPI = {
 };
 
 export const historyAPI = {
-  getAll: (page = 1) => api.get(`/history?page=${page}`),
+  getAll: (page = 1) => api.get(`/history?page=${page}&t=${Date.now()}`),
   getOne: (id) => api.get(`/history/${id}`),
   delete: (id) => {
     if (!id) {

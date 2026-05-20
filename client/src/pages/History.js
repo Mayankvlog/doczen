@@ -65,8 +65,24 @@ export default function History() {
   };
 
   useEffect(() => {
-    fetchHistory(page);
-  }, [page]);
+    fetchHistory(1);
+
+    const handleFocus = () => {
+      fetchHistory(1);
+    };
+
+    const handlePageshow = () => {
+      fetchHistory(1);
+    };
+
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("pageshow", handlePageshow);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("pageshow", handlePageshow);
+    };
+  }, []);
 
   const handleClearAll = async () => {
     if (!window.confirm(t('history.confirmClear', 'Are you sure you want to clear all history?'))) {
@@ -113,6 +129,7 @@ export default function History() {
       await historyAPI.delete(id);
 
       setHistory(prev => prev.filter(item => item._id !== id));
+      window.dispatchEvent(new Event("historyCleared"));
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message || 'Failed to delete entry';
       setError(errorMessage);

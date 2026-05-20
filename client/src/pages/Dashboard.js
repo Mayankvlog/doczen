@@ -97,20 +97,22 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    if (user && user._id) {
-      fetchRecentActivity();
-    }
+    fetchRecentActivity();
 
-    const handleHistoryCleared = () => {
-      setRecentActivity([]);
+    const refresh = () => {
+      fetchRecentActivity();
     };
 
-    window.addEventListener("historyCleared", handleHistoryCleared);
+    window.addEventListener("focus", refresh);
+    window.addEventListener("pageshow", refresh);
+    window.addEventListener("historyCleared", refresh);
 
     return () => {
-      window.removeEventListener("historyCleared", handleHistoryCleared);
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("pageshow", refresh);
+      window.removeEventListener("historyCleared", refresh);
     };
-  }, [user]);
+  }, []);
 
   if (authLoading) {
     return (
