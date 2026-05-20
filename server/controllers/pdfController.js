@@ -6,8 +6,7 @@ const { PDFDocument } = require('pdf-lib');
 const mongoose = require('mongoose');
 const sharp = require('sharp');
 const { createCanvas } = require('@napi-rs/canvas');
-
-let _pdfjsLib = null;
+const { isDbConnected } = require('../config/db');
 const _standardFontUrl = path.join(
   path.dirname(require.resolve('pdfjs-dist/package.json')),
   'standard_fonts'
@@ -88,11 +87,36 @@ const ensureOutputFile = (outputPath) => {
 
 const validateOutputFile = ensureOutputFile;
 
+let _isDbConnected = false;
+
+const setDbConnected = (status) => {
+  _isDbConnected = status;
+  console.log('DB Connection Status:', status);
+};
+
+const isDbConnected = () => _isDbConnected;
+
 const createHistory = async (userId, action, inputFiles, outputFiles, status, error = null) => {
-  if (!isDbConnected()) return;
   try {
+    // Validate required parameters
+    if (!userId) {
+      console.error('ERROR: createHistory called without userId');
+      throw new Error('User ID is required for history tracking');
+    }
+
+    if (!action) {
+      console.error('ERROR: createHistory called without action');
+      throw new Error('Action is required for history tracking');
+    }
+
+    if (!isDbConnected()) {
+      console.error('ERROR: Database not connected, history not saved for', action, 'by user', userId);
+      throw new Error('Database connection failed - history not saved');
+    }
+
     const totalSize = outputFiles.reduce((s, f) => s + (f.size || 0), 0);
-    await History.create({
+    
+    const historyRecord = {
       user: userId,
       action,
       inputFiles: inputFiles.map(f => ({
@@ -110,9 +134,25 @@ const createHistory = async (userId, action, inputFiles, outputFiles, status, er
       fileSize: totalSize || outputFiles[0]?.size || inputFiles[0]?.size || 0,
       status,
       error
-    });
+    };
+
+    const savedRecord = await History.create(historyRecord);
+    
+    console.log(`✓ History created successfully for ${action} (ID: ${savedRecord._id}) by user ${userId}`);
+    return {
+      success: true,
+      historyId: savedRecord._id,
+      action,
+      status
+    };
   } catch (err) {
-    console.error('History creation error:', err);
+    console.error(`✗ CRITICAL: History creation FAILED for action "${action}":`, err.message);
+    console.error('Full error:', err);
+    // Don't throw - we want to complete the operation even if history fails
+    return {
+      success: false,
+      error: err.message
+    };
   }
 };
 
@@ -264,6 +304,11 @@ const processRequest = async (req, res, action, processFn, options = {}) => {
 
 exports.merge = async (req, res) => {
   await processRequest(req, res, 'merge', async (req) => {
+    // Validate user
+    if (!req.user || !req.user._id) {
+      throw new Error('User authentication required for history tracking');
+    }
+
     const filePaths = req.files.map(f => f.path);
     const outputName = `merged_${uuidv4()}.pdf`;
     const outputPath = path.join(getOutputDir(), outputName);
@@ -281,11 +326,12 @@ exports.merge = async (req, res) => {
         path: outputPath,
         pages: 0
       });
-      await createHistory(req.user._id, 'merge',
+      const historyResult = await createHistory(req.user._id, 'merge',
         req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
         [{ originalName: 'merged.pdf', storedName: outputName, size: outStat.size, path: outputPath }],
         'completed'
       );
+      console.log('Merge history result:', historyResult);
     }
 
     return {
@@ -301,6 +347,11 @@ exports.merge = async (req, res) => {
 
 exports.split = async (req, res) => {
   await processRequest(req, res, 'split', async (req) => {
+    // Validate user
+    if (!req.user || !req.user._id) {
+      throw new Error('User authentication required for history tracking');
+    }
+
     const filePath = req.files[0].path;
     const outputDir = getOutputDir();
     const outputFiles = await splitPDF(filePath, outputDir);
@@ -326,11 +377,12 @@ exports.split = async (req, res) => {
     const outStat = fs.statSync(zipPath);
 
     if (req.user) {
-      await createHistory(req.user._id, 'split',
+      const historyResult = await createHistory(req.user._id, 'split',
         req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
         [{ originalName: 'split_pages.zip', storedName: zipName, size: outStat.size, path: zipPath }],
         'completed'
       );
+      console.log('Split history result:', historyResult);
     }
 
     return {
@@ -346,6 +398,11 @@ exports.split = async (req, res) => {
 
 exports.compress = async (req, res) => {
   await processRequest(req, res, 'compress', async (req) => {
+    // Validate user
+    if (!req.user || !req.user._id) {
+      throw new Error('User authentication required for history tracking');
+    }
+
     const filePath = req.files[0].path;
     const quality = parseFloat(req.body.quality) || 0.5;
     const outputPath = getOutputPath(req.files[0].originalname, 'compressed');
@@ -362,11 +419,12 @@ exports.compress = async (req, res) => {
         path: outputPath,
         pages: 0
       });
-      await createHistory(req.user._id, 'compress',
+      const historyResult = await createHistory(req.user._id, 'compress',
         req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
         [{ originalName: `compressed_${req.files[0].originalname}`, storedName: path.basename(outputPath), size: outStat.size, path: outputPath }],
         'completed'
       );
+      console.log('Compress history result:', historyResult);
     }
 
     return {
@@ -383,6 +441,11 @@ exports.compress = async (req, res) => {
 
 exports.rotate = async (req, res) => {
   await processRequest(req, res, 'rotate', async (req) => {
+    // Validate user
+    if (!req.user || !req.user._id) {
+      throw new Error('User authentication required for history tracking');
+    }
+
     const filePath = req.files[0].path;
     const degrees = parseInt(req.body.degrees) || 90;
     const outputPath = getOutputPath(req.files[0].originalname, 'rotated');
@@ -391,11 +454,12 @@ exports.rotate = async (req, res) => {
     const outStat = fs.statSync(outputPath);
 
     if (req.user) {
-      await createHistory(req.user._id, 'rotate',
+      const historyResult = await createHistory(req.user._id, 'rotate',
         req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
         [{ originalName: `rotated_${req.files[0].originalname}`, storedName: path.basename(outputPath), size: outStat.size, path: outputPath }],
         'completed'
       );
+      console.log('Rotate history result:', historyResult);
     }
 
     return {
@@ -411,6 +475,11 @@ exports.rotate = async (req, res) => {
 
 exports.protect = async (req, res) => {
   await processRequest(req, res, 'protect', async (req) => {
+    // Validate user
+    if (!req.user || !req.user._id) {
+      throw new Error('User authentication required for history tracking');
+    }
+
     const filePath = req.files[0].path;
     const password = req.body.password;
     if (!password) {
@@ -424,11 +493,12 @@ exports.protect = async (req, res) => {
     const outStat = fs.statSync(outputPath);
 
     if (req.user) {
-      await createHistory(req.user._id, 'protect',
+      const historyResult = await createHistory(req.user._id, 'protect',
         req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
         [{ originalName: `protected_${req.files[0].originalname}`, storedName: path.basename(outputPath), size: outStat.size, path: outputPath }],
         'completed'
       );
+      console.log('Protect history result:', historyResult);
     }
 
     return {
@@ -444,6 +514,11 @@ exports.protect = async (req, res) => {
 
 exports.unlock = async (req, res) => {
   await processRequest(req, res, 'unlock', async (req) => {
+    // Validate user
+    if (!req.user || !req.user._id) {
+      throw new Error('User authentication required for history tracking');
+    }
+
     const filePath = req.files[0].path;
     const password = req.body.password;
     if (!password) {
@@ -457,11 +532,12 @@ exports.unlock = async (req, res) => {
     const outStat = fs.statSync(outputPath);
 
     if (req.user) {
-      await createHistory(req.user._id, 'unlock',
+      const historyResult = await createHistory(req.user._id, 'unlock',
         req.files.map(f => ({ originalName: f.originalname, storedName: f.filename, size: f.size })),
         [{ originalName: `unlocked_${req.files[0].originalname}`, storedName: path.basename(outputPath), size: outStat.size, path: outputPath }],
         'completed'
       );
+      console.log('Unlock history result:', historyResult);
     }
 
     return {
