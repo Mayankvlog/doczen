@@ -44,9 +44,15 @@ export default function History() {
       const { data } = await historyAPI.getAll(p);
       if (data && data.history && Array.isArray(data.history)) {
         setHistory(data.history);
-        setTotalPages(Math.max(1, data.pages || 1));
+        const pages = Math.max(1, data.pages || 1);
+        setTotalPages(pages);
+        if (p > pages) {
+          setPage(pages);
+        }
       } else {
         setHistory([]);
+        setTotalPages(1);
+        setPage(1);
         setError('Invalid data format received');
       }
     } catch (err) {
@@ -70,25 +76,20 @@ export default function History() {
 
     setDeleting(true);
     setError(null);
-    console.log('Starting clear all history...');
 
     try {
       const response = await historyAPI.clearAll();
 
       if (!response.data || !response.data.success) {
-        console.error('Invalid response from clear all:', response.data);
         throw new Error(response.data?.message || 'Failed to clear history - invalid server response');
       }
 
-      console.log('Clear all history successful:', response.data);
-
-      // Force fresh server fetch to confirm deletion — do NOT rely on local state only
-      await fetchHistory(1);
+      setHistory([]);
+      setPage(1);
+      setTotalPages(1);
     } catch (err) {
-      console.error('Error clearing history:', err);
       const errorMessage = err.response?.data?.message || err.message || 'Failed to clear history';
       setError(errorMessage);
-      // Refetch to show actual server state (delete may have partially failed)
       setTimeout(() => {
         fetchHistory(page);
       }, 500);
@@ -99,38 +100,20 @@ export default function History() {
 
   const handleDelete = async (id) => {
     if (!id) {
-      console.error('No ID provided for delete operation');
       setError('Invalid entry ID');
       return;
     }
 
-    console.log('Deleting history entry:', id);
     setError(null);
 
     try {
-      const response = await historyAPI.delete(id);
+      await historyAPI.delete(id);
 
-      // Verify the response
-      if (!response.data || !response.data.success) {
-        console.error('Invalid response from delete:', response.data);
-        throw new Error(response.data?.message || 'Failed to delete entry - invalid server response');
-      }
-
-      console.log('Delete history entry successful:', response.data);
-
-      // Only remove from state AFTER successful server response
-      setHistory((prev) => {
-        const updated = prev.filter((item) => item._id !== id);
-        console.log(`Removed entry from state, remaining: ${updated.length}`);
-        return updated;
-      });
+      fetchHistory(page);
     } catch (err) {
-      console.error('Error deleting history entry:', err);
       const errorMessage = err.response?.data?.message || err.message || 'Failed to delete entry';
       setError(errorMessage);
-      // Optionally refetch to show current state from server
       setTimeout(() => {
-        console.log('Refetching history after delete failure...');
         fetchHistory(page);
       }, 500);
     }

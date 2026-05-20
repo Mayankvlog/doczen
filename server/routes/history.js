@@ -117,92 +117,6 @@ router.get('/:id', protect, async (req, res) => {
   }
 });
 
-// Delete individual history entry by ID
-router.delete('/:id', protect, async (req, res) => {
-  try {
-    if (!isDbConnected()) {
-      return res.status(503).json({ success: false, message: 'Database not connected. Cannot delete.' });
-    }
-
-    // Validate user authentication
-    if (!req.user || !req.user._id) {
-      return res.status(401).json({ success: false, message: 'User not authenticated' });
-    }
-
-    // Validate ID format
-    if (!req.params.id || req.params.id.length !== 24) {
-      return res.status(400).json({ success: false, message: 'Invalid history entry ID' });
-    }
-
-    // Find the entry
-    const entry = await History.findOne({
-      _id: req.params.id,
-      user: req.user._id
-    });
-
-    if (!entry) {
-      return res.status(404).json({ success: false, message: 'History entry not found' });
-    }
-
-    // Delete associated files first
-    const uploadsDir = path.join(__dirname, '../uploads');
-    const fileDeletionErrors = [];
-
-    if (entry.outputFiles && Array.isArray(entry.outputFiles)) {
-      for (const file of entry.outputFiles) {
-        if (file.path) {
-          const filePath = path.isAbsolute(file.path) ? file.path : path.join(uploadsDir, file.path);
-          try {
-            if (fs.existsSync(filePath)) {
-              fs.unlinkSync(filePath);
-              console.log('Deleted output file:', filePath);
-            }
-          } catch (err) {
-            console.error('Error deleting output file:', filePath, err);
-            fileDeletionErrors.push(filePath);
-          }
-        }
-      }
-    }
-
-    if (entry.inputFiles && Array.isArray(entry.inputFiles)) {
-      for (const file of entry.inputFiles) {
-        if (file.storedName) {
-          const filePath = path.join(uploadsDir, file.storedName);
-          try {
-            if (fs.existsSync(filePath)) {
-              fs.unlinkSync(filePath);
-              console.log('Deleted input file:', filePath);
-            }
-          } catch (err) {
-            console.error('Error deleting input file:', filePath, err);
-            fileDeletionErrors.push(filePath);
-          }
-        }
-      }
-    }
-
-    // Delete from database
-    const result = await History.findByIdAndDelete(req.params.id);
-
-    if (!result) {
-      return res.status(500).json({ success: false, message: 'Failed to delete history entry from database' });
-    }
-
-    console.log('Deleted history entry:', req.params.id);
-
-    res.json({
-      success: true,
-      message: 'History entry deleted successfully',
-      filesDeleted: (entry.outputFiles?.length || 0) + (entry.inputFiles?.length || 0),
-      fileDeletionErrors: fileDeletionErrors.length > 0 ? fileDeletionErrors : undefined
-    });
-  } catch (error) {
-    console.error('Error deleting history entry:', error);
-    res.status(500).json({ success: false, message: 'Server error', error: error.message });
-  }
-});
-
 // Delete all history entries for user
 router.delete('/', protect, async (req, res) => {
   try {
@@ -286,6 +200,80 @@ router.delete('/', protect, async (req, res) => {
     });
   } catch (error) {
     console.error('Error clearing history:', error);
+    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+});
+
+// Delete individual history entry by ID
+router.delete('/:id', protect, async (req, res) => {
+  try {
+    if (!isDbConnected()) {
+      return res.status(503).json({ success: false, message: 'Database not connected. Cannot delete.' });
+    }
+
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    }
+
+    if (!req.params.id || req.params.id.length !== 24) {
+      return res.status(400).json({ success: false, message: 'Invalid history entry ID' });
+    }
+
+    const entry = await History.findOne({
+      _id: req.params.id,
+      user: req.user._id
+    });
+
+    if (!entry) {
+      return res.status(404).json({ success: false, message: 'History entry not found' });
+    }
+
+    const uploadsDir = path.join(__dirname, '../uploads');
+    const fileDeletionErrors = [];
+
+    if (entry.outputFiles && Array.isArray(entry.outputFiles)) {
+      for (const file of entry.outputFiles) {
+        if (file.path) {
+          const filePath = path.isAbsolute(file.path) ? file.path : path.join(uploadsDir, file.path);
+          try {
+            if (fs.existsSync(filePath)) {
+              fs.unlinkSync(filePath);
+            }
+          } catch (err) {
+            fileDeletionErrors.push(filePath);
+          }
+        }
+      }
+    }
+
+    if (entry.inputFiles && Array.isArray(entry.inputFiles)) {
+      for (const file of entry.inputFiles) {
+        if (file.storedName) {
+          const filePath = path.join(uploadsDir, file.storedName);
+          try {
+            if (fs.existsSync(filePath)) {
+              fs.unlinkSync(filePath);
+            }
+          } catch (err) {
+            fileDeletionErrors.push(filePath);
+          }
+        }
+      }
+    }
+
+    const result = await History.findByIdAndDelete(req.params.id);
+
+    if (!result) {
+      return res.status(500).json({ success: false, message: 'Failed to delete history entry from database' });
+    }
+
+    res.json({
+      success: true,
+      message: 'History entry deleted successfully',
+      filesDeleted: (entry.outputFiles?.length || 0) + (entry.inputFiles?.length || 0),
+      fileDeletionErrors: fileDeletionErrors.length > 0 ? fileDeletionErrors : undefined
+    });
+  } catch (error) {
     res.status(500).json({ success: false, message: 'Server error', error: error.message });
   }
 });
