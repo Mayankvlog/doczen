@@ -45,20 +45,47 @@ export default function Dashboard() {
 
   const [recentActivity, setRecentActivity] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [stats, setStats] = useState({ today: 0, total: 0, dailyLimit: 1000, percentageUsed: 0, isLimitReached: false });
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [statsError, setStatsError] = useState(null);
 
   useEffect(() => {
-    const fetchRecent = async () => {
+    const fetchData = async () => {
+      // Fetch stats
+      setLoadingStats(true);
+      setStatsError(null);
+      try {
+        const { data: statsData } = await historyAPI.getStats();
+        if (statsData && statsData.success && statsData.stats) {
+          setStats(statsData.stats);
+        } else {
+          setStats({ today: 0, total: 0, dailyLimit: 1000, percentageUsed: 0, isLimitReached: false });
+        }
+      } catch (error) {
+        console.error('Stats fetch error:', error);
+        setStatsError(error.message || 'Failed to load stats');
+        setStats({ today: 0, total: 0, dailyLimit: 1000, percentageUsed: 0, isLimitReached: false });
+      } finally {
+        setLoadingStats(false);
+      }
+
+      // Fetch recent activity
+      setLoadingHistory(true);
       try {
         const { data } = await historyAPI.getAll(1);
         setRecentActivity(data.history?.slice(0, 5) || []);
-      } catch {
+      } catch (error) {
+        console.error('History fetch error:', error);
         setRecentActivity([]);
       } finally {
         setLoadingHistory(false);
       }
     };
-    fetchRecent();
-  }, []);
+
+    if (user && user._id) {
+      fetchData();
+    }
+  }, [user]);
 
   if (authLoading) {
     return (
@@ -90,6 +117,114 @@ export default function Dashboard() {
           {t('dashboard.subtitle', "Here's what's happening with your documents today.")}
         </p>
       </div>
+
+      {/* Stats Cards */}
+      <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Files Today Card */}
+        <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+                {t('dashboard.filesToday', 'Files Today')}
+              </p>
+              {loadingStats ? (
+                <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+              ) : (
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.today}/{stats.dailyLimit}
+                </p>
+              )}
+            </div>
+            <div className="text-3xl">📄</div>
+          </div>
+          {!loadingStats && (
+            <div className="mt-4 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+              <div
+                className={`h-full transition-all duration-300 ${
+                  stats.percentageUsed >= 80
+                    ? 'bg-red-500'
+                    : stats.percentageUsed >= 50
+                    ? 'bg-yellow-500'
+                    : 'bg-green-500'
+                }`}
+                style={{ width: `${Math.min(100, stats.percentageUsed)}%` }}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Total Files Card */}
+        <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+                {t('dashboard.totalProcessed', 'Total Processed')}
+              </p>
+              {loadingStats ? (
+                <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+              ) : (
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.total}
+                </p>
+              )}
+            </div>
+            <div className="text-3xl">✅</div>
+          </div>
+        </div>
+
+        {/* Usage Status Card */}
+        <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+                {t('dashboard.usage', 'Usage')}
+              </p>
+              {loadingStats ? (
+                <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+              ) : (
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.percentageUsed}%
+                </p>
+              )}
+            </div>
+            <div className="text-3xl">{stats.percentageUsed >= 80 ? '⚠️' : '📊'}</div>
+          </div>
+        </div>
+
+        {/* Status Card */}
+        <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+                {t('dashboard.status', 'Status')}
+              </p>
+              {loadingStats ? (
+                <div className="h-8 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+              ) : (
+                <p className={`text-lg font-bold ${
+                  stats.isLimitReached
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-green-600 dark:text-green-400'
+                }`}>
+                  {stats.isLimitReached
+                    ? t('dashboard.limitReached', 'Limit Reached')
+                    : t('dashboard.active', 'Active')}
+                </p>
+              )}
+            </div>
+            <div className="text-3xl">{stats.isLimitReached ? '🛑' : '🟢'}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Error Display */}
+      {statsError && (
+        <div className="mb-6 rounded-lg border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950/30 px-4 py-3">
+          <p className="text-sm text-yellow-700 dark:text-yellow-300">
+            {statsError}
+          </p>
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div className="mb-8">

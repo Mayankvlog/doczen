@@ -501,6 +501,7 @@ export const historyAPI = {
   getOne: (id) => api.get(`/history/${id}`),
   delete: (id) => api.delete(`/history/${id}`),
   clearAll: () => api.delete('/history'),
+  getStats: () => api.get('/history/stats/daily'),
 };
 
 export default api;

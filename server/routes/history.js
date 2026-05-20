@@ -3,6 +3,53 @@ const router = express.Router();
 const History = require('../models/History');
 const { protect } = require('../middleware/auth');
 
+router.get('/stats/daily', protect, async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    }
+
+    // Get today's date range
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Count files processed today
+    const todayCount = await History.countDocuments({
+      user: req.user._id,
+      createdAt: { $gte: today, $lt: tomorrow }
+    });
+
+    // Get total count for user
+    const totalCount = await History.countDocuments({
+      user: req.user._id
+    });
+
+    // Daily limit (free tier: 10 files/day, but showing 1000 as demo)
+    const dailyLimit = 1000;
+    const isLimitReached = todayCount >= dailyLimit;
+
+    res.json({
+      success: true,
+      stats: {
+        today: todayCount,
+        total: totalCount,
+        dailyLimit: dailyLimit,
+        isLimitReached: isLimitReached,
+        percentageUsed: Math.round((todayCount / dailyLimit) * 100)
+      }
+    });
+  } catch (error) {
+    console.error('Stats fetch error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error',
+      error: error.message 
+    });
+  }
+});
+
 router.get('/', protect, async (req, res) => {
   try {
     const page = Math.max(1, parseInt(req.query.page) || 1);
