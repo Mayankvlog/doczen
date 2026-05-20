@@ -72,10 +72,24 @@ export default function Dashboard() {
       // Fetch recent activity
       setLoadingHistory(true);
       try {
-        const { data } = await historyAPI.getAll(1);
-        setRecentActivity(data.history?.slice(0, 5) || []);
+        const response = await historyAPI.getAll(1);
+        const data = response.data;
+
+        console.log("Dashboard History API Response:", data);
+
+        if (data && data.success) {
+          const historyData =
+            data.histories ||
+            data.history ||
+            data.data ||
+            [];
+
+          setRecentActivity(historyData.slice(0, 5));
+        } else {
+          setRecentActivity([]);
+        }
       } catch (error) {
-        console.error('History fetch error:', error);
+        console.error('Dashboard history fetch error:', error);
         setRecentActivity([]);
       } finally {
         setLoadingHistory(false);
