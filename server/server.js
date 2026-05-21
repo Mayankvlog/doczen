@@ -45,7 +45,7 @@ const connectDB = require('./config/db');
 const app = express();
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://doczen.co.in',
+  origin: process.env.FRONTEND_URL || ['https://doczen.co.in', 'https://www.doczen.co.in'],
   credentials: true
 }));
 app.use(express.json({ limit: '50mb' }));
@@ -105,8 +105,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Internal server error' });
 });
 
-const PORT = process.env.PORT || 8080;
-const HOST = '127.0.0.1';
+const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0';
 
 connectDB().then(() => {
   app.listen(PORT, HOST, () => {
