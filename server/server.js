@@ -106,11 +106,15 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 8080;
+const HOST = '127.0.0.1';
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Doczen server running on port ${PORT}`);
+  app.listen(PORT, HOST, () => {
+    console.log(`Doczen server running on http://${HOST}:${PORT}`);
   });
+}).catch((err) => {
+  console.error('Database connection failed:', err);
+  process.exit(1);
 });
 
 module.exports = app;
