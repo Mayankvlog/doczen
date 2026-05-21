@@ -45,7 +45,7 @@ const connectDB = require('./config/db');
 const app = express();
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://23.22.249.239',
+  origin: process.env.FRONTEND_URL || 'https://doczen.co.in',
   credentials: true
 }));
 app.use(express.json({ limit: '50mb' }));

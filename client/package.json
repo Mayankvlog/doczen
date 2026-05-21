@@ -23,7 +23,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://23.22.249.239",
+  "proxy": "https://doczen.co.in",
   "browserslist": {
     "production": [
       ">0.2%",
