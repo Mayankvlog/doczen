@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 
@@ -44,13 +45,38 @@ const connectDB = require('./config/db');
 
 const app = express();
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL || ['https://doczen.co.in', 'https://www.doczen.co.in'],
-  credentials: true
-}));
+// CORS configuration for Cloudflare + HTTPS
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || [
+    'https://doczen.co.in',
+    'https://www.doczen.co.in',
+    'https://doczen.co.in:443',
+    'https://www.doczen.co.in:443'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Forwarded-For', 'X-Forwarded-Proto', 'CF-Connecting-IP'],
+  exposedHeaders: ['X-Total-Count', 'X-Current-Page']
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+// Trust Cloudflare proxy - CRITICAL for SSL
+app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal', '127.0.0.1', '::1', process.env.CLOUDFLARE_IPS || '103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,104.16.0.0/12,108.162.192.0/18,131.0.72.0/22,141.101.64.0/18,162.158.0.0/15,172.64.0.0/13,173.245.48.0/20,188.114.96.0/20,190.93.240.0/20,197.234.240.0/22,198.41.128.0/17']);
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
+
+// Security middleware
+app.use((req, res, next) => {
+  // Ensure HTTPS (except for health checks)
+  if (req.path !== '/api/health' && !req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV === 'production') {
+    return res.status(426).json({ error: 'HTTPS required' });
+  }
+  next();
+});
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/pdf', require('./routes/pdf'));
@@ -59,7 +85,7 @@ app.use('/api/history', require('./routes/history'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', timestamp: new Date().toISOString(), protocol: req.protocol });
 });
 
 const clientBuild = path.join(__dirname, '../client/build');
@@ -109,9 +135,35 @@ const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
 
 connectDB().then(() => {
-  app.listen(PORT, HOST, () => {
-    console.log(`Doczen server running on http://${HOST}:${PORT}`);
-  });
+  // Check for SSL certificates
+  const certPath = '/etc/letsencrypt/live/doczen.co.in/fullchain.pem';
+  const keyPath = '/etc/letsencrypt/live/doczen.co.in/privkey.pem';
+  const hasCerts = fs.existsSync(certPath) && fs.existsSync(keyPath);
+
+  if (hasCerts && process.env.NODE_ENV === 'production') {
+    // HTTPS server
+    const httpsOptions = {
+      cert: fs.readFileSync(certPath),
+      key: fs.readFileSync(keyPath),
+      secureOptions: require('constants').SSL_OP_NO_TLSv1 | require('constants').SSL_OP_NO_TLSv1_1
+    };
+    https.createServer(httpsOptions, app).listen(PORT, HOST, () => {
+      console.log(`✓ Doczen HTTPS server running on https://${HOST}:${PORT}`);
+      console.log(`✓ SSL certificates loaded from ${certPath}`);
+    });
+  } else {
+    // HTTP server (development or missing certs)
+    app.listen(PORT, HOST, () => {
+      if (hasCerts) {
+        console.log(`✓ Doczen HTTP server running on http://${HOST}:${PORT} (SSL available, NODE_ENV not set to production)`);
+      } else {
+        console.log(`⚠ Doczen HTTP server running on http://${HOST}:${PORT} (SSL certificates not found)`);
+        console.log(`⚠ For production, place SSL certificates at:`);
+        console.log(`  - Cert: ${certPath}`);
+        console.log(`  - Key: ${keyPath}`);
+      }
+    });
+  }
 }).catch((err) => {
   console.error('Database connection failed:', err);
   process.exit(1);
