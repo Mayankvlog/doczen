@@ -43,6 +43,53 @@ export default function Dashboard() {
     { emoji: '✏️', label: t('dashboard.quick.editPdf', 'Edit PDF'), path: '/edit-pdf', color: 'bg-rose-500' },
   ];
 
+  const actionTranslationKeys = {
+    merge: 'tool.mergePdf',
+    split: 'tool.splitPdf',
+    compress: 'tool.compressPdf',
+    rotate: 'tool.rotatePdf',
+    protect: 'tool.protectPdf',
+    unlock: 'tool.unlockPdf',
+    'add-page-numbers': 'tool.addPageNumbers',
+    'add-watermark': 'tool.addWatermark',
+    'extract-text': 'tool.extractText',
+    'reorder-pages': 'tool.reorderPages',
+    'delete-pages': 'tool.deletePages',
+    'pdf-to-jpg': 'tool.pdfToJpg',
+    'jpg-to-pdf': 'tool.jpgToPdf',
+    'pdf-to-txt': 'tool.pdfToTxt',
+    'pdf-to-word': 'tool.pdfToWord',
+    'word-to-pdf': 'tool.wordToPdf',
+    'pdf-to-ppt': 'tool.pdfToPpt',
+    'ppt-to-pdf': 'tool.pptToPdf',
+    'pdf-to-excel': 'tool.pdfToExcel',
+    'excel-to-pdf': 'tool.excelToPdf',
+    editPdf: 'tool.editPdf',
+    signPdf: 'tool.signPdf',
+    repair: 'tool.repairPdf',
+    flatten: 'tool.flattenPdf',
+    'pdf-to-pdfa': 'tool.pdfToPdfa',
+    'html-to-pdf': 'tool.htmlToPdf',
+    redact: 'tool.redactPdf',
+    'remove-annotations': 'tool.removeAnnotations',
+    'remove-watermark': 'tool.removeWatermark',
+    compare: 'tool.comparePdf',
+    metadata: 'tool.pdfMetadata',
+  };
+
+  const getActionLabel = (action) => {
+    const fallback = String(action || '').replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+    return actionTranslationKeys[action]
+      ? t(actionTranslationKeys[action], fallback)
+      : fallback;
+  };
+
+  const statusLabels = {
+    completed: t('dashboard.status.completed', 'Completed'),
+    failed: t('dashboard.status.failed', 'Failed'),
+    pending: t('dashboard.status.pending', 'Pending'),
+  };
+
   const [recentActivity, setRecentActivity] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [stats, setStats] = useState({ total: 0, percentageUsed: 0, isLimitReached: false });
@@ -279,7 +326,7 @@ export default function Dashboard() {
                       actionColors[item.action] || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
                     }`}
                   >
-                    {item.action?.replace(/-/g, ' ')}
+                    {getActionLabel(item.action)}
                   </span>
                   <span className="flex-1 truncate text-sm text-gray-600 dark:text-gray-300">
                     {item.fileName || item.outputFiles?.[0]?.originalName || item.inputFiles?.[0]?.originalName || t('dashboard.untitled', 'Untitled')}
@@ -296,7 +343,7 @@ export default function Dashboard() {
                         : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300'
                     }`}
                   >
-                    {item.status || 'pending'}
+                    {statusLabels[item.status] || item.status || t('dashboard.status.pending', 'Pending')}
                   </span>
                 </div>
               ))}

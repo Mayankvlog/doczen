@@ -19,6 +19,24 @@ function addTranslations(lang, strings) {
   } catch (e) {
     // i18n might not be initialized yet — resources are still in i18nResources for init()
   }
+
+  const mirrorChineseAliases = (sourceLang, aliasCodes) => {
+    if (sourceLang !== lang) return;
+    aliasCodes.forEach((alias) => {
+      if (!i18nResources[alias]) {
+        i18nResources[alias] = { translation: {} };
+      }
+      Object.assign(i18nResources[alias].translation, strings);
+      try {
+        i18n.addResourceBundle(alias, 'translation', strings, true, true);
+      } catch (_) {
+        // ignore
+      }
+    });
+  };
+
+  mirrorChineseAliases('zh-CN', ['zh', 'zh-Hans']);
+  mirrorChineseAliases('zh-TW', ['zh-Hant']);
 }
 
 addTranslations('en', {
@@ -16623,9 +16641,9 @@ i18n
   .init({
     resources: i18nResources,
     fallbackLng: 'en',
-    supportedLngs: Object.keys(i18nResources),
+    supportedLngs: [...new Set([...Object.keys(i18nResources), 'zh', 'zh-Hans', 'zh-Hant'])],
     nonExplicitSupportedLngs: true,
-    load: 'languageOnly',
+    load: 'currentOnly',
     detection: {
       order: ['localStorage', 'navigator'],
       lookupLocalStorage: 'doczen_language',
@@ -16651,7 +16669,8 @@ export function LanguageProvider({ children }) {
   const lang = i18next.language;
   const rtlLanguages = ['ar', 'he', 'yi', 'ji', 'iw'];
   const dir = rtlLanguages.includes(lang) ? 'rtl' : 'ltr';
-  const currentLang = LANGUAGE_MAP.find(l => l.code === lang) || LANGUAGE_MAP[0];
+  const normalizedLang = lang === 'zh' || lang === 'zh-Hans' ? 'zh-CN' : lang === 'zh-Hant' ? 'zh-TW' : lang;
+  const currentLang = LANGUAGE_MAP.find(l => l.code === normalizedLang) || LANGUAGE_MAP[0];
 
   const setLanguage = useCallback((code) => {
     if (LANGUAGE_MAP.some(l => l.code === code)) {
