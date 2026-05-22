@@ -56,7 +56,7 @@ export default function AddPageNumbers() {
 
   return (
     <>
-    <SEO title={t('nav.tools.addPageNumbers', 'Add Page Numbers to PDF Online Free')} description={t('tool.addPageNumbersDesc', 'Add page numbers to your PDF documents online for free. Customize position, font size, and starting number.')} keywords={t('tool.addPageNumbersKeywords', 'add page numbers to PDF, PDF page numbers, insert page numbers, PDF numbering')} canonical="/add-page-numbers" />
+    <SEO title={t('seo.addPageNumbersTitle', 'Add Page Numbers to PDF Online Free')} description={t('seo.addPageNumbersDesc', 'Add page numbers to your PDF documents online for free. Customize position, font size, and starting number.')} keywords={t('tool.addPageNumbersKeywords', 'add page numbers to PDF, PDF page numbers, insert page numbers, PDF numbering')} canonical="/add-page-numbers" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

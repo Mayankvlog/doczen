@@ -135,9 +135,9 @@ export default function Dashboard() {
   return (
     <>
     <SEO
-  title={t('dashboard.seo.title', 'Dashboard - Doczen PDF Editor')}
-  description={t('dashboard.seo.description', 'Your Doczen dashboard. View usage stats, recent activity, and quick access to all PDF tools.')}
-  keywords={t('dashboard.seo.keywords', 'dashboard, PDF tools, Doczen account, file management')}
+  title={t('tool.seo.dashboardTitle', 'Dashboard - Doczen PDF Editor')}
+  description={t('tool.seo.dashboardDesc', 'Your Doczen dashboard. View usage stats, recent activity, and quick access to all PDF tools.')}
+  keywords={t('tool.seo.dashboardKeywords', 'dashboard, PDF tools, Doczen account, file management')}
   canonical="/dashboard"
   noIndex
 />

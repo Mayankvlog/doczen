@@ -54,9 +54,9 @@ export default function Register() {
   return (
     <>
     <SEO
-  title={t('register.seoTitle', 'Create Free Account - Doczen PDF Editor')}
-  description={t('register.seoDescription', 'Create your free Doczen account and get access to all PDF editing tools. Merge, split, compress and convert PDFs online.')}
-  keywords={t('register.seoKeywords', 'register, sign up, create account, free PDF editor, Doczen registration')}
+  title={t('tool.seo.registerTitle', 'Create Free Account - Doczen PDF Editor')}
+  description={t('tool.seo.registerDesc', 'Create your free Doczen account and get access to all PDF editing tools. Merge, split, compress and convert PDFs online.')}
+  keywords={t('tool.seo.registerKeywords', 'register, sign up, create account, free PDF editor, Doczen registration')}
   canonical="/register"
   noIndex
 />

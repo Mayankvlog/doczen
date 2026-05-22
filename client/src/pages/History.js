@@ -144,9 +144,9 @@ export default function History() {
   return (
     <>
     <SEO
-  title={t('history.seo.title', 'History - Doczen PDF Editor')}
-  description={t('history.seo.description', 'View your PDF processing history on Doczen. Download previously processed files and track your usage.')}
-  keywords={t('history.seo.keywords', 'PDF history, document history, processed files, Doczen history')}
+  title={t('tool.seo.historyTitle', 'History - Doczen PDF Editor')}
+  description={t('tool.seo.historyDesc', 'View your PDF processing history on Doczen. Download previously processed files and track your usage.')}
+  keywords={t('tool.seo.historyKeywords', 'PDF history, document history, processed files, Doczen history')}
   canonical="/history"
   noIndex
 />

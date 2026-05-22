@@ -1,13 +1,24 @@
-import React, { createContext, useState, useContext, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useCallback, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import i18n from 'i18next';
+import { initReactI18next, useTranslation, I18nextProvider } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 import './styles/index.css';
 import App from './App';
 
-const TRANSLATIONS = { en: {} };
+const i18nResources = {};
 
 function addTranslations(lang, strings) {
-  TRANSLATIONS[lang] = strings;
+  if (!i18nResources[lang]) {
+    i18nResources[lang] = { translation: {} };
+  }
+  Object.assign(i18nResources[lang].translation, strings);
+  try {
+    i18n.addResourceBundle(lang, 'translation', strings, true, true);
+  } catch (e) {
+    // i18n might not be initialized yet — resources are still in i18nResources for init()
+  }
 }
 
 addTranslations('en', {
@@ -242,7 +253,7 @@ addTranslations('en', {
   'dashboard.untitled': 'Untitled',
   'dashboard.seo.title': 'Dashboard - Doczen PDF Editor',
   'dashboard.seo.description': 'Your Doczen dashboard. View usage stats, recent activity, and quick access to all PDF tools.',
-  'dashboard.seo.keywords': 'dashboard, PDF tools, Doczen account, file management',
+  'dashboard.seo.keywords': 'dashboard, PDF tools, Doczen account, file management, PDF editor dashboard, online PDF tools, document management',
   'history.title': 'History',
   'history.subtitle': 'View all your past PDF operations.',
   'history.clearAll': 'Clear All',
@@ -513,20 +524,20 @@ addTranslations('en', {
   'tool.toast.merged': 'PDFs merged successfully!',
   'tool.toast.compressed': 'PDF compressed successfully!',
   'tool.seo.defaultTitle': 'Free Online PDF Editor - Merge, Split, Compress & Convert PDFs',
-  'tool.seo.defaultDesc': 'Doczen is a free online PDF editor. Merge PDFs, split PDFs, compress PDF files, convert PDF to Word, JPG, PPT, Excel and more. No registration required for basic tools.',
-  'tool.seo.defaultKeywords': 'free PDF editor, online PDF tool, merge PDF, split PDF, combine PDF, extract PDF, compress PDF, convert PDF, Word to PDF, Excel to PDF, Powerpoint to PDF, PDF to JPG, JPG to PDF, PDF converter, PDF to Word, Doczen',
+  'tool.seo.defaultDesc': 'Doczen is a free online PDF editor and converter. Merge, split, compress, and edit PDFs. Convert PDF to Word, Excel, PPT, JPG and back. Protect, unlock, sign, and rotate PDFs online. No registration required.',
+  'tool.seo.defaultKeywords': 'free PDF editor, online PDF editor, edit PDF online, merge PDF files, split PDF, compress PDF, PDF converter, PDF to Word, Word to PDF, JPG to PDF, PDF to JPG, combine PDF, PDF merger, PDF splitter, PDF compressor, PDF creator, sign PDF online, protect PDF, unlock PDF, rotate PDF, delete PDF pages, add page numbers to PDF, PDF watermark, extract PDF text, PDF to Excel, Excel to PDF, PDF to PPT, PPT to PDF, PDF to TXT, HTML to PDF, PDF metadata editor, Doczen',
   'tool.seo.loginTitle': 'Login - Doczen PDF Editor',
   'tool.seo.loginDesc': 'Sign in to your Doczen account to access all PDF tools, manage your files, and view your processing history.',
-  'tool.seo.loginKeywords': 'login, sign in, Doczen account, PDF editor login',
+  'tool.seo.loginKeywords': 'login, sign in, Doczen account, PDF editor login, free PDF editor login, online PDF tools login',
   'tool.seo.registerTitle': 'Create Free Account - Doczen PDF Editor',
   'tool.seo.registerDesc': 'Create your free Doczen account and get access to all PDF editing tools. Merge, split, compress and convert PDFs online.',
-  'tool.seo.registerKeywords': 'register, sign up, create account, free PDF editor, Doczen registration',
+  'tool.seo.registerKeywords': 'register, sign up, create account, free PDF editor, online PDF tools, Doczen registration, free account PDF editor',
   'tool.seo.dashboardTitle': 'Dashboard - Doczen PDF Editor',
   'tool.seo.dashboardDesc': 'Your Doczen dashboard. View usage stats, recent activity, and quick access to all PDF tools.',
-  'tool.seo.dashboardKeywords': 'dashboard, PDF tools, Doczen account, file management',
+  'tool.seo.dashboardKeywords': 'dashboard, PDF tools, Doczen account, file management, PDF editor dashboard, online PDF tools dashboard',
   'tool.seo.historyTitle': 'History - Doczen PDF Editor',
   'tool.seo.historyDesc': 'View your PDF processing history on Doczen. Download previously processed files and track your usage.',
-  'tool.seo.historyKeywords': 'PDF history, document history, processed files, Doczen history',
+  'tool.seo.historyKeywords': 'PDF history, document history, processed files, Doczen history, PDF conversion history, recent PDF files',
   'tool.status.completed': 'completed',
   'tool.status.failed': 'failed',
   'tool.status.pending': 'pending',
@@ -16280,12 +16291,12 @@ addTranslations('bn', {
 
 // Initialize all languages with English fallback for any missing keys
 // Existing translations are preserved; only gaps are filled with English
-const ALL_LANGS = Object.keys(TRANSLATIONS).filter(c => c !== 'en');
+const ALL_LANGS = Object.keys(i18nResources).filter(c => c !== 'en');
 ALL_LANGS.forEach(lang => {
-  const enCount = Object.keys(TRANSLATIONS['en']).length;
-  const langCount = TRANSLATIONS[lang] ? Object.keys(TRANSLATIONS[lang]).length : 0;
+  const enCount = Object.keys(i18nResources['en'].translation).length;
+  const langCount = i18nResources[lang] ? Object.keys(i18nResources[lang].translation).length : 0;
   if (langCount < enCount) {
-    TRANSLATIONS[lang] = { ...TRANSLATIONS['en'], ...TRANSLATIONS[lang] };
+    addTranslations(lang, { ...i18nResources['en'].translation, ...i18nResources[lang].translation });
   }
 });
 
@@ -16296,8 +16307,8 @@ const loadCachedTranslations = () => {
     if (cached) {
       const cache = JSON.parse(cached);
       Object.keys(cache).forEach(lang => {
-        if (TRANSLATIONS[lang]) {
-          TRANSLATIONS[lang] = { ...TRANSLATIONS[lang], ...cache[lang] };
+        if (i18nResources[lang]) {
+          addTranslations(lang, cache[lang]);
         }
       });
     }
@@ -16311,16 +16322,16 @@ loadCachedTranslations();
 
 // Auto-translate missing content using MyMemory Translation API (async, non-blocking)
 const autoTranslateLanguages = async () => {
-  if (typeof window === 'undefined' || !TRANSLATIONS['en']) return;
+  if (typeof window === 'undefined' || !i18nResources['en']) return;
   
   try {
-    const enStrings = TRANSLATIONS['en'];
+    const enStrings = i18nResources['en'].translation;
     const cachedTranslations = {};
     
     // Process languages that don't have full translations yet
-    const enCount = Object.keys(TRANSLATIONS['en']).length;
+    const enCount = Object.keys(i18nResources['en'].translation).length;
     const langsToTranslate = ALL_LANGS.filter(lang => {
-      const transCount = (TRANSLATIONS[lang] && Object.keys(TRANSLATIONS[lang]).length) || 0;
+      const transCount = (i18nResources[lang] && Object.keys(i18nResources[lang].translation).length) || 0;
       return transCount < enCount; // Only supplement languages that are incomplete
     }).slice(0, 15); // Limit to prevent overwhelming the API
     
@@ -16333,7 +16344,7 @@ const autoTranslateLanguages = async () => {
           try {
             const cachedObj = JSON.parse(cached);
             if (cachedObj && Object.keys(cachedObj).length > 50) {
-              TRANSLATIONS[lang] = { ...TRANSLATIONS[lang], ...cachedObj };
+              addTranslations(lang, cachedObj);
               cachedTranslations[lang] = cachedObj;
               continue;
             }
@@ -16345,7 +16356,7 @@ const autoTranslateLanguages = async () => {
         // Load translations from service with timeout
         const result = await loadLanguageTranslations(lang, enStrings);
         if (result && Object.keys(result).length > 0) {
-          TRANSLATIONS[lang] = { ...TRANSLATIONS[lang], ...result };
+          addTranslations(lang, result);
           cachedTranslations[lang] = result;
           try {
             localStorage.setItem(cacheKey, JSON.stringify(result));
@@ -16480,72 +16491,47 @@ const LANGUAGE_MAP = [
   { code: 'et', name: 'Estonian', native: 'Eesti' },
 ];
 
-const STORAGE_KEY = 'doczen_language';
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources: i18nResources,
+    fallbackLng: 'en',
+    detection: {
+      order: ['localStorage', 'navigator'],
+      lookupLocalStorage: 'doczen_language',
+      caches: ['localStorage'],
+    },
+    interpolation: {
+      escapeValue: false,
+    },
+  });
 
-function getInitialLanguage() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved && LANGUAGE_MAP.some(l => l.code === saved)) return saved;
-    
-    const browserLang = navigator.language || navigator.userLanguage || 'en';
-    
-    // Exact match first
-    if (LANGUAGE_MAP.some(l => l.code === browserLang)) return browserLang;
-    
-    // Try base language code (e.g., 'en' from 'en-US')
-    const baseLang = browserLang.split('-')[0];
-    const matchedLang = LANGUAGE_MAP.find(l => l.code === baseLang || l.code.startsWith(baseLang + '-'));
-    if (matchedLang) return matchedLang.code;
-    
-    // Try Chinese variants
-    if (baseLang === 'zh') {
-      const region = browserLang.split('-')[1];
-      if (region === 'TW' || region === 'HK' || region === 'MO') return 'zh-TW';
-      return 'zh-CN';
-    }
-  } catch {}
-  return 'en';
-}
-
-const TranslationContext = createContext(null);
+const Context = createContext(null);
 
 export function useLanguage() {
-  const ctx = useContext(TranslationContext);
+  const ctx = useContext(Context);
   if (!ctx) throw new Error('useLanguage must be used within a LanguageProvider');
   return ctx;
 }
 
 export function LanguageProvider({ children }) {
-  const [lang, setLangState] = useState(getInitialLanguage);
+  const { i18n: i18next } = useTranslation();
+
+  const lang = i18next.language;
+  const rtlLanguages = ['ar', 'he', 'yi', 'ji', 'iw'];
+  const dir = rtlLanguages.includes(lang) ? 'rtl' : 'ltr';
+  const currentLang = LANGUAGE_MAP.find(l => l.code === lang) || LANGUAGE_MAP[0];
 
   const setLanguage = useCallback((code) => {
     if (LANGUAGE_MAP.some(l => l.code === code)) {
-      setLangState(code);
-      try { localStorage.setItem(STORAGE_KEY, code); } catch {}
+      i18next.changeLanguage(code);
     }
-  }, []);
-
-  const currentLang = LANGUAGE_MAP.find(l => l.code === lang) || LANGUAGE_MAP[0];
+  }, [i18next]);
 
   const t = useCallback((key, fallback, vars) => {
-    const langTranslations = TRANSLATIONS[lang];
-    let text = langTranslations && langTranslations[key];
-    if (text === undefined || text === null) {
-      text = TRANSLATIONS['en'] && TRANSLATIONS['en'][key];
-    }
-    if (text === undefined || text === null) {
-      text = fallback || key;
-    }
-    if (vars && typeof text === 'string') {
-      Object.keys(vars).forEach(k => {
-        text = String(text).replace(`{${k}}`, String(vars[k]));
-      });
-    }
-    return String(text || key);
-  }, [lang]);
-
-  const rtlLanguages = ['ar', 'he', 'yi', 'ji', 'iw'];
-  const dir = rtlLanguages.includes(lang) ? 'rtl' : 'ltr';
+    return i18next.t(key, { defaultValue: fallback || key, ...vars });
+  }, [i18next]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -16553,10 +16539,12 @@ export function LanguageProvider({ children }) {
     document.documentElement.dir = dir;
   }, [lang, dir]);
 
+  const value = { lang, setLanguage, currentLang, t, dir, LANGUAGE_MAP };
+
   return (
-    <TranslationContext.Provider value={{ lang, setLanguage, currentLang, t, dir, LANGUAGE_MAP }}>
+    <Context.Provider value={value}>
       {children}
-    </TranslationContext.Provider>
+    </Context.Provider>
   );
 }
 
@@ -16564,9 +16552,11 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <LanguageProvider>
-        <App />
-      </LanguageProvider>
+      <I18nextProvider i18n={i18n}>
+        <LanguageProvider>
+          <App />
+        </LanguageProvider>
+      </I18nextProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

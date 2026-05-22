@@ -16,10 +16,6 @@ export default function RemoveWatermark() {
   const [removalResult, setRemovalResult] = useState(null);
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
   const { t } = useLanguage();
-  const MODES = [
-    { value: 'auto', label: t('tool.modeAuto', 'Auto'), description: t('tool.modeAutoDesc', 'Try all removal strategies') },
-    { value: 'text', label: t('tool.modeText', 'Text'), description: t('tool.modeTextDesc', 'Target text-based watermarks only') },
-  ];
   const modes = [
     { value: 'auto', label: t('tool.modeAuto', 'Auto'), description: t('tool.modeAutoDesc', 'Try all removal strategies') },
     { value: 'text', label: t('tool.modeText', 'Text'), description: t('tool.modeTextDesc', 'Target text-based watermarks only') },

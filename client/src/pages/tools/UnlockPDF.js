@@ -47,7 +47,7 @@ export default function UnlockPDF() {
 
   return (
     <>
-    <SEO title={t('nav.tools.unlock', 'Unlock PDF Online - Remove PDF Password Free')} description={t('tool.unlockDesc', 'Remove password protection from PDF files online for free. Unlock secured PDF documents with Doczen.')} keywords={t('tool.unlockKeywords', 'unlock PDF, remove PDF password, decrypt PDF, PDF password remover, unlock protected PDF')} canonical="/unlock-pdf" />
+    <SEO title={t('seo.unlockTitle', 'Unlock PDF Online - Remove PDF Password Free')} description={t('seo.unlockDesc', 'Remove password protection from PDF files online for free. Unlock secured PDF documents with Doczen.')} keywords={t('tool.unlockKeywords', 'unlock PDF, remove PDF password, decrypt PDF, PDF password remover, unlock protected PDF')} canonical="/unlock-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

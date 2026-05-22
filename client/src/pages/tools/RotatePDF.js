@@ -49,7 +49,7 @@ export default function RotatePDF() {
 
   return (
     <>
-    <SEO title={t('nav.tools.rotate', 'Rotate PDF Online - Rotate PDF Pages Free')} description={t('tool.rotateDesc', 'Rotate PDF pages online for free. Rotate individual pages or entire PDF documents 90, 180, or 270 degrees.')} keywords={t('tool.rotateKeywords', 'rotate PDF, rotate PDF pages, PDF rotation, flip PDF, turn PDF')} canonical="/rotate-pdf" />
+    <SEO title={t('seo.rotateTitle', 'Rotate PDF Online - Rotate PDF Pages Free')} description={t('seo.rotateDesc', 'Rotate PDF pages online for free. Rotate individual pages or entire PDF documents 90, 180, or 270 degrees.')} keywords={t('tool.rotateKeywords', 'rotate PDF, rotate PDF pages, PDF rotation, flip PDF, turn PDF')} canonical="/rotate-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

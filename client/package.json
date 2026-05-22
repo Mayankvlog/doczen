@@ -5,7 +5,10 @@
   "dependencies": {
     "@heroicons/react": "^2.1.1",
     "axios": "^1.6.2",
+    "i18next": "^23.7.16",
+    "i18next-browser-languagedetector": "^7.2.0",
     "react": "^18.2.0",
+    "react-i18next": "^13.5.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-helmet-async": "^3.0.0",
@@ -14,6 +17,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.16",
+    "litic": "^1.0.0",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.4.0"
   },
@@ -21,7 +25,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "seo": "litic -u \"https://doczen.co.in\" -k \"free PDF editor, online PDF editor, merge PDF, split PDF, compress PDF, PDF converter, PDF to Word, Word to PDF, JPG to PDF, PDF to JPG, sign PDF, protect PDF, unlock PDF, Doczen\" -o \"seo-report.csv\"",
+    "seo:full": "litic -u \"https://doczen.co.in/merge-pdf\" -k \"merge PDF, combine PDF, join PDF, PDF merger, merge PDF online\" -o \"seo-report-merge.csv\" && litic -u \"https://doczen.co.in/split-pdf\" -k \"split PDF, separate PDF, PDF splitter, extract PDF pages\" -o \"seo-report-split.csv\" && litic -u \"https://doczen.co.in/compress-pdf\" -k \"compress PDF, reduce PDF size, PDF compressor, shrink PDF\" -o \"seo-report-compress.csv\" && litic -u \"https://doczen.co.in/pdf-to-word\" -k \"PDF to Word, convert PDF to Word, PDF to DOCX\" -o \"seo-report-pdf2word.csv\" && litic -u \"https://doczen.co.in/word-to-pdf\" -k \"Word to PDF, convert Word to PDF, DOCX to PDF\" -o \"seo-report-word2pdf.csv\" && litic -u \"https://doczen.co.in/jpg-to-pdf\" -k \"JPG to PDF, image to PDF, convert JPG to PDF\" -o \"seo-report-jpg2pdf.csv\" && litic -u \"https://doczen.co.in/pdf-to-jpg\" -k \"PDF to JPG, convert PDF to image, PDF to JPEG\" -o \"seo-report-pdf2jpg.csv\" && litic -u \"https://doczen.co.in/protect-pdf\" -k \"protect PDF, password protect PDF, PDF security, encrypt PDF\" -o \"seo-report-protect.csv\" && litic -u \"https://doczen.co.in/unlock-pdf\" -k \"unlock PDF, remove PDF password, decrypt PDF, unlock protected PDF\" -o \"seo-report-unlock.csv\" && litic -u \"https://doczen.co.in/sign-pdf\" -k \"sign PDF, PDF signature, electronic signature, sign document online\" -o \"seo-report-sign.pdf\""
   },
   "proxy": "https://doczen.co.in",
   "browserslist": {

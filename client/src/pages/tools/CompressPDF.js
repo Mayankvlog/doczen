@@ -52,7 +52,7 @@ export default function CompressPDF() {
 
   return (
     <>
-    <SEO title={t('nav.tools.compress', 'Compress PDF Online - Reduce PDF File Size Free')} description={t('tool.compressDesc', 'Compress PDF files online to reduce file size without losing quality. Free PDF compressor tool by Doczen.')} keywords={t('tool.compressKeywords', 'compress PDF, reduce PDF size, PDF compressor, shrink PDF, optimize PDF')} canonical="/compress-pdf" />
+    <SEO title={t('seo.compressTitle', 'Compress PDF Online - Reduce PDF File Size Free')} description={t('seo.compressDesc', 'Compress PDF files online to reduce file size without losing quality. Free PDF compressor tool by Doczen.')} keywords={t('tool.compressKeywords', 'compress PDF, reduce PDF size, PDF compressor, shrink PDF, optimize PDF')} canonical="/compress-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10 animate-fade-in-down">

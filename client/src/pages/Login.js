@@ -40,9 +40,9 @@ export default function Login() {
   return (
     <>
     <SEO
-  title={t('login.seoTitle', 'Login - Doczen PDF Editor')}
-  description={t('login.seoDescription', 'Sign in to your Doczen account to access all PDF tools, manage your files, and view your processing history.')}
-  keywords={t('login.seoKeywords', 'login, sign in, Doczen account, PDF editor login')}
+  title={t('tool.seo.loginTitle', 'Login - Doczen PDF Editor')}
+  description={t('tool.seo.loginDesc', 'Sign in to your Doczen account to access all PDF tools, manage your files, and view your processing history.')}
+  keywords={t('tool.seo.loginKeywords', 'login, sign in, Doczen account, PDF editor login')}
   canonical="/login"
   noIndex
 />

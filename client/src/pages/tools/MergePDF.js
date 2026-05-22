@@ -50,7 +50,7 @@ export default function MergePDF() {
 
   return (
     <>
-    <SEO title={t('nav.tools.merge', 'Merge PDF Online - Combine PDF Files Free')} description={t('tool.mergeDesc', 'Merge multiple PDF files into one document online for free. Combine PDFs instantly with Doczen\'s easy-to-use PDF merger tool.')} keywords={t('tool.mergeKeywords', 'merge PDF, combine PDF, join PDF files, PDF merger, merge PDF online free')} canonical="/merge-pdf" />
+    <SEO title={t('seo.mergeTitle', 'Merge PDF Online - Combine PDF Files Free')} description={t('seo.mergeDesc', 'Merge multiple PDF files into one document online for free. Combine PDFs instantly with Doczen\'s easy-to-use PDF merger tool.')} keywords={t('tool.mergeKeywords', 'merge PDF, combine PDF, join PDF files, PDF merger, merge PDF online free')} canonical="/merge-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10 animate-fade-in-down">

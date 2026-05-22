@@ -47,7 +47,7 @@ export default function AddWatermark() {
 
   return (
     <>
-    <SEO title={t('nav.tools.addWatermark', 'Add Watermark to PDF Online Free')} description={t('tool.addWatermarkDesc', 'Add text watermark to PDF files online for free. Protect your documents with custom watermarks using Doczen.')} keywords={t('tool.addWatermarkKeywords', 'PDF watermark, add watermark to PDF, watermark PDF, text watermark, PDF protection')} canonical="/add-watermark" />
+    <SEO title={t('seo.addWatermarkTitle', 'Add Watermark to PDF Online Free')} description={t('seo.addWatermarkDesc', 'Add text watermark to PDF files online for free. Protect your documents with custom watermarks using Doczen.')} keywords={t('tool.addWatermarkKeywords', 'PDF watermark, add watermark to PDF, watermark PDF, text watermark, PDF protection')} canonical="/add-watermark" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">
