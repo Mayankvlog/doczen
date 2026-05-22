@@ -16320,6 +16320,52 @@ const loadCachedTranslations = () => {
 // Load cached translations on initialization
 loadCachedTranslations();
 
+const getMissingTranslationKeys = (lang) => {
+  const enStrings = i18nResources['en']?.translation || {};
+  const langStrings = i18nResources[lang]?.translation || {};
+  return Object.keys(enStrings).filter((key) => {
+    const value = langStrings[key];
+    return !value || value === enStrings[key];
+  });
+};
+
+const translateMissingKeysForLanguage = async (lang) => {
+  if (typeof window === 'undefined' || !i18nResources['en'] || lang === 'en') return null;
+  const missingKeys = getMissingTranslationKeys(lang);
+  if (missingKeys.length === 0) return null;
+
+  const enStrings = missingKeys.reduce((acc, key) => {
+    acc[key] = i18nResources['en'].translation[key];
+    return acc;
+  }, {});
+
+  const cacheKey = `doczen_trans_${lang}`;
+  try {
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      const cachedObj = JSON.parse(cached);
+      if (cachedObj && Object.keys(cachedObj).length > 0) {
+        addTranslations(lang, cachedObj);
+        return cachedObj;
+      }
+    }
+  } catch (e) {
+    console.warn(`Cache parse error for ${lang}`);
+  }
+
+  const result = await loadLanguageTranslations(lang, enStrings);
+  if (result && Object.keys(result).length > 0) {
+    addTranslations(lang, result);
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify(result));
+    } catch (e) {
+      console.warn(`Failed to cache translations for ${lang}`);
+    }
+    return result;
+  }
+  return null;
+};
+
 // Auto-translate missing content using MyMemory Translation API (async, non-blocking)
 const autoTranslateLanguages = async () => {
   if (typeof window === 'undefined' || !i18nResources['en']) return;
@@ -16333,40 +16379,18 @@ const autoTranslateLanguages = async () => {
     const langsToTranslate = ALL_LANGS.filter(lang => {
       const transCount = (i18nResources[lang] && Object.keys(i18nResources[lang].translation).length) || 0;
       return transCount < enCount; // Only supplement languages that are incomplete
-    }).slice(0, 15); // Limit to prevent overwhelming the API
+    });
     
     for (const lang of langsToTranslate) {
       try {
-        // Check localStorage cache first
-        const cacheKey = `doczen_trans_${lang}`;
-        const cached = localStorage.getItem(cacheKey);
-        if (cached) {
-          try {
-            const cachedObj = JSON.parse(cached);
-            if (cachedObj && Object.keys(cachedObj).length > 50) {
-              addTranslations(lang, cachedObj);
-              cachedTranslations[lang] = cachedObj;
-              continue;
-            }
-          } catch (e) {
-            console.warn(`Cache parse error for ${lang}`);
-          }
-        }
-
-        // Load translations from service with timeout
-        const result = await loadLanguageTranslations(lang, enStrings);
-        if (result && Object.keys(result).length > 0) {
-          addTranslations(lang, result);
-          cachedTranslations[lang] = result;
-          try {
-            localStorage.setItem(cacheKey, JSON.stringify(result));
-          } catch (e) {
-            console.warn(`Failed to cache translations for ${lang}`);
-          }
+        const translated = await translateMissingKeysForLanguage(lang);
+        if (translated && Object.keys(translated).length > 0) {
+          cachedTranslations[lang] = translated;
         }
       } catch (err) {
         // Continue to next language on error
       }
+      await new Promise((resolve) => setTimeout(resolve, 250));
     }
 
     // Update main translations cache
@@ -16386,11 +16410,19 @@ const autoTranslateLanguages = async () => {
 // Load language translations from MyMemory API (free service)
 const loadLanguageTranslations = async (lang, enStrings) => {
   try {
-    const keys = Object.keys(enStrings).slice(0, 100); // Sample first 100 keys
-    const texts = keys.map(k => enStrings[k]);
-    const textString = texts.join(' | ').substring(0, 500); // Limit length for API
-    
-    if (!textString || textString.length < 10) return null;
+    const allKeys = Object.keys(enStrings);
+    const separator = ' ||| ';
+    const keys = [];
+    let textString = '';
+
+    for (const key of allKeys) {
+      const chunk = keys.length === 0 ? enStrings[key] : `${textString}${separator}${enStrings[key]}`;
+      if (chunk.length > 1000) break;
+      textString = chunk;
+      keys.push(key);
+    }
+
+    if (!textString || textString.length < 10 || keys.length === 0) return null;
 
     const apiUrl = 'https://api.mymemory.translated.net/get?q=' + 
                    encodeURIComponent(textString) + 
@@ -16413,7 +16445,7 @@ const loadLanguageTranslations = async (lang, enStrings) => {
       if (data && data.responseData && data.responseData.translatedText) {
         const translations = {};
         const translatedText = String(data.responseData.translatedText);
-        const translatedParts = translatedText.split(' | ');
+        const translatedParts = translatedText.split(separator);
         
         keys.forEach((key, idx) => {
           if (translatedParts[idx]) {
@@ -16426,7 +16458,7 @@ const loadLanguageTranslations = async (lang, enStrings) => {
         });
         
         // Return only if we have meaningful translations
-        return Object.keys(translations).length > 10 ? translations : null;
+        return Object.keys(translations).length > 0 ? translations : null;
       }
     }
     return null;
@@ -16526,6 +16558,9 @@ export function LanguageProvider({ children }) {
   const setLanguage = useCallback((code) => {
     if (LANGUAGE_MAP.some(l => l.code === code)) {
       i18next.changeLanguage(code);
+      translateMissingKeysForLanguage(code).catch(() => {
+        // Enrichment failure is non-fatal; keep using existing translations
+      });
     }
   }, [i18next]);
 
