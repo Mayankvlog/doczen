@@ -5,6 +5,7 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function ComparePDF() {
   const [file1, setFile1] = useState(null);
@@ -91,6 +92,8 @@ export default function ComparePDF() {
             )}
           </div>
         </div>
+
+        <AdsterraNative />
 
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-center gap-2">

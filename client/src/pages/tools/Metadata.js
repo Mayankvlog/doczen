@@ -5,6 +5,7 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function Metadata() {
   const [file, setFile] = useState(null);
@@ -101,6 +102,8 @@ export default function Metadata() {
             </div>
           )}
         </div>
+
+        <AdsterraNative />
 
         <div className="card mb-6">
           <div className="flex gap-2 mb-6">

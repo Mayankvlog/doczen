@@ -5,6 +5,7 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function RemoveWatermark() {
   const [file, setFile] = useState(null);
@@ -96,6 +97,8 @@ export default function RemoveWatermark() {
             </div>
           )}
         </div>
+
+        <AdsterraNative />
 
         <div className="card mb-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-800">{t('tool.options', 'Options')}</h2>

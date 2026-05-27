@@ -5,6 +5,7 @@ import { useDownloadHandler } from '../../services/api';
 const API_BASE = process.env.REACT_APP_API_URL || '';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function HTMLToPDF() {
   const [content, setContent] = useState('');
@@ -88,6 +89,8 @@ export default function HTMLToPDF() {
             />
           </div>
         </div>
+
+        <AdsterraNative />
 
         <div className="card mb-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('tool.documentSettings', 'Document Settings')}</h2>

@@ -5,6 +5,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler } from '../../services/api';
 import SEO from '../../components/SEO';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function ExtractText() {
   const [file, setFile] = useState(null);
@@ -78,6 +79,8 @@ export default function ExtractText() {
             </div>
           )}
         </div>
+
+        <AdsterraNative />
 
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-center gap-2">

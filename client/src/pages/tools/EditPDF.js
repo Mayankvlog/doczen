@@ -5,6 +5,7 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function EditPDF() {
   const { t } = useLanguage();
@@ -110,6 +111,9 @@ export default function EditPDF() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); setEditText(''); clearDownload(); }} action={t('tool.edited', 'edited')} />
           </div>
         )}
+
+      <AdsterraNative />
+
       </div>
     </div>
     </>

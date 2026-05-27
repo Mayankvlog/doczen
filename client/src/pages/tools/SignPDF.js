@@ -5,6 +5,7 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function SignPDF() {
   const { t } = useLanguage();
@@ -112,6 +113,9 @@ export default function SignPDF() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); setSignatureText(''); clearDownload(); }} action={t('tool.signed', 'signed')} />
           </div>
         )}
+
+      <AdsterraNative />
+
       </div>
     </div>
     </>

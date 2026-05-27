@@ -5,6 +5,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler } from '../../services/api';
 import SEO from '../../components/SEO';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function JPGToPDF() {
   const [files, setFiles] = useState([]);
@@ -90,6 +91,9 @@ export default function JPGToPDF() {
             <ResultCard result={result} onReset={() => { setResult(null); setFiles([]); clearDownload(); }} action={t('tool.converted', 'converted')} />
           </div>
         )}
+
+      <AdsterraNative />
+
       </div>
     </div>
     </>

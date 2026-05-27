@@ -5,6 +5,7 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function PDFToPPT() {
   const { t } = useLanguage();
@@ -91,6 +92,9 @@ export default function PDFToPPT() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); clearDownload(); }} action={t('tool.converted', 'converted')} />
           </div>
         )}
+
+      <AdsterraNative />
+
       </div>
     </div>
     </>

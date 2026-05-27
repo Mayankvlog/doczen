@@ -5,6 +5,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler } from '../../services/api';
 import SEO from '../../components/SEO';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function WordToPDF() {
   const [file, setFile] = useState(null);
@@ -89,6 +90,9 @@ export default function WordToPDF() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); clearDownload(); }} action={t('tool.converted', 'converted')} />
           </div>
         )}
+
+      <AdsterraNative />
+
       </div>
     </div>
     </>

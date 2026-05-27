@@ -6,6 +6,7 @@ import { handleToolSubmit, useDownloadHandler } from '../../services/api';
 import { useToast } from '../../context/ToastContext';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function MergePDF() {
   const { t } = useLanguage();
@@ -72,6 +73,8 @@ export default function MergePDF() {
             progress={progress}
           />
         </div>
+
+        <AdsterraNative />
 
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-center gap-2 animate-shake">

@@ -5,6 +5,7 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function RedactPDF() {
   const [file, setFile] = useState(null);
@@ -76,6 +77,8 @@ export default function RedactPDF() {
             </div>
           )}
         </div>
+
+        <AdsterraNative />
 
         <div className="card mb-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('tool.termsToRedact', 'Terms to Redact')}</h2>

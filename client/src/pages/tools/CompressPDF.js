@@ -6,6 +6,7 @@ import { handleToolSubmit, useDownloadHandler } from '../../services/api';
 import { useToast } from '../../context/ToastContext';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import AdsterraNative from '../../components/AdsterraNative';
 
 export default function CompressPDF() {
   const { t } = useLanguage();
@@ -81,6 +82,8 @@ export default function CompressPDF() {
             </div>
           )}
         </div>
+
+        <AdsterraNative />
 
         <div className="card mb-6 animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
           <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('tool.qualitySettings', 'Quality Settings')}</h2>

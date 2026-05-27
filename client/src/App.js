@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/Navbar';
+import Banner728x90 from './components/Banner728x90';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
@@ -142,6 +143,7 @@ function AppContent() {
     <div className="min-h-screen flex flex-col bg-gray-50" dir={dir}>
       <ScrollToTop />
       <Navbar />
+      <Banner728x90 />
       <main className="flex-1 page-enter-active">
         <Routes>
           <Route path="/" element={<Home />} />
