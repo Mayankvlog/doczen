@@ -297,11 +297,6 @@ const processRequest = async (req, res, action, processFn, options = {}) => {
 
 exports.merge = async (req, res) => {
   await processRequest(req, res, 'merge', async (req) => {
-    // Validate user
-    if (!req.user || !req.user._id) {
-      throw new Error('User authentication required for history tracking');
-    }
-
     const filePaths = req.files.map(f => f.path);
     const outputName = `merged_${uuidv4()}.pdf`;
     const outputPath = path.join(getOutputDir(), outputName);
@@ -340,11 +335,6 @@ exports.merge = async (req, res) => {
 
 exports.split = async (req, res) => {
   await processRequest(req, res, 'split', async (req) => {
-    // Validate user
-    if (!req.user || !req.user._id) {
-      throw new Error('User authentication required for history tracking');
-    }
-
     const filePath = req.files[0].path;
     const outputDir = getOutputDir();
     const outputFiles = await splitPDF(filePath, outputDir);
@@ -391,11 +381,6 @@ exports.split = async (req, res) => {
 
 exports.compress = async (req, res) => {
   await processRequest(req, res, 'compress', async (req) => {
-    // Validate user
-    if (!req.user || !req.user._id) {
-      throw new Error('User authentication required for history tracking');
-    }
-
     const filePath = req.files[0].path;
     const quality = parseFloat(req.body.quality) || 0.5;
     const outputPath = getOutputPath(req.files[0].originalname, 'compressed');
@@ -434,11 +419,6 @@ exports.compress = async (req, res) => {
 
 exports.rotate = async (req, res) => {
   await processRequest(req, res, 'rotate', async (req) => {
-    // Validate user
-    if (!req.user || !req.user._id) {
-      throw new Error('User authentication required for history tracking');
-    }
-
     const filePath = req.files[0].path;
     const degrees = parseInt(req.body.degrees) || 90;
     const outputPath = getOutputPath(req.files[0].originalname, 'rotated');
@@ -468,11 +448,6 @@ exports.rotate = async (req, res) => {
 
 exports.protect = async (req, res) => {
   await processRequest(req, res, 'protect', async (req) => {
-    // Validate user
-    if (!req.user || !req.user._id) {
-      throw new Error('User authentication required for history tracking');
-    }
-
     const filePath = req.files[0].path;
     const password = req.body.password;
     if (!password) {
@@ -507,11 +482,6 @@ exports.protect = async (req, res) => {
 
 exports.unlock = async (req, res) => {
   await processRequest(req, res, 'unlock', async (req) => {
-    // Validate user
-    if (!req.user || !req.user._id) {
-      throw new Error('User authentication required for history tracking');
-    }
-
     const filePath = req.files[0].path;
     const password = req.body.password;
     if (!password) {
