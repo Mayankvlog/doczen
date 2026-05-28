@@ -92,7 +92,6 @@ app.use((req, res, next) => {
   // Block requests from known external tracking and ad network domains
   const blockedDomains = [
     'cloudflareinsights', 
-    'kettledroopingcontinuation',
     'static.cloudflareinsights.com'
   ];
   

@@ -9,8 +9,8 @@ import App from './App';
 
 // Global error handler for external tracking/fingerprinting scripts
 // Prevents console errors from blocked external resources
-const EXTERNAL_DOMAINS = ['cloudflareinsights', 'beacon.min.js', 'kettledroopingcontinuation'];
-const EXTERNAL_URLS = ['static.cloudflareinsights.com', 'kettledroopingcontinuation.com'];
+const EXTERNAL_DOMAINS = ['cloudflareinsights', 'beacon.min.js'];
+const EXTERNAL_URLS = ['static.cloudflareinsights.com'];
 
 // Suppress errors from external tracking domains
 window.addEventListener('error', (event) => {
