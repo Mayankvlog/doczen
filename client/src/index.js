@@ -16,7 +16,6 @@ const SUPPRESSED_PATTERNS = [
   'spendsdetachment.com',
   'kettledroopingcontinuation.com',
   'Fingerprinting Protection',
-  'InstallTrigger is deprecated',
   'OpaqueResponseBlocking',
   'Cookie \"_ga',
   'has been rejected',
