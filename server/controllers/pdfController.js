@@ -11,6 +11,7 @@ const _standardFontUrl = path.join(
   path.dirname(require.resolve('pdfjs-dist/package.json')),
   'standard_fonts'
 ) + '/';
+let _pdfjsLib = null;
 async function getPdfjs() {
   if (!_pdfjsLib) _pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
   return _pdfjsLib;

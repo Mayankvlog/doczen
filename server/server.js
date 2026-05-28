@@ -71,17 +71,14 @@ app.use(cookieParser());
 
 // Cookie settings middleware - Fix cookie domain and SameSite issues
 app.use((req, res, next) => {
-  // Override default cookie settings to handle cross-domain requests
   const originalCookie = res.cookie;
   res.cookie = function(name, value, options = {}) {
-    options.httpOnly = options.httpOnly !== false; // Default to true
-    options.secure = process.env.NODE_ENV === 'production'; // Only on HTTPS in production
-    options.sameSite = process.env.NODE_ENV === 'production' ? 'None' : 'Lax'; // None requires Secure
-    // Allow the domain to be auto-set based on request host
-    if (!options.domain && process.env.NODE_ENV !== 'production') {
-      // Don't set domain in development - browser will handle it
-      delete options.domain;
-    }
+    options.httpOnly = options.httpOnly !== false;
+    options.secure = process.env.NODE_ENV === 'production';
+    options.sameSite = process.env.NODE_ENV === 'production' ? 'None' : 'Lax';
+    // Never set an explicit domain - let the browser use the current host
+    // This prevents "invalid domain" rejection by browsers like Firefox
+    delete options.domain;
     return originalCookie.call(this, name, value, options);
   };
   next();

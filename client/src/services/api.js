@@ -103,9 +103,17 @@ export async function handleToolSubmit(url, formData, fallbackName) {
   if (!response.ok) {
     let message = 'Request failed';
     try {
-      const err = await response.json();
-      message = err.message || err.error || message;
-    } catch (_) {}
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        const err = await response.json();
+        message = err.message || err.error || message;
+      } else {
+        const text = await response.text();
+        if (text) message = text.substring(0, 200);
+      }
+    } catch (_) {
+      message = `Request failed (${response.status})`;
+    }
     throw new Error(message);
   }
 

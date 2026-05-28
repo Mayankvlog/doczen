@@ -1,24 +1,48 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function AdsterraNative() {
   const ref = useRef(null);
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    if (!ref.current) return;
-    const s1 = document.createElement('script');
-    s1.text = `atOptions = ${JSON.stringify({
-      key: 'c53e6e4677b82c7e335cf46167b6321f',
-      format: 'iframe',
-      height: 250,
-      width: 300,
-      params: {},
-    })};`;
-    ref.current.appendChild(s1);
+    if (!ref.current || failed) return;
+    try {
+      const existing = ref.current.querySelector('script');
+      if (existing) return;
 
-    const s2 = document.createElement('script');
-    s2.src = 'https://www.highperformanceformat.com/c53e6e4677b82c7e335cf46167b6321f/invoke.js';
-    ref.current.appendChild(s2);
-  }, []);
+      const s1 = document.createElement('script');
+      s1.text = `atOptions = ${JSON.stringify({
+        key: 'c53e6e4677b82c7e335cf46167b6321f',
+        format: 'iframe',
+        height: 250,
+        width: 300,
+        params: {},
+      })};`;
+      ref.current.appendChild(s1);
 
-  return <div className="flex justify-center my-6" ref={ref} />;
+      const s2 = document.createElement('script');
+      s2.src = 'https://www.highperformanceformat.com/c53e6e4677b82c7e335cf46167b6321f/invoke.js';
+      s2.async = true;
+      s2.onerror = () => setFailed(true);
+      s2.onload = () => setLoaded(true);
+      ref.current.appendChild(s2);
+    } catch (e) {
+      setFailed(true);
+    }
+  }, [failed]);
+
+  return (
+    <div
+      ref={ref}
+      className="flex justify-center my-6"
+      style={{ minHeight: failed ? 'auto' : '250px', minWidth: '300px' }}
+    >
+      {failed && (
+        <div className="w-[300px] h-[250px] bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-sm">
+          Ad Space
+        </div>
+      )}
+    </div>
+  );
 }

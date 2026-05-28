@@ -7,94 +7,53 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import './styles/index.css';
 import App from './App';
 
-// Global error handler for external tracking/fingerprinting scripts
-// Prevents console errors from blocked external resources
-const EXTERNAL_DOMAINS = ['cloudflareinsights', 'beacon.min.js'];
-const EXTERNAL_URLS = ['static.cloudflareinsights.com'];
+// Suppress known non-critical browser warnings and external tracking noise
+const SUPPRESSED_PATTERNS = [
+  'cloudflareinsights',
+  'beacon.min.js',
+  'static.cloudflareinsights.com',
+  'highperformanceformat.com',
+  'spendsdetachment.com',
+  'kettledroopingcontinuation.com',
+  'Fingerprinting Protection',
+  'InstallTrigger is deprecated',
+  'OpaqueResponseBlocking',
+  'Cookie \"_ga',
+  'has been rejected',
+  'Affiliatizer()',
+  'Layout was forced',
+  'flash of unstyled content',
+];
 
-// Suppress errors from external tracking domains
 window.addEventListener('error', (event) => {
-  if (event.filename && EXTERNAL_DOMAINS.some(domain => event.filename.includes(domain))) {
+  const msg = String(event.message || '') + String(event.filename || '');
+  if (SUPPRESSED_PATTERNS.some(p => msg.includes(p))) {
     event.preventDefault();
-    return true;
   }
 }, true);
 
-// Suppress unhandled rejections from external scripts
 window.addEventListener('unhandledrejection', (event) => {
-  const message = String(event.reason || '');
-  if (EXTERNAL_DOMAINS.some(domain => message.includes(domain)) || EXTERNAL_URLS.some(url => message.includes(url))) {
+  const msg = String(event.reason || '');
+  if (SUPPRESSED_PATTERNS.some(p => msg.includes(p))) {
     event.preventDefault();
   }
 });
 
-// Intercept fetch requests to block tracking domains
-const originalFetch = window.fetch;
-window.fetch = function(...args) {
-  const url = typeof args[0] === 'string' ? args[0] : args[0]?.url || '';
-  if (EXTERNAL_URLS.some(trackingUrl => url.includes(trackingUrl))) {
-    // Return a failed promise without logging
-    return Promise.reject(new Error('Blocked'));
-  }
-  return originalFetch.apply(this, args).catch(err => {
-    // Don't log errors from tracking domains
-    return Promise.reject(err);
-  });
-};
-
-// Intercept XMLHttpRequest to external domains
-const originalOpen = XMLHttpRequest.prototype.open;
-XMLHttpRequest.prototype.open = function(method, url, ...rest) {
-  if (EXTERNAL_URLS.some(trackingUrl => url.includes(trackingUrl))) {
-    // Override send to prevent the request
-    this.send = () => {};
-    return;
-  }
-  return originalOpen.apply(this, [method, url, ...rest]);
-};
-
-// Block document.createElement for external scripts
-const originalCreateElement = document.createElement;
-document.createElement = function(tagName, ...rest) {
-  const element = originalCreateElement.apply(document, [tagName, ...rest]);
-  
-  if (tagName.toLowerCase() === 'script') {
-    const originalSetAttribute = element.setAttribute;
-    element.setAttribute = function(name, value) {
-      if (name === 'src' && EXTERNAL_URLS.some(trackingUrl => value.includes(trackingUrl))) {
-        console.warn('Blocked external script:', value);
-        return;
-      }
-      return originalSetAttribute.apply(this, [name, value]);
-    };
-  }
-  
-  return element;
-};
-
-// Suppress console output from external tracking domains
+// Suppress noisy warnings/errors from external tracking domains
 const originalWarn = console.warn;
 const originalError = console.error;
-const originalLog = console.log;
 
 console.warn = function(...args) {
-  const message = String(args[0] || '');
-  if (!EXTERNAL_DOMAINS.some(domain => message.includes(domain)) && !EXTERNAL_URLS.some(url => message.includes(url))) {
+  const msg = String(args[0] || '');
+  if (!SUPPRESSED_PATTERNS.some(p => msg.includes(p))) {
     return originalWarn.apply(console, args);
   }
 };
 
 console.error = function(...args) {
-  const message = String(args[0] || '');
-  if (!EXTERNAL_DOMAINS.some(domain => message.includes(domain)) && !EXTERNAL_URLS.some(url => message.includes(url))) {
+  const msg = String(args[0] || '');
+  if (!SUPPRESSED_PATTERNS.some(p => msg.includes(p))) {
     return originalError.apply(console, args);
-  }
-};
-
-console.log = function(...args) {
-  const message = String(args[0] || '');
-  if (!EXTERNAL_DOMAINS.some(domain => message.includes(domain)) && !EXTERNAL_URLS.some(url => message.includes(url))) {
-    return originalLog.apply(console, args);
   }
 };
 
