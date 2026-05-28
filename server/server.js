@@ -92,13 +92,8 @@ app.use((req, res, next) => {
   // Block requests from known external tracking and ad network domains
   const blockedDomains = [
     'cloudflareinsights', 
-    'spendsdetachment', 
-    'effectivecpmnetwork', 
-    'flushpersist',
-    'zoologyfibre',
     'kettledroopingcontinuation',
-    'static.cloudflareinsights.com',
-    'pl29568431.effectivecpmnetwork.com'
+    'static.cloudflareinsights.com'
   ];
   
   const referer = req.get('referer') || '';
