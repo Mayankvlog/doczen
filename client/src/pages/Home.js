@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ToolCard from '../components/ToolCard';
+import AdsterraNative from '../components/AdsterraNative';
 import SEO from '../components/SEO';
 import { useLanguage } from '../index';
 
@@ -159,6 +160,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <AdsterraNative />
 
       {/* FAQ */}
       <section id="faq" className="px-4 py-20 lg:px-8">

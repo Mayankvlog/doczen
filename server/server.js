@@ -94,11 +94,9 @@ app.use((req, res, next) => {
     'cloudflareinsights', 
     'spendsdetachment', 
     'effectivecpmnetwork', 
-    'highperformanceformat',
     'flushpersist',
     'zoologyfibre',
     'static.cloudflareinsights.com',
-    'www.highperformanceformat.com',
     'pl29568431.effectivecpmnetwork.com'
   ];
   
@@ -126,7 +124,6 @@ app.use((req, res, next) => {
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  next();
   next();
 });
 
