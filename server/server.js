@@ -75,10 +75,12 @@ app.use((req, res, next) => {
   res.cookie = function(name, value, options = {}) {
     options.httpOnly = options.httpOnly !== false;
     options.secure = process.env.NODE_ENV === 'production';
-    options.sameSite = process.env.NODE_ENV === 'production' ? 'None' : 'Lax';
+    options.sameSite = options.sameSite || (process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax');
     // Never set an explicit domain - let the browser use the current host
     // This prevents "invalid domain" rejection by browsers like Firefox
     delete options.domain;
+    // Path defaults to root
+    options.path = options.path || '/';
     return originalCookie.call(this, name, value, options);
   };
   next();
@@ -89,7 +91,12 @@ app.use((req, res, next) => {
   // Block requests from known external tracking and ad network domains
   const blockedDomains = [
     'cloudflareinsights', 
-    'static.cloudflareinsights.com'
+    'static.cloudflareinsights.com',
+    'zoologyfibre',
+    'spendsdetachment',
+    'kettledroopingcontinuation',
+    'workdeadlinededicate',
+    'realizationnewestfangs'
   ];
   
   const referer = req.get('referer') || '';
@@ -98,10 +105,10 @@ app.use((req, res, next) => {
   const host = req.hostname || '';
   
   if (blockedDomains.some(domain => 
-    referer.includes(domain) || 
-    userAgent.includes(domain) || 
-    origin.includes(domain) ||
-    host.includes(domain)
+    referer.toLowerCase().includes(domain) || 
+    userAgent.toLowerCase().includes(domain) || 
+    origin.toLowerCase().includes(domain) ||
+    host.toLowerCase().includes(domain)
   )) {
     return res.status(403).json({ error: 'Access denied' });
   }
@@ -111,11 +118,14 @@ app.use((req, res, next) => {
     return res.status(426).json({ error: 'HTTPS required' });
   }
   
-  // Add security headers to prevent tracking and fingerprinting issues
+  // Add comprehensive security headers to prevent tracking and fingerprinting issues
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=()');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://doczen.co.in https://www.doczen.co.in; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;");
   next();
 });
 
