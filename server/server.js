@@ -94,7 +94,7 @@ app.use((req, res, next) => {
     'static.cloudflareinsights.com',
     'zoologyfibre',
     'spendsdetachment',
-    'kettledroopingcontinuation',
+    // 'kettledroopingcontinuation',  // removed - ad network domain
     'workdeadlinededicate',
     'realizationnewestfangs'
   ];
@@ -125,7 +125,7 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=()');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://doczen.co.in https://www.doczen.co.in; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;");
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.highperformanceformat.com https://kettledroopingcontinuation.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://doczen.co.in https://www.doczen.co.in https://www.highperformanceformat.com https://kettledroopingcontinuation.com; frame-src 'self' https://www.highperformanceformat.com https://kettledroopingcontinuation.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;");
   next();
 });
 
