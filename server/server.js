@@ -89,6 +89,15 @@ app.use((req, res, next) => {
 
 // Security middleware
 app.use((req, res, next) => {
+  // Block requests to known external tracking domains
+  const trackingDomains = ['cloudflareinsights', 'spendsdetachment', 'effectivecpmnetwork', 'highperformanceformat'];
+  const referer = req.get('referer') || '';
+  const userAgent = req.get('user-agent') || '';
+  
+  if (trackingDomains.some(domain => referer.includes(domain) || userAgent.includes(domain))) {
+    return res.status(403).json({ error: 'Tracking request blocked' });
+  }
+  
   // Ensure HTTPS (except for health checks)
   if (req.path !== '/api/health' && !req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV === 'production') {
     return res.status(426).json({ error: 'HTTPS required' });

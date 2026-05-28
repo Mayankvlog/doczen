@@ -9,22 +9,62 @@ import App from './App';
 
 // Global error handler for external tracking/fingerprinting scripts
 // Prevents console errors from blocked external resources
-const EXTERNAL_DOMAINS = ['cloudflareinsights', 'spendsdetachment', 'effectivecpmnetwork', 'beacon.min.js'];
+const EXTERNAL_DOMAINS = ['cloudflareinsights', 'spendsdetachment', 'effectivecpmnetwork', 'beacon.min.js', 'highperformanceformat', 'flushpersist'];
+const EXTERNAL_URLS = ['pl29568431.effectivecpmnetwork.com', 'static.cloudflareinsights.com', 'spendsdetachment.com', 'flushpersist.com'];
 
+// Suppress errors from external tracking domains
 window.addEventListener('error', (event) => {
   if (event.filename && EXTERNAL_DOMAINS.some(domain => event.filename.includes(domain))) {
     event.preventDefault();
-    return true; // Suppress error
+    return true;
   }
 }, true);
 
-// Handle unhandled promise rejections from external scripts
+// Suppress unhandled rejections from external scripts
 window.addEventListener('unhandledrejection', (event) => {
   const message = String(event.reason || '');
-  if (EXTERNAL_DOMAINS.some(domain => message.includes(domain))) {
+  if (EXTERNAL_DOMAINS.some(domain => message.includes(domain)) || EXTERNAL_URLS.some(url => message.includes(url))) {
     event.preventDefault();
   }
 });
+
+// Intercept fetch requests to block tracking domains
+const originalFetch = window.fetch;
+window.fetch = function(...args) {
+  const url = typeof args[0] === 'string' ? args[0] : args[0]?.url || '';
+  if (EXTERNAL_URLS.some(trackingUrl => url.includes(trackingUrl))) {
+    // Return a failed promise without logging
+    return Promise.reject(new Error('Blocked'));
+  }
+  return originalFetch.apply(this, args);
+};
+
+// Intercept XMLHttpRequest to external domains
+const originalOpen = XMLHttpRequest.prototype.open;
+XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+  if (EXTERNAL_URLS.some(trackingUrl => url.includes(trackingUrl))) {
+    // Override send to prevent the request
+    this.send = () => {};
+    return;
+  }
+  return originalOpen.apply(this, [method, url, ...rest]);
+};
+
+// Suppress console output from external tracking domains
+const originalWarn = console.warn;
+const originalError = console.error;
+console.warn = function(...args) {
+  const message = String(args[0] || '');
+  if (!EXTERNAL_DOMAINS.some(domain => message.includes(domain)) && !EXTERNAL_URLS.some(url => message.includes(url))) {
+    return originalWarn.apply(console, args);
+  }
+};
+console.error = function(...args) {
+  const message = String(args[0] || '');
+  if (!EXTERNAL_DOMAINS.some(domain => message.includes(domain)) && !EXTERNAL_URLS.some(url => message.includes(url))) {
+    return originalError.apply(console, args);
+  }
+};
 
 const i18nResources = {};
 
