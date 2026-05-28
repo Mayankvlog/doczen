@@ -13,8 +13,6 @@ const SUPPRESSED_PATTERNS = [
   'beacon.min.js',
   'static.cloudflareinsights.com',
   'highperformanceformat.com',
-  'spendsdetachment.com',
-  'kettledroopingcontinuation.com',
   'Fingerprinting Protection',
   'OpaqueResponseBlocking',
   'Cookie \"_ga',
