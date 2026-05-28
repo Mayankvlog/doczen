@@ -89,24 +89,44 @@ app.use((req, res, next) => {
 
 // Security middleware
 app.use((req, res, next) => {
-  // Block requests to known external tracking domains
-  const trackingDomains = ['cloudflareinsights', 'spendsdetachment', 'effectivecpmnetwork', 'highperformanceformat'];
+  // Block requests from known external tracking and ad network domains
+  const blockedDomains = [
+    'cloudflareinsights', 
+    'spendsdetachment', 
+    'effectivecpmnetwork', 
+    'highperformanceformat',
+    'flushpersist',
+    'zoologyfibre',
+    'static.cloudflareinsights.com',
+    'www.highperformanceformat.com',
+    'pl29568431.effectivecpmnetwork.com'
+  ];
+  
   const referer = req.get('referer') || '';
   const userAgent = req.get('user-agent') || '';
+  const origin = req.get('origin') || '';
+  const host = req.hostname || '';
   
-  if (trackingDomains.some(domain => referer.includes(domain) || userAgent.includes(domain))) {
-    return res.status(403).json({ error: 'Tracking request blocked' });
+  if (blockedDomains.some(domain => 
+    referer.includes(domain) || 
+    userAgent.includes(domain) || 
+    origin.includes(domain) ||
+    host.includes(domain)
+  )) {
+    return res.status(403).json({ error: 'Access denied' });
   }
   
   // Ensure HTTPS (except for health checks)
   if (req.path !== '/api/health' && !req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV === 'production') {
     return res.status(426).json({ error: 'HTTPS required' });
   }
+  
   // Add security headers to prevent tracking and fingerprinting issues
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
   next();
 });
 

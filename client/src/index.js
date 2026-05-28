@@ -9,8 +9,8 @@ import App from './App';
 
 // Global error handler for external tracking/fingerprinting scripts
 // Prevents console errors from blocked external resources
-const EXTERNAL_DOMAINS = ['cloudflareinsights', 'spendsdetachment', 'effectivecpmnetwork', 'beacon.min.js', 'highperformanceformat', 'flushpersist'];
-const EXTERNAL_URLS = ['pl29568431.effectivecpmnetwork.com', 'static.cloudflareinsights.com', 'spendsdetachment.com', 'flushpersist.com'];
+const EXTERNAL_DOMAINS = ['cloudflareinsights', 'spendsdetachment', 'effectivecpmnetwork', 'beacon.min.js', 'highperformanceformat', 'flushpersist', 'zoologyfibre'];
+const EXTERNAL_URLS = ['pl29568431.effectivecpmnetwork.com', 'static.cloudflareinsights.com', 'spendsdetachment.com', 'flushpersist.com', 'www.highperformanceformat.com', 'zoologyfibre.com'];
 
 // Suppress errors from external tracking domains
 window.addEventListener('error', (event) => {
@@ -36,7 +36,10 @@ window.fetch = function(...args) {
     // Return a failed promise without logging
     return Promise.reject(new Error('Blocked'));
   }
-  return originalFetch.apply(this, args);
+  return originalFetch.apply(this, args).catch(err => {
+    // Don't log errors from tracking domains
+    return Promise.reject(err);
+  });
 };
 
 // Intercept XMLHttpRequest to external domains
@@ -50,19 +53,48 @@ XMLHttpRequest.prototype.open = function(method, url, ...rest) {
   return originalOpen.apply(this, [method, url, ...rest]);
 };
 
+// Block document.createElement for external scripts
+const originalCreateElement = document.createElement;
+document.createElement = function(tagName, ...rest) {
+  const element = originalCreateElement.apply(document, [tagName, ...rest]);
+  
+  if (tagName.toLowerCase() === 'script') {
+    const originalSetAttribute = element.setAttribute;
+    element.setAttribute = function(name, value) {
+      if (name === 'src' && EXTERNAL_URLS.some(trackingUrl => value.includes(trackingUrl))) {
+        console.warn('Blocked external script:', value);
+        return;
+      }
+      return originalSetAttribute.apply(this, [name, value]);
+    };
+  }
+  
+  return element;
+};
+
 // Suppress console output from external tracking domains
 const originalWarn = console.warn;
 const originalError = console.error;
+const originalLog = console.log;
+
 console.warn = function(...args) {
   const message = String(args[0] || '');
   if (!EXTERNAL_DOMAINS.some(domain => message.includes(domain)) && !EXTERNAL_URLS.some(url => message.includes(url))) {
     return originalWarn.apply(console, args);
   }
 };
+
 console.error = function(...args) {
   const message = String(args[0] || '');
   if (!EXTERNAL_DOMAINS.some(domain => message.includes(domain)) && !EXTERNAL_URLS.some(url => message.includes(url))) {
     return originalError.apply(console, args);
+  }
+};
+
+console.log = function(...args) {
+  const message = String(args[0] || '');
+  if (!EXTERNAL_DOMAINS.some(domain => message.includes(domain)) && !EXTERNAL_URLS.some(url => message.includes(url))) {
+    return originalLog.apply(console, args);
   }
 };
 
