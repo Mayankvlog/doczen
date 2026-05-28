@@ -96,6 +96,7 @@ app.use((req, res, next) => {
     'effectivecpmnetwork', 
     'flushpersist',
     'zoologyfibre',
+    'kettledroopingcontinuation',
     'static.cloudflareinsights.com',
     'pl29568431.effectivecpmnetwork.com'
   ];
