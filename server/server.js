@@ -69,12 +69,35 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
 
+// Cookie settings middleware - Fix cookie domain and SameSite issues
+app.use((req, res, next) => {
+  // Override default cookie settings to handle cross-domain requests
+  const originalCookie = res.cookie;
+  res.cookie = function(name, value, options = {}) {
+    options.httpOnly = options.httpOnly !== false; // Default to true
+    options.secure = process.env.NODE_ENV === 'production'; // Only on HTTPS in production
+    options.sameSite = process.env.NODE_ENV === 'production' ? 'None' : 'Lax'; // None requires Secure
+    // Allow the domain to be auto-set based on request host
+    if (!options.domain && process.env.NODE_ENV !== 'production') {
+      // Don't set domain in development - browser will handle it
+      delete options.domain;
+    }
+    return originalCookie.call(this, name, value, options);
+  };
+  next();
+});
+
 // Security middleware
 app.use((req, res, next) => {
   // Ensure HTTPS (except for health checks)
   if (req.path !== '/api/health' && !req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV === 'production') {
     return res.status(426).json({ error: 'HTTPS required' });
   }
+  // Add security headers to prevent tracking and fingerprinting issues
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   next();
 });
 

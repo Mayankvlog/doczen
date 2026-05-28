@@ -7,6 +7,25 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import './styles/index.css';
 import App from './App';
 
+// Global error handler for external tracking/fingerprinting scripts
+// Prevents console errors from blocked external resources
+const EXTERNAL_DOMAINS = ['cloudflareinsights', 'spendsdetachment', 'effectivecpmnetwork', 'beacon.min.js'];
+
+window.addEventListener('error', (event) => {
+  if (event.filename && EXTERNAL_DOMAINS.some(domain => event.filename.includes(domain))) {
+    event.preventDefault();
+    return true; // Suppress error
+  }
+}, true);
+
+// Handle unhandled promise rejections from external scripts
+window.addEventListener('unhandledrejection', (event) => {
+  const message = String(event.reason || '');
+  if (EXTERNAL_DOMAINS.some(domain => message.includes(domain))) {
+    event.preventDefault();
+  }
+});
+
 const i18nResources = {};
 
 function addTranslations(lang, strings) {
