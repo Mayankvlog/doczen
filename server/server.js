@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
@@ -90,7 +90,14 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   // Block requests from known external tracking and ad network domains
   const blockedDomains = [
-    'cloudflareinsights', 
+    'cloudflareinsights',
+    'protrafficinspector.com',
+    'kettledroopingcontinuation.com',
+    'zoologyfibre.com',
+    'spendsdetachment.com',
+    'workdeadlinededicate.com',
+    'realizationnewestfangs.com',
+  
     'static.cloudflareinsights.com'
   ];
   
@@ -120,7 +127,7 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=()');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com https://zoologyfibre.com https://spendsdetachment.com https://kettledroopingcontinuation.com https://workdeadlinededicate.com https://realizationnewestfangs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https:; font-src 'self' https://fonts.gstatic.com data: https:; img-src 'self' data: blob: https:; connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://doczen.co.in https://www.doczen.co.in https://www.highperformanceformat.com https://zoologyfibre.com https://spendsdetachment.com https://kettledroopingcontinuation.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://protrafficinspector.com; frame-src 'self' https://www.highperformanceformat.com https://zoologyfibre.com https://spendsdetachment.com https://kettledroopingcontinuation.com https://workdeadlinededicate.com https://realizationnewestfangs.com; object-src 'none'; base-uri 'self'; form-action 'self';");
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://doczen.co.in https://www.doczen.co.in https://www.highperformanceformat.com https://protrafficinspector.com https://kettledroopingcontinuation.com; frame-src 'self' https://www.highperformanceformat.com https://kettledroopingcontinuation.com; object-src 'none'; base-uri 'self'; form-action 'self';");
   next();
 });
 
@@ -194,17 +201,17 @@ connectDB().then(() => {
       secureOptions: require('constants').SSL_OP_NO_TLSv1 | require('constants').SSL_OP_NO_TLSv1_1
     };
     https.createServer(httpsOptions, app).listen(PORT, HOST, () => {
-      console.log(`✓ Doczen HTTPS server running on https://${HOST}:${PORT}`);
-      console.log(`✓ SSL certificates loaded from ${certPath}`);
+      console.log(`âœ“ Doczen HTTPS server running on https://${HOST}:${PORT}`);
+      console.log(`âœ“ SSL certificates loaded from ${certPath}`);
     });
   } else {
     // HTTP server (development or missing certs)
     app.listen(PORT, HOST, () => {
       if (hasCerts) {
-        console.log(`✓ Doczen HTTP server running on http://${HOST}:${PORT} (SSL available, NODE_ENV not set to production)`);
+        console.log(`âœ“ Doczen HTTP server running on http://${HOST}:${PORT} (SSL available, NODE_ENV not set to production)`);
       } else {
-        console.log(`⚠ Doczen HTTP server running on http://${HOST}:${PORT} (SSL certificates not found)`);
-        console.log(`⚠ For production, place SSL certificates at:`);
+        console.log(`âš  Doczen HTTP server running on http://${HOST}:${PORT} (SSL certificates not found)`);
+        console.log(`âš  For production, place SSL certificates at:`);
         console.log(`  - Cert: ${certPath}`);
         console.log(`  - Key: ${keyPath}`);
       }
@@ -216,3 +223,5 @@ connectDB().then(() => {
 });
 
 module.exports = app;
+
+

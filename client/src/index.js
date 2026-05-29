@@ -7,19 +7,12 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import './styles/index.css';
 import App from './App';
 
-// Suppress known non-critical browser warnings and external tracking noise
+// Suppress non-actionable browser warnings and extension noise only
 const SUPPRESSED_PATTERNS = [
-  'cloudflareinsights',
-  'beacon.min.js',
-  'static.cloudflareinsights.com',
-  'highperformanceformat.com',
   'Fingerprinting Protection',
   'OpaqueResponseBlocking',
-  'Cookie \"_ga',
-  'has been rejected',
   'Affiliatizer()',
-  'Layout was forced',
-  'flash of unstyled content',
+  'InstallTrigger is deprecated',
 ];
 
 window.addEventListener('error', (event) => {
