@@ -97,8 +97,6 @@ app.use((req, res, next) => {
     'spendsdetachment.com',
     'workdeadlinededicate.com',
     'realizationnewestfangs.com',
-  
-    'static.cloudflareinsights.com'
   ];
   
   const referer = req.get('referer') || '';
@@ -127,7 +125,7 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=()');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  res.setHeader('Content-Security-Policy', "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com https://workdeadlinededicate.com https://protrafficinspector.com; connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://www.highperformanceformat.com https://workdeadlinededicate.com https://protrafficinspector.com; frame-src 'self' https://www.highperformanceformat.com https://workdeadlinededicate.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; object-src 'none'; base-uri 'self'; form-action 'self';");
+  res.setHeader('Content-Security-Policy', "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com https://workdeadlinededicate.com https://protrafficinspector.com https://realizationnewestfangs.com; connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://doczen.co.in https://www.doczen.co.in https://www.highperformanceformat.com https://protrafficinspector.com https://workdeadlinededicate.com https://realizationnewestfangs.com; frame-src 'self' https://www.highperformanceformat.com https://workdeadlinededicate.com https://realizationnewestfangs.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';");
   next();
 });
 
