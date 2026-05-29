@@ -88,28 +88,10 @@ app.use((req, res, next) => {
 
 // Security middleware
 app.use((req, res, next) => {
-  // Block requests from known external tracking and ad network domains
-  const blockedDomains = [
-    'cloudflareinsights',
-    'protrafficinspector.com',
-    'kettledroopingcontinuation.com',
-    'zoologyfibre.com',
-    'spendsdetachment.com',
-    'workdeadlinededicate.com',
-    'realizationnewestfangs.com',
-  ];
-  
-  const referer = req.get('referer') || '';
-  const userAgent = req.get('user-agent') || '';
-  const origin = req.get('origin') || '';
+  // Prevent server from being accessed via unexpected hostnames (anti-DNS-rebinding)
+  const allowedHostSuffixes = ['doczen.co.in', 'localhost', '127.0.0.1'];
   const host = req.hostname || '';
-  
-  if (blockedDomains.some(domain => 
-    referer.toLowerCase().includes(domain) || 
-    userAgent.toLowerCase().includes(domain) || 
-    origin.toLowerCase().includes(domain) ||
-    host.toLowerCase().includes(domain)
-  )) {
+  if (host && !allowedHostSuffixes.some(suffix => host === suffix || host.endsWith('.' + suffix))) {
     return res.status(403).json({ error: 'Access denied' });
   }
   
