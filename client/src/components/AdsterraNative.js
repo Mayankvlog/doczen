@@ -30,6 +30,14 @@ export default function AdsterraNative() {
     } catch (e) {
       setFailed(true);
     }
+    return () => {
+      if (ref.current) {
+        try {
+          const scripts = ref.current.querySelectorAll('script');
+          scripts.forEach(script => script.remove());
+        } catch (_) {}
+      }
+    };
   }, [failed]);
 
   return (
