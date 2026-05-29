@@ -27,15 +27,16 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-J0V79VJ0JH', {
-        anonymize_ip: true
+        anonymize_ip: true,
+        cookie_domain: 'www.doczen.co.in',
+        cookie_flags: 'SameSite=None;Secure'
       });
     </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run Doczen.</noscript>
     <div id="root"></div>
-    <!-- External monetization scripts removed to prevent CORS/tracking issues -->
-    <!-- Use server-side analytics if needed instead of client-side trackers -->
+    <!-- Ad scripts loaded dynamically via React components (Banner728x90, AdsterraNative) -->
   </body>
 </html>
 
