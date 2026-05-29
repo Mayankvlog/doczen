@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 
 export default function Banner728x90() {
   const ref = useRef(null);
-  const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -11,31 +10,20 @@ export default function Banner728x90() {
       const existing = ref.current.querySelector('script');
       if (existing) return;
 
-      // Use defer for better CSP compliance and async loading
-      const s1 = document.createElement('script');
-      s1.text = `window.atOptions = ${JSON.stringify({
+      window.atOptions = {
         key: '20c23d55e0aa2d4c55f69cec04907f2b',
         format: 'iframe',
         height: 90,
         width: 728,
         params: {},
-      })};`;
-      s1.defer = true;
-      ref.current.appendChild(s1);
+      };
 
-      const s2 = document.createElement('script');
-      s2.src = 'https://www.highperformanceformat.com/20c23d55e0aa2d4c55f69cec04907f2b/invoke.js';
-      s2.async = true;
-      s2.defer = true;
-      s2.onerror = (err) => {
-        console.warn('[Banner728x90] Failed to load ad script:', err);
-        setFailed(true);
-      };
-      s2.onload = () => {
-        console.log('[Banner728x90] Ad script loaded successfully');
-        setLoaded(true);
-      };
-      ref.current.appendChild(s2);
+      const s = document.createElement('script');
+      s.src = 'https://www.highperformanceformat.com/20c23d55e0aa2d4c55f69cec04907f2b/invoke.js';
+      s.async = true;
+      s.onerror = () => setFailed(true);
+      s.onload = () => { window.__bannerAdLoaded = true; };
+      ref.current.appendChild(s);
     } catch (e) {
       setFailed(true);
     }
