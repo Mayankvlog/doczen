@@ -13,6 +13,8 @@ const SUPPRESSED_PATTERNS = [
   'OpaqueResponseBlocking',
   'Affiliatizer()',
   'InstallTrigger is deprecated',
+  'Cookie has been rejected',
+  'cookie has been rejected',
 ];
 
 window.addEventListener('error', (event) => {
