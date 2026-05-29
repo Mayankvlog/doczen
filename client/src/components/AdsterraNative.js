@@ -11,21 +11,30 @@ export default function AdsterraNative() {
       const existing = ref.current.querySelector('script');
       if (existing) return;
 
+      // Use defer for better CSP compliance and async loading
       const s1 = document.createElement('script');
-      s1.text = `atOptions = ${JSON.stringify({
+      s1.text = `window.atOptions = ${JSON.stringify({
         key: 'c53e6e4677b82c7e335cf46167b6321f',
         format: 'iframe',
         height: 250,
         width: 300,
         params: {},
       })};`;
+      s1.defer = true;
       ref.current.appendChild(s1);
 
       const s2 = document.createElement('script');
       s2.src = 'https://www.highperformanceformat.com/c53e6e4677b82c7e335cf46167b6321f/invoke.js';
       s2.async = true;
-      s2.onerror = () => setFailed(true);
-      s2.onload = () => setLoaded(true);
+      s2.defer = true;
+      s2.onerror = (err) => {
+        console.warn('[AdsterraNative] Failed to load ad script:', err);
+        setFailed(true);
+      };
+      s2.onload = () => {
+        console.log('[AdsterraNative] Ad script loaded successfully');
+        setLoaded(true);
+      };
       ref.current.appendChild(s2);
     } catch (e) {
       setFailed(true);
