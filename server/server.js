@@ -1,4 +1,12 @@
-﻿const express = require('express');
+﻿// Global crash handlers — server must NEVER die silently
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION (keeping server alive):', err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('UNHANDLED REJECTION (keeping server alive):', reason);
+});
+
+const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
@@ -113,6 +121,14 @@ app.use((req, res, next) => {
   next();
 });
 
+// DB-health middleware — return 503 immediately instead of hanging when MongoDB is down
+app.use('/api/auth', (req, res, next) => {
+  const { isDbConnected } = require('./config/db');
+  if (!isDbConnected()) {
+    return res.status(503).json({ message: 'Service temporarily unavailable. Database connection is required for authentication.' });
+  }
+  next();
+});
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/pdf', require('./routes/pdf'));
 app.use('/api/history', require('./routes/history'));
