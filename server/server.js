@@ -198,8 +198,11 @@ connectDB().then(() => {
     });
   }
 }).catch((err) => {
-  console.error('Database connection failed:', err);
-  process.exit(1);
+  console.error('Database connection error:', err.message);
+  console.log('Starting server for API availability...');
+  app.listen(PORT, HOST, () => {
+    console.warn(`Server running on http://${HOST}:${PORT} (Database not available)`);
+  });
 });
 
 module.exports = app;
