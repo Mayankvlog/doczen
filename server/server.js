@@ -196,35 +196,31 @@ connectDB().then(() => {
 });
 
 function startServer() {
-  // Check for SSL certificates
+  // Nginx handles SSL termination — Node.js always runs HTTP
+  // HTTPS mode is only attempted in dev when no reverse proxy is present
   const certPath = '/etc/letsencrypt/live/doczen.co.in/fullchain.pem';
   const keyPath = '/etc/letsencrypt/live/doczen.co.in/privkey.pem';
   const hasCerts = fs.existsSync(certPath) && fs.existsSync(keyPath);
 
   if (hasCerts && process.env.NODE_ENV === 'production') {
-    // HTTPS server
-    const httpsOptions = {
-      cert: fs.readFileSync(certPath),
-      key: fs.readFileSync(keyPath),
-      secureOptions: crypto.constants.SSL_OP_NO_TLSv1 | crypto.constants.SSL_OP_NO_TLSv1_1
-    };
-    https.createServer(httpsOptions, app).listen(PORT, HOST, () => {
-      console.log(`✓ Doczen HTTPS server running on https://${HOST}:${PORT}`);
-      console.log(`✓ SSL certificates loaded from ${certPath}`);
-    });
-  } else {
-    // HTTP server (development or missing certs)
-    app.listen(PORT, HOST, () => {
-      if (hasCerts) {
-        console.log(`✓ Doczen HTTP server running on http://${HOST}:${PORT} (SSL available, NODE_ENV not set to production)`);
-      } else {
-        console.log(`⚠ Doczen HTTP server running on http://${HOST}:${PORT} (SSL certificates not found)`);
-        console.log(`⚠ For production, place SSL certificates at:`);
-        console.log(`  - Cert: ${certPath}`);
-        console.log(`  - Key: ${keyPath}`);
-      }
-    });
+    try {
+      const httpsOptions = {
+        cert: fs.readFileSync(certPath),
+        key: fs.readFileSync(keyPath),
+        secureOptions: crypto.constants.SSL_OP_NO_TLSv1 | crypto.constants.SSL_OP_NO_TLSv1_1
+      };
+      https.createServer(httpsOptions, app).listen(PORT, HOST, () => {
+        console.log(`✓ Doczen HTTPS server running on https://${HOST}:${PORT}`);
+      });
+      return;
+    } catch (err) {
+      // Cert read failed (permissions etc.) — fall through to HTTP
+      // Nginx handles SSL anyway, so HTTP is fine
+    }
   }
+  app.listen(PORT, HOST, () => {
+    console.log(`✓ Doczen HTTP server running on http://${HOST}:${PORT} (nginx terminates SSL in production)`);
+  });
 }
 
 module.exports = app;
