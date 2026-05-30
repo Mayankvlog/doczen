@@ -97,6 +97,7 @@ export async function handleToolSubmit(url, formData, fallbackName) {
   const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/api${url}`, {
     method: 'POST',
+    credentials: 'include',
     headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: formData
   });

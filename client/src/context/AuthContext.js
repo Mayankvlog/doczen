@@ -20,22 +20,16 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
       if (token && storedUser) {
+        setUser(JSON.parse(storedUser));
         try {
-          setUser(JSON.parse(storedUser));
           const { data } = await authAPI.refresh();
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data));
           setUser(data);
         } catch {
-          try {
-            const { data } = await authAPI.getProfile();
-            localStorage.setItem('user', JSON.stringify(data));
-            setUser(data);
-          } catch {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            setUser(null);
-          }
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setUser(null);
         }
       }
       setLoading(false);

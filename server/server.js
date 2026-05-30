@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
+const crypto = require('crypto');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 
@@ -112,6 +113,14 @@ app.use((req, res, next) => {
   next();
 });
 
+// DB-health middleware for auth routes — return 503 immediately if DB is down
+app.use('/api/auth', (req, res, next) => {
+  const { isDbConnected } = require('./config/db');
+  if (!isDbConnected()) {
+    return res.status(503).json({ message: 'Service temporarily unavailable. Database connection is required for authentication.' });
+  }
+  next();
+});
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/pdf', require('./routes/pdf'));
 app.use('/api/history', require('./routes/history'));
@@ -176,9 +185,6 @@ connectDB().then(() => {
   startServer();
 }).catch((err) => {
   console.error('Database connection failed:', err);
-  if (process.env.NODE_ENV === 'production') {
-    process.exit(1);
-  }
 });
 
 function startServer() {
@@ -192,7 +198,7 @@ function startServer() {
     const httpsOptions = {
       cert: fs.readFileSync(certPath),
       key: fs.readFileSync(keyPath),
-      secureOptions: require('constants').SSL_OP_NO_TLSv1 | require('constants').SSL_OP_NO_TLSv1_1
+      secureOptions: crypto.constants.SSL_OP_NO_TLSv1 | crypto.constants.SSL_OP_NO_TLSv1_1
     };
     https.createServer(httpsOptions, app).listen(PORT, HOST, () => {
       console.log(`✓ Doczen HTTPS server running on https://${HOST}:${PORT}`);
