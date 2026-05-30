@@ -31,7 +31,12 @@ export default function Login() {
       await login(form.email, form.password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || t('login.error.invalid', 'Invalid email or password.'));
+      const status = err.response?.status;
+      if (status === 503) {
+        setError(t('login.error.serverDown', 'Server is temporarily unavailable. Please try again later.'));
+      } else {
+        setError(err.response?.data?.message || t('login.error.invalid', 'Invalid email or password.'));
+      }
     } finally {
       setLoading(false);
     }
@@ -81,9 +86,14 @@ export default function Login() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                {t('login.password', 'Password')}
-              </label>
+              <div className="flex justify-between items-center mb-1.5">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {t('login.password', 'Password')}
+                </label>
+                <Link to="/forgot-password" className="text-xs font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                  {t('login.forgotPassword', 'Forgot?')}
+                </Link>
+              </div>
               <input
                 id="password"
                 name="password"

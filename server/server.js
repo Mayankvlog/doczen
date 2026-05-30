@@ -42,6 +42,7 @@ cleanupOldFiles();
 setInterval(cleanupOldFiles, 60 * 60 * 1000);
 
 const connectDB = require('./config/db');
+const { isDbConnected } = require('./config/db');
 
 const app = express();
 
@@ -107,7 +108,7 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=()');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https:; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com https:; connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://www.highperformanceformat.com https://protrafficinspector.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://doczen.co.in https://www.doczen.co.in wss://doczen.co.in wss://www.doczen.co.in; frame-src 'self' https://www.highperformanceformat.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com; worker-src 'self' blob:; media-src 'self' blob: https:; object-src 'none'; base-uri 'self'; form-action 'self';     frame-ancestors 'self'; upgrade-insecure-requests;");
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob: data:; style-src 'self' 'unsafe-inline' https: data:; img-src 'self' https: data: blob:; font-src 'self' https: data:; connect-src 'self' https: wss: blob: data:; frame-src 'self' https: blob: data:; worker-src 'self' blob:; media-src 'self' https: blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;");
   next();
 });
 
@@ -168,6 +169,19 @@ const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
 
 connectDB().then(() => {
+  if (!isDbConnected() && process.env.NODE_ENV === 'production') {
+    console.error('CRITICAL: Database connection failed in production mode.');
+    console.error('Auth features (login, register) will not work.');
+  }
+  startServer();
+}).catch((err) => {
+  console.error('Database connection failed:', err);
+  if (process.env.NODE_ENV === 'production') {
+    process.exit(1);
+  }
+});
+
+function startServer() {
   // Check for SSL certificates
   const certPath = '/etc/letsencrypt/live/doczen.co.in/fullchain.pem';
   const keyPath = '/etc/letsencrypt/live/doczen.co.in/privkey.pem';
@@ -181,26 +195,23 @@ connectDB().then(() => {
       secureOptions: require('constants').SSL_OP_NO_TLSv1 | require('constants').SSL_OP_NO_TLSv1_1
     };
     https.createServer(httpsOptions, app).listen(PORT, HOST, () => {
-      console.log(`âœ“ Doczen HTTPS server running on https://${HOST}:${PORT}`);
-      console.log(`âœ“ SSL certificates loaded from ${certPath}`);
+      console.log(`✓ Doczen HTTPS server running on https://${HOST}:${PORT}`);
+      console.log(`✓ SSL certificates loaded from ${certPath}`);
     });
   } else {
     // HTTP server (development or missing certs)
     app.listen(PORT, HOST, () => {
       if (hasCerts) {
-        console.log(`âœ“ Doczen HTTP server running on http://${HOST}:${PORT} (SSL available, NODE_ENV not set to production)`);
+        console.log(`✓ Doczen HTTP server running on http://${HOST}:${PORT} (SSL available, NODE_ENV not set to production)`);
       } else {
-        console.log(`âš  Doczen HTTP server running on http://${HOST}:${PORT} (SSL certificates not found)`);
-        console.log(`âš  For production, place SSL certificates at:`);
+        console.log(`⚠ Doczen HTTP server running on http://${HOST}:${PORT} (SSL certificates not found)`);
+        console.log(`⚠ For production, place SSL certificates at:`);
         console.log(`  - Cert: ${certPath}`);
         console.log(`  - Key: ${keyPath}`);
       }
     });
   }
-}).catch((err) => {
-  console.error('Database connection failed:', err);
-  process.exit(1);
-});
+}
 
 module.exports = app;
 

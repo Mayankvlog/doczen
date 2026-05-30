@@ -44,10 +44,6 @@ const fileSchema = new mongoose.Schema({
     type: Date,
     default: () => new Date(Date.now() + 24 * 60 * 60 * 1000)
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
 }, {
   timestamps: true
 });
