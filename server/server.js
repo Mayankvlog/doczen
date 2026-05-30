@@ -118,13 +118,13 @@ app.use((req, res, next) => {
   }
   
   // Add comprehensive security headers to prevent tracking and fingerprinting issues
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-  res.setHeader('X-XSS-Protection', '1; mode=block');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=()');
-  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob: data:; style-src 'self' 'unsafe-inline' https: data:; img-src 'self' https: data: blob:; font-src 'self' https: data:; connect-src 'self' https: wss: blob: data:; frame-src 'self' https: blob: data: https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com https://zoologyfibre.com https://spendsdetachment.com https://workdeadlinededicate.com https://realizationnewestfangs.com; worker-src 'self' blob:; media-src 'self' https: blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;");
+  //res.setHeader('X-Content-Type-Options', 'nosniff');
+  //res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  //res.setHeader('X-XSS-Protection', '1; mode=block');
+  //res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  //res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=()');
+  //res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  //res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob: data:; style-src 'self' 'unsafe-inline' https: data:; img-src 'self' https: data: blob:; font-src 'self' https: data:; connect-src 'self' https: wss: blob: data:; frame-src 'self' https: blob: data: https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com https://zoologyfibre.com https://spendsdetachment.com https://workdeadlinededicate.com https://realizationnewestfangs.com; worker-src 'self' blob:; media-src 'self' https: blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;");
   next();
 });
 
