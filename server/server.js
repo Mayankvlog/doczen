@@ -42,6 +42,7 @@ cleanupOldFiles();
 setInterval(cleanupOldFiles, 60 * 60 * 1000);
 
 const connectDB = require('./config/db');
+const { isDbConnected } = require('./config/db');
 
 const app = express();
 
@@ -168,6 +169,19 @@ const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
 
 connectDB().then(() => {
+  if (!isDbConnected() && process.env.NODE_ENV === 'production') {
+    console.error('CRITICAL: Database connection failed in production mode.');
+    console.error('Auth features (login, register) will not work.');
+  }
+  startServer();
+}).catch((err) => {
+  console.error('Database connection failed:', err);
+  if (process.env.NODE_ENV === 'production') {
+    process.exit(1);
+  }
+});
+
+function startServer() {
   // Check for SSL certificates
   const certPath = '/etc/letsencrypt/live/doczen.co.in/fullchain.pem';
   const keyPath = '/etc/letsencrypt/live/doczen.co.in/privkey.pem';
@@ -181,29 +195,23 @@ connectDB().then(() => {
       secureOptions: require('constants').SSL_OP_NO_TLSv1 | require('constants').SSL_OP_NO_TLSv1_1
     };
     https.createServer(httpsOptions, app).listen(PORT, HOST, () => {
-      console.log(`âœ“ Doczen HTTPS server running on https://${HOST}:${PORT}`);
-      console.log(`âœ“ SSL certificates loaded from ${certPath}`);
+      console.log(`✓ Doczen HTTPS server running on https://${HOST}:${PORT}`);
+      console.log(`✓ SSL certificates loaded from ${certPath}`);
     });
   } else {
     // HTTP server (development or missing certs)
     app.listen(PORT, HOST, () => {
       if (hasCerts) {
-        console.log(`âœ“ Doczen HTTP server running on http://${HOST}:${PORT} (SSL available, NODE_ENV not set to production)`);
+        console.log(`✓ Doczen HTTP server running on http://${HOST}:${PORT} (SSL available, NODE_ENV not set to production)`);
       } else {
-        console.log(`âš  Doczen HTTP server running on http://${HOST}:${PORT} (SSL certificates not found)`);
-        console.log(`âš  For production, place SSL certificates at:`);
+        console.log(`⚠ Doczen HTTP server running on http://${HOST}:${PORT} (SSL certificates not found)`);
+        console.log(`⚠ For production, place SSL certificates at:`);
         console.log(`  - Cert: ${certPath}`);
         console.log(`  - Key: ${keyPath}`);
       }
     });
   }
-}).catch((err) => {
-  console.error('Database connection error:', err.message);
-  console.log('Starting server for API availability...');
-  app.listen(PORT, HOST, () => {
-    console.warn(`Server running on http://${HOST}:${PORT} (Database not available)`);
-  });
-});
+}
 
 module.exports = app;
 

@@ -56,8 +56,9 @@ export default function ResetPassword() {
         newPassword: form.newPassword
       });
       
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data));
+      const { token: newToken, _id, name, email: userEmail, storageUsed, storageLimit } = response.data;
+      localStorage.setItem('token', newToken);
+      localStorage.setItem('user', JSON.stringify({ _id, name, email: userEmail, storageUsed, storageLimit }));
       
       setMessage(response.data.message || t('resetPassword.success', 'Password reset successfully!'));
       setSuccess(true);
@@ -103,7 +104,7 @@ export default function ResetPassword() {
               </div>
             )}
 
-            {!success && !error?.includes('invalid') ? (
+            {!success && !error?.includes('Invalid or missing reset link') ? (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">

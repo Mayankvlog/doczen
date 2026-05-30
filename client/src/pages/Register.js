@@ -45,7 +45,12 @@ export default function Register() {
       await register(form.name, form.email, form.password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || t('register.error.failed', 'Registration failed. Please try again.'));
+      const status = err.response?.status;
+      if (status === 503) {
+        setError(t('register.error.serverDown', 'Server is temporarily unavailable. Please try again later.'));
+      } else {
+        setError(err.response?.data?.message || t('register.error.failed', 'Registration failed. Please try again.'));
+      }
     } finally {
       setLoading(false);
     }

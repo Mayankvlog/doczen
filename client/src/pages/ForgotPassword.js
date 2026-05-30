@@ -31,7 +31,12 @@ export default function ForgotPassword() {
       setSubmitted(true);
       setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
-      setError(err.response?.data?.message || t('forgotPassword.error.failed', 'Failed to process request.'));
+      const status = err.response?.status;
+      if (status === 503) {
+        setError(t('forgotPassword.error.serverDown', 'Server is temporarily unavailable. Please try again later.'));
+      } else {
+        setError(err.response?.data?.message || t('forgotPassword.error.failed', 'Failed to process request.'));
+      }
     } finally {
       setLoading(false);
     }

@@ -31,7 +31,12 @@ export default function Login() {
       await login(form.email, form.password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || t('login.error.invalid', 'Invalid email or password.'));
+      const status = err.response?.status;
+      if (status === 503) {
+        setError(t('login.error.serverDown', 'Server is temporarily unavailable. Please try again later.'));
+      } else {
+        setError(err.response?.data?.message || t('login.error.invalid', 'Invalid email or password.'));
+      }
     } finally {
       setLoading(false);
     }

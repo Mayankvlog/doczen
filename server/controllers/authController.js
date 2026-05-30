@@ -214,7 +214,7 @@ exports.forgotPassword = async (req, res) => {
     const resetLink = `${process.env.FRONTEND_URL || 'https://www.doczen.co.in'}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
     res.json({ 
       message: 'Password reset link has been sent to your email',
-      resetLink: process.env.NODE_ENV === 'development' ? resetLink : undefined
+      resetLink
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
