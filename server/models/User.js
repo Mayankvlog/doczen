@@ -32,10 +32,6 @@ const userSchema = new mongoose.Schema({
   refreshToken: {
     type: String,
     default: null
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
   }
 }, {
   timestamps: true

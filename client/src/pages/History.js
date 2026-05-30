@@ -65,14 +65,16 @@ export default function History() {
   };
 
   useEffect(() => {
-    fetchHistory(1);
+    fetchHistory(page);
+  }, [page]);
 
+  useEffect(() => {
     const handleFocus = () => {
-      fetchHistory(1);
+      fetchHistory(page);
     };
 
     const handlePageshow = () => {
-      fetchHistory(1);
+      fetchHistory(page);
     };
 
     window.addEventListener("focus", handleFocus);
@@ -82,7 +84,7 @@ export default function History() {
       window.removeEventListener("focus", handleFocus);
       window.removeEventListener("pageshow", handlePageshow);
     };
-  }, []);
+  }, [page]);
 
   const handleClearAll = async () => {
     if (!window.confirm(t('history.confirmClear', 'Are you sure you want to clear all history?'))) {
@@ -130,6 +132,10 @@ export default function History() {
     try {
       await historyAPI.delete(id);
       window.dispatchEvent(new Event("historyCleared"));
+      const remaining = history.filter(item => item._id !== id);
+      if (remaining.length === 0 && page > 1) {
+        setPage(page - 1);
+      }
     } catch (err) {
       if (err.response?.status === 404) {
         window.dispatchEvent(new Event("historyCleared"));

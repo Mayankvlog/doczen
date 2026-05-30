@@ -50,6 +50,9 @@ exports.register = async (req, res) => {
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'All fields are required' });
     }
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters' });
+    }
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Email already registered' });
@@ -64,7 +67,7 @@ exports.register = async (req, res) => {
     setRefreshCookie(res, refreshToken);
     res.status(201).json(userResponse(user, token));
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -73,6 +76,9 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters' });
     }
     const user = await User.findOne({ email });
     if (!user) {
@@ -89,7 +95,7 @@ exports.login = async (req, res) => {
     setRefreshCookie(res, refreshToken);
     res.json(userResponse(user, token));
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -111,7 +117,7 @@ exports.refreshToken = async (req, res) => {
     setRefreshCookie(res, newRefreshToken);
     res.json({ ...userResponse(user, accessToken), message: 'Token refreshed' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -124,7 +130,7 @@ exports.logout = async (req, res) => {
     clearRefreshCookie(res);
     res.json({ message: 'Logged out successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -134,14 +140,13 @@ exports.getProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    await user.save();
     res.json({
       _id: user._id, name: user.name, email: user.email,
       storageUsed: user.storageUsed, storageLimit: user.storageLimit,
       createdAt: user.createdAt
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -159,13 +164,19 @@ exports.updateProfile = async (req, res) => {
       message: 'Profile updated successfully'
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 exports.changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current password and new password are required' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters' });
+    }
     const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -176,10 +187,13 @@ exports.changePassword = async (req, res) => {
     }
     const salt = await bcrypt.genSalt(12);
     user.password = await bcrypt.hash(newPassword, salt);
+    const refreshToken = generateRefreshToken();
+    user.refreshToken = refreshToken;
     await user.save();
+    setRefreshCookie(res, refreshToken);
     res.json({ message: 'Password changed successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
