@@ -72,8 +72,15 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-// Trust Cloudflare proxy - CRITICAL for SSL
-app.set('trust proxy', 1);
+// Trust Cloudflare proxy - CRITICAL for SSL.
+// IMPORTANT: Express does NOT support comma-separated CIDR strings.
+// Use number (1 = trust first proxy), boolean (true), or array of IPs/CIDRs.
+try {
+  app.set('trust proxy', 1);
+} catch (_) {
+  // Never crash on bad trust proxy value
+  app.set('trust proxy', true);
+}
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
