@@ -15,21 +15,32 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const isTokenExpired = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch {
+      return true;
+    }
+  };
+
   useEffect(() => {
     const restoreSession = async () => {
       const token = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
       if (token && storedUser) {
         setUser(JSON.parse(storedUser));
-        try {
-          const { data } = await authAPI.refresh();
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify(data));
-          setUser(data);
-        } catch {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          setUser(null);
+        if (isTokenExpired(token)) {
+          try {
+            const { data } = await authAPI.refresh();
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data));
+            setUser(data);
+          } catch {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setUser(null);
+          }
         }
       }
       setLoading(false);
