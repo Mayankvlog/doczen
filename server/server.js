@@ -265,7 +265,7 @@ Allow: /reset-password
 Disallow: /api/
 Disallow: /admin/
 Disallow: /private/
-Sitemap: https://doczen.co.in/sitemap.xml
+Sitemap: https://www.doczen.co.in/sitemap.xml
 Crawl-delay: 1`;
   res.type('text/plain').send(robotsTxt);
 });
@@ -306,7 +306,7 @@ app.get('/sitemap.xml', (req, res) => {
     { path: '/compare-pdf', priority: '0.6' },
   ];
 
-  const baseUrl = 'https://doczen.co.in';
+  const baseUrl = 'https://www.doczen.co.in';
   const today = new Date().toISOString().split('T')[0];
   
   let sitemapXml = '<?xml version="1.0" encoding="UTF-8"?>\n';

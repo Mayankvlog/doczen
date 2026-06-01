@@ -38,5 +38,5 @@ Allow: /login
 Allow: /register
 Disallow: /api/
 Disallow: /admin/
-Sitemap: https://doczen.co.in/sitemap.xml
+Sitemap: https://www.doczen.co.in/sitemap.xml
 Crawl-delay: 1
