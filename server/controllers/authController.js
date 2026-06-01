@@ -91,7 +91,7 @@ exports.login = async (req, res) => {
     }
     const refreshToken = generateRefreshToken();
     user.refreshToken = refreshToken;
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
     const token = generateAccessToken(user._id);
     setRefreshCookie(res, refreshToken);
     res.json(userResponse(user, token));
@@ -114,7 +114,7 @@ exports.refreshToken = async (req, res) => {
     }
     const newRefreshToken = generateRefreshToken();
     user.refreshToken = newRefreshToken;
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
     const accessToken = generateAccessToken(user._id);
     setRefreshCookie(res, newRefreshToken);
     res.json({ ...userResponse(user, accessToken), message: 'Token refreshed' });
@@ -163,7 +163,7 @@ exports.updateProfile = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
     if (name) user.name = name;
-    const updatedUser = await user.save();
+    const updatedUser = await user.save({ validateModifiedOnly: true });
     res.json({
       _id: updatedUser._id, name: updatedUser.name, email: updatedUser.email,
       message: 'Profile updated successfully'
@@ -217,7 +217,7 @@ exports.forgotPassword = async (req, res) => {
     const resetToken = crypto.randomBytes(32).toString('hex');
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpiry = Date.now() + 30 * 60 * 1000;
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
     const resetLink = `${process.env.FRONTEND_URL || 'https://www.doczen.co.in'}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
     res.json({ 
       message: 'Password reset link has been sent to your email',
