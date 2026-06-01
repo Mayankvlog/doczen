@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -15,6 +15,10 @@ export default function RemoveAnnotations() {
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
   const { t } = useLanguage();
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'remove-annotations' });
+  }, []);
+
   const handleProcess = async () => {
     if (!file) {
       setError(t('tool.selectPdfError', 'Please select a PDF file.'));
@@ -24,6 +28,7 @@ export default function RemoveAnnotations() {
     setLoading(true);
     setResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'remove-annotations' });
 
     try {
       const formData = new FormData();
@@ -33,8 +38,11 @@ export default function RemoveAnnotations() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'cleaned.pdf');
       }
+      gtagEvent('tool_success', { tool_name: 'remove-annotations' });
     } catch (err) {
-      setError(err.message || t('tool.failedRemoveAnnotations', 'Failed to remove annotations. Please try again.'));
+      const msg = err.message || t('tool.failedRemoveAnnotations', 'Failed to remove annotations. Please try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'remove-annotations', error: msg });
     } finally {
       setLoading(false);
     }

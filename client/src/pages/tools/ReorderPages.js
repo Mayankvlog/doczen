@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '../../index';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import AdsterraNative from '../../components/AdsterraNative';
 
@@ -15,6 +15,10 @@ export default function ReorderPages() {
   const [result, setResult] = useState(null);
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
   const { t } = useLanguage();
+
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'reorder-pages' });
+  }, []);
 
   const handleProcess = async () => {
     if (!file) {
@@ -41,6 +45,7 @@ export default function ReorderPages() {
     setLoading(true);
     setResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'reorder-pages' });
 
     try {
       const formData = new FormData();
@@ -51,8 +56,11 @@ export default function ReorderPages() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'reordered.pdf');
       }
+      gtagEvent('tool_success', { tool_name: 'reorder-pages' });
     } catch (err) {
-      setError(err.message || t('tool.reorderError', 'Failed to reorder pages. Please try again.'));
+      const msg = err.message || t('tool.reorderError', 'Failed to reorder pages. Please try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'reorder-pages', error: msg });
     } finally {
       setLoading(false);
     }

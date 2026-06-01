@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { historyAPI } from '../services/api';
+import { historyAPI, gtagEvent } from '../services/api';
 import SEO from '../components/SEO';
 import { useLanguage } from '../index';
 
@@ -33,6 +33,10 @@ const actionColors = {
 export default function Dashboard() {
   const { user, loading: authLoading } = useAuth();
   const { t } = useLanguage();
+
+  useEffect(() => {
+    gtagEvent('page_view', { page_name: 'dashboard' });
+  }, []);
 
   const quickActions = [
     { emoji: '🔗', label: t('dashboard.quick.mergePdf', 'Merge PDF'), path: '/merge-pdf', color: 'bg-indigo-500' },

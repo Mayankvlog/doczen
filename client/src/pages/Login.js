@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SEO from '../components/SEO';
 import { useLanguage } from '../index';
+import { gtagEvent } from '../services/api';
 
 export default function Login() {
   const { login } = useAuth();
@@ -12,6 +13,10 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    gtagEvent('page_view', { page_name: 'login' });
+  }, []);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -29,14 +34,15 @@ export default function Login() {
     setLoading(true);
     try {
       await login(form.email, form.password);
+      gtagEvent('login_success', { method: 'email' });
       navigate('/dashboard');
     } catch (err) {
       const status = err.response?.status;
-      if (status === 503) {
-        setError(t('login.error.serverDown', 'Server is temporarily unavailable. Please try again later.'));
-      } else {
-        setError(err.response?.data?.message || t('login.error.invalid', 'Invalid email or password.'));
-      }
+      const msg = status === 503
+        ? t('login.error.serverDown', 'Server is temporarily unavailable. Please try again later.')
+        : (err.response?.data?.message || t('login.error.invalid', 'Invalid email or password.'));
+      setError(msg);
+      gtagEvent('login_error', { method: 'email', error: msg });
     } finally {
       setLoading(false);
     }

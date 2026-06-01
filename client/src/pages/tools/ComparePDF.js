@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit } from '../../services/api';
+import { handleToolSubmit, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -15,6 +15,10 @@ export default function ComparePDF() {
   const [comparison, setComparison] = useState(null);
   const { t } = useLanguage();
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'compare-pdf' });
+  }, []);
+
   const handleProcess = async () => {
     if (!file1 || !file2) {
       setError(t('tool.selectBothPdfs', 'Please select both PDF files to compare.'));
@@ -23,14 +27,18 @@ export default function ComparePDF() {
     setError('');
     setLoading(true);
     setComparison(null);
+    gtagEvent('tool_process', { tool_name: 'compare-pdf' });
     try {
       const formData = new FormData();
       formData.append('files', file1);
       formData.append('files', file2);
       const data = await handleToolSubmit('/pdf/compare', formData);
       setComparison(data);
+      gtagEvent('tool_success', { tool_name: 'compare-pdf' });
     } catch (err) {
-      setError(err.message || t('tool.compareError', 'Failed to compare PDFs. Please try again.'));
+      const msg = err.message || t('tool.compareError', 'Failed to compare PDFs. Please try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'compare-pdf', error: msg });
     } finally {
       setLoading(false);
     }

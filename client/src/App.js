@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from './context/AuthContext';
@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import Banner728x90 from './components/Banner728x90';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import { gtagPageView, gtagConsent } from './services/api';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -135,6 +136,7 @@ function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    gtagPageView(pathname);
   }, [pathname]);
   return null;
 }
@@ -196,12 +198,80 @@ function AppContent() {
   );
 }
 
+const CONSENT_KEY = 'doczen_consent';
+
+function getStoredConsent() {
+  const stored = localStorage.getItem(CONSENT_KEY);
+  if (stored === 'accepted') return 'accepted';
+  if (stored === 'rejected') return 'rejected';
+  return null;
+}
+
+function CookieConsent() {
+  const [consent, setConsent] = useState(getStoredConsent);
+
+  const handleAccept = useCallback(() => {
+    localStorage.setItem(CONSENT_KEY, 'accepted');
+    setConsent('accepted');
+    gtagConsent({
+      analytics_storage: 'granted',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+    });
+  }, []);
+
+  const handleReject = useCallback(() => {
+    localStorage.setItem(CONSENT_KEY, 'rejected');
+    setConsent('rejected');
+    gtagConsent({
+      analytics_storage: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+    });
+  }, []);
+
+  if (consent) return null;
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 animate-fade-in-up">
+      <div className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-xl shadow-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="flex-1 text-sm text-gray-700">
+          <span className="font-semibold text-gray-900">Cookie Consent</span>
+          <span className="ml-1">
+            We use cookies to analyze site usage and improve your experience. You can choose to accept or reject analytics cookies.
+          </span>
+          <a href="/privacy-policy" className="text-indigo-600 hover:text-indigo-800 underline ml-1 whitespace-nowrap">
+            Learn more
+          </a>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={handleReject}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+          >
+            Reject
+          </button>
+          <button
+            onClick={handleAccept}
+            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
+          >
+            Accept
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   return (
     <HelmetProvider>
     <AuthProvider>
     <ToastProvider>
       <AppContent />
+      <CookieConsent />
     </ToastProvider>
     </AuthProvider>
     </HelmetProvider>

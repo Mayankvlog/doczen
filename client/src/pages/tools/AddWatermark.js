@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -15,6 +15,10 @@ export default function AddWatermark() {
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
+
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'add-watermark' });
+  }, []);
 
   const handleProcess = async () => {
     if (!file) {
@@ -29,6 +33,7 @@ export default function AddWatermark() {
     setLoading(true);
     setResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'add-watermark' });
 
     try {
       const formData = new FormData();
@@ -39,8 +44,11 @@ export default function AddWatermark() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'watermarked.pdf');
       }
+      gtagEvent('tool_success', { tool_name: 'add-watermark' });
     } catch (err) {
-      setError(err.message || t('tool.addWatermarkError', 'Failed to add watermark. Please try again.'));
+      const msg = err.message || t('tool.addWatermarkError', 'Failed to add watermark. Please try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'add-watermark', error: msg });
     } finally {
       setLoading(false);
     }

@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -16,28 +16,35 @@ export default function EditPDF() {
   const [editText, setEditText] = useState('');
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'edit-pdf' });
+  }, []);
+
   const handleProcess = async () => {
-    if (!file) return;
-    setLoading(true);
+    if (!file) {
+      setError(t('tool.selectPdfError', 'Please select a PDF file.'));
+      return;
+    }
     setError('');
+    setLoading(true);
     setResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'edit-pdf' });
 
     try {
-      const edits = editText.trim()
-        ? [{ type: 'text', text: editText.trim(), pageIndex: 0, x: 50, y: 50 }]
-        : [{ type: 'text', text: 'Edited', pageIndex: 0, x: 50, y: 50 }];
-
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('edits', JSON.stringify(edits));
+      formData.append('edits', JSON.stringify({ text: editText }));
       const data = await handleToolSubmit('/pdf/edit-pdf', formData, 'edited.pdf');
       setResult(data);
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'edited.pdf');
       }
+      gtagEvent('tool_success', { tool_name: 'edit-pdf' });
     } catch (err) {
-      setError(err.message || t('tool.editError', 'Failed to edit PDF.'));
+      const msg = err.message || t('tool.editError', 'Failed to edit PDF.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'edit-pdf', error: msg });
     } finally {
       setLoading(false);
     }

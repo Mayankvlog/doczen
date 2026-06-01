@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { useDownloadHandler } from '../../services/api';
+import { useDownloadHandler, gtagEvent } from '../../services/api';
 const API_BASE = process.env.REACT_APP_API_URL || '';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
@@ -17,6 +17,10 @@ export default function HTMLToPDF() {
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
   const { t } = useLanguage();
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'html-to-pdf' });
+  }, []);
+
   const handleProcess = async () => {
     if (!content.trim()) {
       setError(t('tool.enterContentToConvert', 'Please enter HTML or text content to convert.'));
@@ -26,6 +30,7 @@ export default function HTMLToPDF() {
     setLoading(true);
     setResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'html-to-pdf' });
 
     try {
       const token = localStorage.getItem('token');
@@ -52,8 +57,11 @@ export default function HTMLToPDF() {
 
       setDownload(blobUrl, filename);
       setResult({ success: true, filename });
+      gtagEvent('tool_success', { tool_name: 'html-to-pdf' });
     } catch (err) {
-      setError(err.message || t('tool.failedConvertToPdf', 'Failed to convert to PDF. Please try again.'));
+      const msg = err.message || t('tool.failedConvertToPdf', 'Failed to convert to PDF. Please try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'html-to-pdf', error: msg });
     } finally {
       setLoading(false);
     }

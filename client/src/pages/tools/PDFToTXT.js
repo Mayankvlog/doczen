@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '../../index';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import AdsterraNative from '../../components/AdsterraNative';
 
@@ -15,10 +15,15 @@ export default function PDFToTXT() {
   const [error, setError] = useState('');
   const { t } = useLanguage();
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'pdf-to-txt' });
+  }, []);
+
   const handleProcess = async () => {
     if (!file) return;
     setLoading(true);
     setError('');
+    gtagEvent('tool_process', { tool_name: 'pdf-to-txt' });
 
     try {
       const formData = new FormData();
@@ -28,8 +33,11 @@ export default function PDFToTXT() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'extracted.txt');
       }
+      gtagEvent('tool_success', { tool_name: 'pdf-to-txt' });
     } catch (err) {
-      setError(err.message || t('tool.textExtractionFailed', 'Text extraction failed. Try again.'));
+      const msg = err.message || t('tool.textExtractionFailed', 'Text extraction failed. Try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'pdf-to-txt', error: msg });
     } finally {
       setLoading(false);
     }

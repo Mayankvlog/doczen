@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -16,6 +16,10 @@ export default function SignPDF() {
   const [signatureText, setSignatureText] = useState('');
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'sign-pdf' });
+  }, []);
+
   const handleProcess = async () => {
     if (!file) return;
     if (!signatureText.trim()) {
@@ -26,6 +30,7 @@ export default function SignPDF() {
     setError('');
     setResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'sign-pdf' });
 
     try {
       const signature = { text: signatureText.trim(), pageIndex: 0 };
@@ -37,8 +42,11 @@ export default function SignPDF() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'signed.pdf');
       }
+      gtagEvent('tool_success', { tool_name: 'sign-pdf' });
     } catch (err) {
-      setError(err.message || t('tool.signError', 'Failed to sign PDF.'));
+      const msg = err.message || t('tool.signError', 'Failed to sign PDF.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'sign-pdf', error: msg });
     } finally {
       setLoading(false);
     }

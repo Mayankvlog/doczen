@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -15,6 +15,10 @@ export default function FlattenPDF() {
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
   const { t } = useLanguage();
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'flatten-pdf' });
+  }, []);
+
   const handleProcess = async () => {
     if (!file) {
       setError(t('tool.selectPdfFlatten', 'Please select a PDF file to flatten.'));
@@ -24,6 +28,7 @@ export default function FlattenPDF() {
     setLoading(true);
     setResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'flatten-pdf' });
 
     try {
       const formData = new FormData();
@@ -33,8 +38,11 @@ export default function FlattenPDF() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'flattened.pdf');
       }
+      gtagEvent('tool_success', { tool_name: 'flatten-pdf' });
     } catch (err) {
-      setError(err.message || t('tool.failedFlatten', 'Failed to flatten PDF. Please try again.'));
+      const msg = err.message || t('tool.failedFlatten', 'Failed to flatten PDF. Please try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'flatten-pdf', error: msg });
     } finally {
       setLoading(false);
     }

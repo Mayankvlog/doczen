@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -22,6 +22,10 @@ export default function RemoveWatermark() {
     { value: 'text', label: t('tool.modeText', 'Text'), description: t('tool.modeTextDesc', 'Target text-based watermarks only') },
   ];
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'remove-watermark' });
+  }, []);
+
   const handleProcess = async () => {
     if (!file) {
       setError(t('tool.selectPdfRemoveWatermark', 'Please select a PDF file to remove watermark from.'));
@@ -32,6 +36,7 @@ export default function RemoveWatermark() {
     setResult(null);
     setRemovalResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'remove-watermark' });
 
     try {
       const formData = new FormData();
@@ -44,6 +49,7 @@ export default function RemoveWatermark() {
         setRemovalResult({ status: 'removed', pagesModified: data.pagesModified });
         setDownload(data.blobUrl, data.filename || 'watermark_removed.pdf');
       }
+      gtagEvent('tool_success', { tool_name: 'remove-watermark' });
     } catch (err) {
       const msg = err.message || '';
       if (msg.includes('not removable') || msg.includes('flattened') || msg.includes('embedded')) {
@@ -51,6 +57,7 @@ export default function RemoveWatermark() {
       } else {
         setError(msg || t('tool.watermarkRemoveError', 'Failed to remove watermark. Please try again.'));
       }
+      gtagEvent('tool_error', { tool_name: 'remove-watermark', error: msg });
     } finally {
       setLoading(false);
     }

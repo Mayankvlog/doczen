@@ -4,9 +4,14 @@ import ToolCard from '../components/ToolCard';
 import AdsterraNative from '../components/AdsterraNative';
 import SEO from '../components/SEO';
 import { useLanguage } from '../index';
+import { gtagEvent } from '../services/api';
 
 export default function Home() {
   const { t } = useLanguage();
+
+  useEffect(() => {
+    gtagEvent('page_view', { page_name: 'home' });
+  }, []);
   const tools = [
     { emoji: '🔗', color: 'from-indigo-500 to-purple-600', title: t('tool.mergePdf', 'Merge PDF'), desc: t('tool.mergePdfDesc', 'Combine multiple PDFs into one file instantly.'), path: '/merge-pdf' },
     { emoji: '✂️', color: 'from-blue-500 to-cyan-600', title: t('tool.splitPdf', 'Split PDF'), desc: t('tool.splitPdfDesc', 'Split a PDF into separate documents by pages.'), path: '/split-pdf' },

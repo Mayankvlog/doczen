@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '../../index';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import AdsterraNative from '../../components/AdsterraNative';
 
@@ -15,10 +15,15 @@ export default function PDFToWord() {
   const [error, setError] = useState('');
   const { t } = useLanguage();
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'pdf-to-word' });
+  }, []);
+
   const handleProcess = async () => {
     if (!file) return;
     setLoading(true);
     setError('');
+    gtagEvent('tool_process', { tool_name: 'pdf-to-word' });
 
     try {
       const formData = new FormData();
@@ -28,9 +33,11 @@ export default function PDFToWord() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'converted.docx');
       }
+      gtagEvent('tool_success', { tool_name: 'pdf-to-word' });
     } catch (err) {
       const msg = err.message || t('tool.genericError', 'Something went wrong.');
       setError(msg);
+      gtagEvent('tool_error', { tool_name: 'pdf-to-word', error: msg });
     } finally {
       setLoading(false);
     }

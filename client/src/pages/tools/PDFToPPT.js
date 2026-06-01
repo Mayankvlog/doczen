@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -15,10 +15,15 @@ export default function PDFToPPT() {
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'pdf-to-ppt' });
+  }, []);
+
   const handleProcess = async () => {
     if (!file) return;
     setLoading(true);
     setError('');
+    gtagEvent('tool_process', { tool_name: 'pdf-to-ppt' });
 
     try {
       const formData = new FormData();
@@ -29,9 +34,11 @@ export default function PDFToPPT() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'converted.pptx');
       }
+      gtagEvent('tool_success', { tool_name: 'pdf-to-ppt' });
     } catch (err) {
       const msg = err.message || t('tool.convertError', 'Conversion failed. Please try again.');
       setError(msg);
+      gtagEvent('tool_error', { tool_name: 'pdf-to-ppt', error: msg });
     } finally {
       setLoading(false);
     }

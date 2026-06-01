@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -15,6 +15,10 @@ export default function UnlockPDF() {
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
+
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'unlock-pdf' });
+  }, []);
 
   const handleProcess = async () => {
     if (!file) {
@@ -29,6 +33,7 @@ export default function UnlockPDF() {
     setLoading(true);
     setResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'unlock-pdf' });
 
     try {
       const formData = new FormData();
@@ -39,8 +44,11 @@ export default function UnlockPDF() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'unlocked.pdf');
       }
+      gtagEvent('tool_success', { tool_name: 'unlock-pdf' });
     } catch (err) {
-      setError(err.message || t('tool.unlockError', 'Failed to unlock PDF. Please check your password and try again.'));
+      const msg = err.message || t('tool.unlockError', 'Failed to unlock PDF. Please check your password and try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'unlock-pdf', error: msg });
     } finally {
       setLoading(false);
     }

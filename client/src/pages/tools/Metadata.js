@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -21,6 +21,10 @@ export default function Metadata() {
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
   const { t } = useLanguage();
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'metadata' });
+  }, []);
+
   const handleRead = async () => {
     if (!file) {
       setError(t('tool.selectPdfError', 'Please select a PDF file.'));
@@ -31,13 +35,17 @@ export default function Metadata() {
     setResult(null);
     clearDownload();
     setMetadataData(null);
+    gtagEvent('tool_process', { tool_name: 'metadata', action: 'read' });
     try {
       const formData = new FormData();
       formData.append('file', file);
       const data = await handleToolSubmit('/pdf/read-metadata', formData);
       setMetadataData(data.metadata);
+      gtagEvent('tool_success', { tool_name: 'metadata', action: 'read' });
     } catch (err) {
-      setError(err.message || t('tool.metadataReadError', 'Failed to read metadata. Please try again.'));
+      const msg = err.message || t('tool.metadataReadError', 'Failed to read metadata. Please try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'metadata', action: 'read', error: msg });
     } finally {
       setLoading(false);
     }
@@ -52,6 +60,7 @@ export default function Metadata() {
     setLoading(true);
     setResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'metadata', action: 'write' });
 
     try {
       const formData = new FormData();
@@ -65,8 +74,11 @@ export default function Metadata() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'metadata.pdf');
       }
+      gtagEvent('tool_success', { tool_name: 'metadata', action: 'write' });
     } catch (err) {
-      setError(err.message || t('tool.metadataWriteError', 'Failed to write metadata. Please try again.'));
+      const msg = err.message || t('tool.metadataWriteError', 'Failed to write metadata. Please try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'metadata', action: 'write', error: msg });
     } finally {
       setLoading(false);
     }

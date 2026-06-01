@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '../../index';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import AdsterraNative from '../../components/AdsterraNative';
 
@@ -16,6 +16,10 @@ export default function ExtractText() {
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
   const { t } = useLanguage();
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'extract-text' });
+  }, []);
+
   const handleProcess = async () => {
     if (!file) {
       setError(t('tool.selectPdfError', 'Please select a PDF file.'));
@@ -26,6 +30,7 @@ export default function ExtractText() {
     setExtractedText('');
     setResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'extract-text' });
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -42,8 +47,11 @@ export default function ExtractText() {
           setDownload(objectUrl, data.fileName || data.originalName || 'extracted-text.txt');
         }
       }
+      gtagEvent('tool_success', { tool_name: 'extract-text' });
     } catch (err) {
-      setError(err.message || t('tool.extractTextError', 'Failed to extract text. Please try again.'));
+      const msg = err.message || t('tool.extractTextError', 'Failed to extract text. Please try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'extract-text', error: msg });
     } finally {
       setLoading(false);
     }

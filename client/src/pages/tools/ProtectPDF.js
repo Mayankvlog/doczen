@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -16,6 +16,10 @@ export default function ProtectPDF() {
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
+
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'protect-pdf' });
+  }, []);
 
   const handleProcess = async () => {
     if (!file) {
@@ -38,6 +42,7 @@ export default function ProtectPDF() {
     setLoading(true);
     setResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'protect-pdf' });
 
     try {
       const formData = new FormData();
@@ -48,8 +53,11 @@ export default function ProtectPDF() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'protected.pdf');
       }
+      gtagEvent('tool_success', { tool_name: 'protect-pdf' });
     } catch (err) {
-      setError(err.message || t('tool.protectError', 'Failed to protect PDF. Please try again.'));
+      const msg = err.message || t('tool.protectError', 'Failed to protect PDF. Please try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'protect-pdf', error: msg });
     } finally {
       setLoading(false);
     }

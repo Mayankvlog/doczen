@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SEO from '../components/SEO';
 import { useLanguage } from '../index';
+import { gtagEvent } from '../services/api';
 
 export default function Register() {
   const { register } = useAuth();
@@ -12,6 +13,10 @@ export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    gtagEvent('page_view', { page_name: 'register' });
+  }, []);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -43,14 +48,15 @@ export default function Register() {
     setLoading(true);
     try {
       await register(form.name, form.email, form.password);
+      gtagEvent('register_success', { method: 'email' });
       navigate('/dashboard');
     } catch (err) {
       const status = err.response?.status;
-      if (status === 503) {
-        setError(t('register.error.serverDown', 'Server is temporarily unavailable. Please try again later.'));
-      } else {
-        setError(err.response?.data?.message || t('register.error.failed', 'Registration failed. Please try again.'));
-      }
+      const msg = status === 503
+        ? t('register.error.serverDown', 'Server is temporarily unavailable. Please try again later.')
+        : (err.response?.data?.message || t('register.error.failed', 'Registration failed. Please try again.'));
+      setError(msg);
+      gtagEvent('register_error', { method: 'email', error: msg });
     } finally {
       setLoading(false);
     }

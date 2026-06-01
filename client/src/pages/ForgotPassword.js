@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { authAPI } from '../services/api';
+import { authAPI, gtagEvent } from '../services/api';
 import SEO from '../components/SEO';
 import { useLanguage } from '../index';
 
@@ -13,6 +13,10 @@ export default function ForgotPassword() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    gtagEvent('page_view', { page_name: 'forgot-password' });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,14 +33,15 @@ export default function ForgotPassword() {
       const response = await authAPI.forgotPassword({ email });
       setMessage(response.data.message || t('forgotPassword.success', 'Password reset link has been sent to your email.'));
       setSubmitted(true);
+      gtagEvent('forgot_password_success', {});
       setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
       const status = err.response?.status;
-      if (status === 503) {
-        setError(t('forgotPassword.error.serverDown', 'Server is temporarily unavailable. Please try again later.'));
-      } else {
-        setError(err.response?.data?.message || t('forgotPassword.error.failed', 'Failed to process request.'));
-      }
+      const msg = status === 503
+        ? t('forgotPassword.error.serverDown', 'Server is temporarily unavailable. Please try again later.')
+        : (err.response?.data?.message || t('forgotPassword.error.failed', 'Failed to process request.'));
+      setError(msg);
+      gtagEvent('forgot_password_error', { error: msg });
     } finally {
       setLoading(false);
     }

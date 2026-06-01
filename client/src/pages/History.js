@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { historyAPI } from '../services/api';
+import { historyAPI, gtagEvent } from '../services/api';
 import SEO from '../components/SEO';
 import { useLanguage } from '../index';
 
 export default function History() {
   const { lang, t } = useLanguage();
+
+  useEffect(() => {
+    gtagEvent('page_view', { page_name: 'history' });
+  }, []);
 
   const actionLabels = {
     merge: t('nav.tools.merge', 'Merge PDF'),

@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -15,10 +15,15 @@ export default function PDFToExcel() {
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'pdf-to-excel' });
+  }, []);
+
   const handleProcess = async () => {
     if (!file) return;
     setLoading(true);
     setError('');
+    gtagEvent('tool_process', { tool_name: 'pdf-to-excel' });
 
     try {
       const formData = new FormData();
@@ -28,9 +33,11 @@ export default function PDFToExcel() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'converted.xlsx');
       }
+      gtagEvent('tool_success', { tool_name: 'pdf-to-excel' });
     } catch (err) {
       const msg = err.message || t('tool.genericError', 'Something went wrong.');
       setError(msg);
+      gtagEvent('tool_error', { tool_name: 'pdf-to-excel', error: msg });
     } finally {
       setLoading(false);
     }

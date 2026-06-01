@@ -546,4 +546,30 @@ export const historyAPI = {
   getStats: () => api.get('/history/stats/daily'),
 };
 
+const GA_MEASUREMENT_ID = process.env.REACT_APP_GA_MEASUREMENT_ID;
+
+export function gtagPageView(path) {
+  try {
+    if (typeof window.gtag !== 'function' || !GA_MEASUREMENT_ID) return;
+    window.gtag('config', GA_MEASUREMENT_ID, {
+      page_path: path,
+      anonymize_ip: true,
+    });
+  } catch (_) {}
+}
+
+export function gtagEvent(action, params = {}) {
+  try {
+    if (typeof window.gtag !== 'function' || !GA_MEASUREMENT_ID) return;
+    window.gtag('event', action, params);
+  } catch (_) {}
+}
+
+export function gtagConsent(consent) {
+  try {
+    if (typeof window.gtag !== 'function') return;
+    window.gtag('consent', 'update', consent);
+  } catch (_) {}
+}
+
 export default api;

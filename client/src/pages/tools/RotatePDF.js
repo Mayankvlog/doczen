@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
@@ -22,6 +22,10 @@ export default function RotatePDF() {
     { label: '270\u00B0', value: 270 },
   ];
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'rotate-pdf' });
+  }, []);
+
   const handleProcess = async () => {
     if (!file) {
       setError(t('tool.selectPdfRotate', 'Please select a PDF file to rotate.'));
@@ -31,6 +35,7 @@ export default function RotatePDF() {
     setLoading(true);
     setResult(null);
     clearDownload();
+    gtagEvent('tool_process', { tool_name: 'rotate-pdf', degrees });
 
     try {
       const formData = new FormData();
@@ -41,8 +46,11 @@ export default function RotatePDF() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'rotated.pdf');
       }
+      gtagEvent('tool_success', { tool_name: 'rotate-pdf' });
     } catch (err) {
-      setError(err.message || t('tool.rotateError', 'Failed to rotate PDF. Please try again.'));
+      const msg = err.message || t('tool.rotateError', 'Failed to rotate PDF. Please try again.');
+      setError(msg);
+      gtagEvent('tool_error', { tool_name: 'rotate-pdf', error: msg });
     } finally {
       setLoading(false);
     }

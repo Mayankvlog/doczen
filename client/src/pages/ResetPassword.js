@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { authAPI } from '../services/api';
+import { authAPI, gtagEvent } from '../services/api';
 import SEO from '../components/SEO';
 import { useLanguage } from '../index';
 
@@ -19,6 +19,7 @@ export default function ResetPassword() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
+    gtagEvent('page_view', { page_name: 'reset-password' });
     if (!token || !email) {
       setError(t('resetPassword.error.invalidLink', 'Invalid or missing reset link parameters.'));
     }
@@ -62,10 +63,13 @@ export default function ResetPassword() {
       
       setMessage(response.data.message || t('resetPassword.success', 'Password reset successfully!'));
       setSuccess(true);
+      gtagEvent('reset_password_success', {});
       
       setTimeout(() => navigate('/dashboard'), 2000);
     } catch (err) {
-      setError(err.response?.data?.message || t('resetPassword.error.failed', 'Failed to reset password.'));
+      const msg = err.response?.data?.message || t('resetPassword.error.failed', 'Failed to reset password.');
+      setError(msg);
+      gtagEvent('reset_password_error', { error: msg });
     } finally {
       setLoading(false);
     }

@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
-import { handleToolSubmit, useDownloadHandler } from '../../services/api';
+import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import { useToast } from '../../context/ToastContext';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
@@ -18,10 +18,15 @@ export default function MergePDF() {
   const { downloadUrl, isReady, setDownload, clearDownload, handleDownloadAgain } = useDownloadHandler();
   const [progress, setProgress] = useState(null);
 
+  useEffect(() => {
+    gtagEvent('tool_view', { tool_name: 'merge-pdf' });
+  }, []);
+
   const handleProcess = async () => {
     if (files.length < 2) {
-      setError(t('tool.selectPdfs', 'Please select at least 2 PDF files to merge.'));
-      toast.error(t('tool.selectPdfs', 'Please select at least 2 PDF files to merge.'));
+      const msg = t('tool.selectPdfs', 'Please select at least 2 PDF files to merge.');
+      setError(msg);
+      toast.error(msg);
       return;
     }
     setError('');
@@ -29,6 +34,7 @@ export default function MergePDF() {
     setResult(null);
     clearDownload();
     setProgress(0);
+    gtagEvent('tool_process', { tool_name: 'merge-pdf', file_count: files.length });
 
     try {
       const formData = new FormData();
@@ -39,10 +45,12 @@ export default function MergePDF() {
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'merged.pdf');
       }
+      gtagEvent('tool_success', { tool_name: 'merge-pdf' });
     } catch (err) {
       const msg = err.message || t('tool.mergeError', 'Failed to merge PDFs. Please try again.');
       setError(msg);
       toast.error(msg);
+      gtagEvent('tool_error', { tool_name: 'merge-pdf', error: msg });
     } finally {
       setLoading(false);
       setProgress(null);
