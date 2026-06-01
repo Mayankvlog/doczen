@@ -157,6 +157,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
 
 // CSRF token generation - sets a non-httpOnly cookie for client to read
+// MUST come after cookie-parser so it can check if token already exists
 const { csrfGenerateToken } = require('./middleware/csrf');
 app.use(csrfGenerateToken);
 
