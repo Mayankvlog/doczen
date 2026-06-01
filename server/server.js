@@ -14,6 +14,9 @@ const https = require('https');
 const crypto = require('crypto');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const envPath = path.join(__dirname, '../.env');
 const envResult = dotenv.config({ path: envPath });
@@ -72,6 +75,50 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
+// ✅ PHASE 1 FIX: Add compression middleware for gzip (30-40% smaller transfers)
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+  },
+  level: 6,
+  threshold: 1024 // Only compress responses larger than 1KB
+}));
+
+// ✅ PHASE 0 FIX: Apply helmet for security headers
+app.use(helmet({
+  contentSecurityPolicy: false, // We set custom CSP below
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
+}));
+
+// ✅ PHASE 0 FIX: Rate limiting middleware - Prevent brute force attacks
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again after 15 minutes'
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 auth attempts per windowMs
+  message: 'Too many login attempts, please try again after 15 minutes'
+});
+
+// Apply rate limiting to all requests
+app.use('/api/', limiter);
+
+// Apply stricter rate limiting to auth endpoints
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+app.use('/api/auth/forgot-password', authLimiter);
+app.use('/api/auth/reset-password', authLimiter);
+
 // Trust Cloudflare proxy - CRITICAL for SSL.
 // IMPORTANT: Express does NOT support comma-separated CIDR strings.
 // Use number (1 = trust first proxy), boolean (true), or array of IPs/CIDRs.
@@ -103,7 +150,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Security middleware
+// Security middleware - PHASE 0 CRITICAL FIX
 app.use((req, res, next) => {
   // Prevent server from being accessed via unexpected hostnames (anti-DNS-rebinding)
   const allowedHostSuffixes = ['doczen.co.in', 'localhost', '127.0.0.1'];
@@ -117,14 +164,35 @@ app.use((req, res, next) => {
     return res.status(426).json({ error: 'HTTPS required' });
   }
   
-  // Add comprehensive security headers to prevent tracking and fingerprinting issues
-  //res.setHeader('X-Content-Type-Options', 'nosniff');
-  //res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-  //res.setHeader('X-XSS-Protection', '1; mode=block');
-  //res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  //res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=()');
-  //res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  //res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob: data:; style-src 'self' 'unsafe-inline' https: data:; img-src 'self' https: data: blob:; font-src 'self' https: data:; connect-src 'self' https: wss: blob: data:; frame-src 'self' https: blob: data: https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com https://zoologyfibre.com https://spendsdetachment.com https://workdeadlinededicate.com https://realizationnewestfangs.com; worker-src 'self' blob:; media-src 'self' https: blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;");
+  // ✅ SECURITY HEADERS - NOW ENABLED (P0 CRITICAL FIX)
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=()');
+  
+  // HSTS - Enforce HTTPS
+  if (process.env.NODE_ENV === 'production') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  }
+  
+  // CSP - ONLY safe sources (NO malvertising, NO unsafe-inline for scripts)
+  res.setHeader('Content-Security-Policy', 
+    "default-src 'self'; " +
+    "script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com 'nonce-doczen'; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+    "img-src 'self' https: data: blob:; " +
+    "font-src 'self' https://fonts.gstatic.com data:; " +
+    "connect-src 'self' https: wss: https://www.google-analytics.com https://www.googletagmanager.com; " +
+    "frame-src 'self' https:; " +
+    "worker-src 'self' blob:; " +
+    "media-src 'self' https: blob:; " +
+    "object-src 'none'; " +
+    "base-uri 'self'; " +
+    "form-action 'self'; " +
+    "upgrade-insecure-requests;"
+  );
+  
   next();
 });
 

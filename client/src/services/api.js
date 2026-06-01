@@ -565,6 +565,90 @@ export function gtagEvent(action, params = {}) {
   } catch (_) {}
 }
 
+// ✅ PHASE 1 FIX: GA4 Conversion Events for Tool Tracking & User Funnel
+/**
+ * Track tool completion events (PDF processing successful)
+ * Used to measure conversion metrics for each tool
+ */
+export function gtagToolCompletion(toolName, fileSize = 0) {
+  try {
+    if (typeof window.gtag !== 'function' || !GA_MEASUREMENT_ID) return;
+    window.gtag('event', 'tool_completion', {
+      tool_name: toolName,
+      file_size_mb: (fileSize / 1024 / 1024).toFixed(2),
+      timestamp: new Date().toISOString(),
+      engagement_time_msec: 100
+    });
+  } catch (_) {}
+}
+
+/**
+ * Track tool error events for debugging and user experience
+ */
+export function gtagToolError(toolName, errorMessage) {
+  try {
+    if (typeof window.gtag !== 'function' || !GA_MEASUREMENT_ID) return;
+    window.gtag('event', 'tool_error', {
+      tool_name: toolName,
+      error_message: errorMessage.substring(0, 100),
+      timestamp: new Date().toISOString()
+    });
+  } catch (_) {}
+}
+
+/**
+ * Track user registration (funnel event)
+ */
+export function gtagUserRegistration() {
+  try {
+    if (typeof window.gtag !== 'function' || !GA_MEASUREMENT_ID) return;
+    window.gtag('event', 'sign_up', {
+      method: 'form',
+      timestamp: new Date().toISOString()
+    });
+  } catch (_) {}
+}
+
+/**
+ * Track user login (funnel event)
+ */
+export function gtagUserLogin() {
+  try {
+    if (typeof window.gtag !== 'function' || !GA_MEASUREMENT_ID) return;
+    window.gtag('event', 'login', {
+      method: 'form',
+      timestamp: new Date().toISOString()
+    });
+  } catch (_) {}
+}
+
+/**
+ * Track first tool usage (funnel event for new users)
+ */
+export function gtagFirstToolUsage(toolName) {
+  try {
+    if (typeof window.gtag !== 'function' || !GA_MEASUREMENT_ID) return;
+    window.gtag('event', 'first_tool_usage', {
+      tool_name: toolName,
+      timestamp: new Date().toISOString()
+    });
+  } catch (_) {}
+}
+
+/**
+ * Track file download completion
+ */
+export function gtagDownloadComplete(toolName, fileSize = 0) {
+  try {
+    if (typeof window.gtag !== 'function' || !GA_MEASUREMENT_ID) return;
+    window.gtag('event', 'download', {
+      file_name: toolName,
+      file_size_mb: (fileSize / 1024 / 1024).toFixed(2),
+      timestamp: new Date().toISOString()
+    });
+  } catch (_) {}
+}
+
 export function gtagConsent(consent) {
   try {
     if (typeof window.gtag !== 'function') return;

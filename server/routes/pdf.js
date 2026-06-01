@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { upload } = require('../middleware/upload');
 const { protect, optionalAuth } = require('../middleware/auth');
+const { csrfCheckToken } = require('../middleware/csrf');
 
 const {
   merge, split, compress, rotate, protect: protectPdf,
