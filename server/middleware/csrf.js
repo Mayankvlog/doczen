@@ -1,37 +1,37 @@
-const csrf = require('csurf');
-const cookieParser = require('cookie-parser');
+const crypto = require('crypto');
 
-// ✅ PHASE 0 FIX: CSRF protection middleware
+const COOKIE_NAME = 'csrf_token';
+const HEADER_NAME = 'x-csrf-token';
 
-// CSRF protection using cookies
-const csrfProtection = csrf({ 
-  cookie: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'Lax',
-    path: '/'
-  }
-});
+const generateToken = () => crypto.randomUUID();
 
-// Middleware to generate CSRF token for GET requests (forms, etc)
 const csrfGenerateToken = (req, res, next) => {
-  // Store token in request for use in responses
-  req.csrfToken = () => csrf.createToken(req, res);
+  if (!req.cookies[COOKIE_NAME]) {
+    const token = generateToken();
+    res.cookie(COOKIE_NAME, token, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Lax',
+      path: '/',
+    });
+  }
   next();
 };
 
-// Middleware to check CSRF token for mutating operations
-const csrfCheckToken = csrf({ 
-  cookie: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'Lax',
-    path: '/'
+const csrfCheckToken = (req, res, next) => {
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+    return next();
   }
-});
+  const cookieToken = req.cookies[COOKIE_NAME];
+  const headerToken = req.headers[HEADER_NAME];
+  if (!cookieToken || !headerToken || cookieToken !== headerToken) {
+    return res.status(403).json({ error: 'Invalid CSRF token' });
+  }
+  next();
+};
 
 module.exports = {
-  csrfProtection,
+  csrfProtection: csrfCheckToken,
   csrfGenerateToken,
-  csrfCheckToken
+  csrfCheckToken,
 };

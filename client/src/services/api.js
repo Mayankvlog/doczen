@@ -3,6 +3,15 @@ import { useState, useEffect, useCallback } from 'react';
 
 const API_BASE = process.env.REACT_APP_API_URL || '';
 
+function getCSRFToken() {
+  try {
+    const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/);
+    return match ? match[1] : '';
+  } catch (_) {
+    return '';
+  }
+}
+
 const api = axios.create({
   baseURL: `${API_BASE}/api`,
   withCredentials: true,
@@ -29,6 +38,10 @@ api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  }
+  const csrfToken = getCSRFToken();
+  if (csrfToken) {
+    config.headers['X-CSRF-Token'] = csrfToken;
   }
   return config;
 });
@@ -95,10 +108,14 @@ async function parseResponseBlob(response, fallbackFilename) {
 
 export async function handleToolSubmit(url, formData, fallbackName) {
   const token = localStorage.getItem('token');
+  const csrfToken = getCSRFToken();
+  const headers = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
   const response = await fetch(`${API_URL}/api${url}`, {
     method: 'POST',
     credentials: 'include',
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    headers,
     body: formData
   });
 

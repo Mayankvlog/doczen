@@ -58,17 +58,25 @@ const { isDbConnected } = require('./config/db');
 
 const app = express();
 
-// CORS configuration for Cloudflare + HTTPS
+// CORS configuration - dynamic origin validation
+const ALLOWED_ORIGINS = new Set([
+  'https://doczen.co.in',
+  'https://www.doczen.co.in',
+]);
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || [
-    'https://doczen.co.in',
-    'https://www.doczen.co.in',
-    'https://doczen.co.in:443',
-    'https://www.doczen.co.in:443'
-  ],
+  origin: (origin, callback) => {
+    if (!origin || origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1')) {
+      return callback(null, true);
+    }
+    if (ALLOWED_ORIGINS.has(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Forwarded-For', 'X-Forwarded-Proto', 'CF-Connecting-IP', 'Cache-Control', 'Pragma', 'Expires', 'Surrogate-Control'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-Requested-With', 'X-Forwarded-For', 'X-Forwarded-Proto', 'CF-Connecting-IP', 'Cache-Control', 'Pragma', 'Expires', 'Surrogate-Control'],
   exposedHeaders: ['X-Total-Count', 'X-Current-Page', 'Content-Disposition']
 };
 
@@ -104,20 +112,32 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again after 15 minutes'
 });
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 auth attempts per windowMs
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
   message: 'Too many login attempts, please try again after 15 minutes'
+});
+
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: 'Too many registration attempts from this IP, please try again after an hour'
+});
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 3,
+  message: 'Too many password reset requests, please try again after an hour'
 });
 
 // Apply rate limiting to all requests
 app.use('/api/', limiter);
 
-// Apply stricter rate limiting to auth endpoints
-app.use('/api/auth/login', authLimiter);
-app.use('/api/auth/register', authLimiter);
-app.use('/api/auth/forgot-password', authLimiter);
-app.use('/api/auth/reset-password', authLimiter);
+// Apply separate rate limiters to auth endpoints
+app.use('/api/auth/login', loginLimiter);
+app.use('/api/auth/register', registerLimiter);
+app.use('/api/auth/forgot-password', forgotPasswordLimiter);
+app.use('/api/auth/reset-password', forgotPasswordLimiter);
 
 // Trust Cloudflare proxy - CRITICAL for SSL.
 // IMPORTANT: Express does NOT support comma-separated CIDR strings.
@@ -132,6 +152,10 @@ try {
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
+
+// CSRF token generation - sets a non-httpOnly cookie for client to read
+const { csrfGenerateToken } = require('./middleware/csrf');
+app.use(csrfGenerateToken);
 
 // Cookie settings middleware - Fix cookie domain and SameSite issues
 app.use((req, res, next) => {
@@ -231,6 +255,13 @@ Allow: /redact-pdf
 Allow: /remove-annotations
 Allow: /remove-watermark
 Allow: /compare-pdf
+Allow: /about
+Allow: /privacy-policy
+Allow: /terms-of-service
+Allow: /login
+Allow: /register
+Allow: /forgot-password
+Allow: /reset-password
 Disallow: /api/
 Disallow: /admin/
 Disallow: /private/
@@ -305,8 +336,12 @@ app.get('/sitemap.xml', (req, res) => {
   // Static pages
   const staticPages = [
     { path: '/about', priority: '0.6' },
-    { path: '/privacy', priority: '0.5' },
-    { path: '/terms', priority: '0.5' },
+    { path: '/privacy-policy', priority: '0.5' },
+    { path: '/terms-of-service', priority: '0.5' },
+    { path: '/login', priority: '0.4' },
+    { path: '/register', priority: '0.4' },
+    { path: '/forgot-password', priority: '0.3' },
+    { path: '/reset-password', priority: '0.3' },
   ];
   
   staticPages.forEach(page => {

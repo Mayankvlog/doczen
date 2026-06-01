@@ -8,6 +8,7 @@ import Banner728x90 from './components/Banner728x90';
 import Footer from './components/Footer';
 import LoadingSpinner from './components/LoadingSpinner';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 import { gtagPageView, gtagConsent } from './services/api';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -154,7 +155,8 @@ function AppContent() {
       <Navbar />
       <Banner728x90 />
       <main className="flex-1 page-enter-active">
-        {/* ✅ PHASE 1 FIX: Suspense boundary for code-split components */}
+        {/* ✅ PHASE 1 FIX: Suspense + ErrorBoundary for code-split components */}
+        <ErrorBoundary>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -200,6 +202,7 @@ function AppContent() {
             <Route path="/remove-watermark" element={<RemoveWatermark />} />
           </Routes>
         </Suspense>
+        </ErrorBoundary>
       </main>
       <Footer />
     </div>
