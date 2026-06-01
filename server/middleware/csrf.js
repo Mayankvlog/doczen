@@ -6,15 +6,13 @@ const HEADER_NAME = 'x-csrf-token';
 const generateToken = () => crypto.randomUUID();
 
 const csrfGenerateToken = (req, res, next) => {
-  if (!req.cookies[COOKIE_NAME]) {
-    const token = generateToken();
-    res.cookie(COOKIE_NAME, token, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Lax',
-      path: '/',
-    });
-  }
+  const token = generateToken();
+  res.cookie(COOKIE_NAME, token, {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'Lax',
+    path: '/',
+  });
   next();
 };
 
