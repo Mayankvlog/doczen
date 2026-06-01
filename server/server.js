@@ -27,6 +27,9 @@ if (envResult.error || !process.env.MONGO_URI) {
 if (!process.env.MONGO_URI) {
   console.warn('WARNING: MONGO_URI not found in .env. Create a .env file with MONGO_URI=mongodb+srv://...');
 }
+if (!process.env.JWT_SECRET) {
+  console.warn('WARNING: JWT_SECRET not found in .env. Auth features (login, register, profile) will fail with 500.');
+}
 
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {

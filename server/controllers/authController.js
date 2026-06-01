@@ -7,6 +7,9 @@ const ACCESS_TOKEN_EXPIRY = '15m';
 const REFRESH_TOKEN_EXPIRY_DAYS = 7;
 
 const generateAccessToken = (id) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is not set. Auth features will not work.');
+  }
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: ACCESS_TOKEN_EXPIRY
   });
@@ -63,7 +66,7 @@ exports.register = async (req, res) => {
     setRefreshCookie(res, refreshToken);
     res.status(201).json(userResponse(user, token));
   } catch (error) {
-    // Handle validation errors from model
+    console.error('Register error:', error);
     if (error.errors) {
       return res.status(400).json({ 
         message: 'Validation error',
@@ -77,7 +80,6 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    // Note: Input validation now done in middleware (validateLogin)
     
     const user = await User.findOne({ email });
     if (!user) {
@@ -94,6 +96,7 @@ exports.login = async (req, res) => {
     setRefreshCookie(res, refreshToken);
     res.json(userResponse(user, token));
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -116,6 +119,7 @@ exports.refreshToken = async (req, res) => {
     setRefreshCookie(res, newRefreshToken);
     res.json({ ...userResponse(user, accessToken), message: 'Token refreshed' });
   } catch (error) {
+    console.error('Refresh token error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -129,6 +133,7 @@ exports.logout = async (req, res) => {
     clearRefreshCookie(res);
     res.json({ message: 'Logged out successfully' });
   } catch (error) {
+    console.error('Logout error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -145,6 +150,7 @@ exports.getProfile = async (req, res) => {
       createdAt: user.createdAt
     });
   } catch (error) {
+    console.error('Get profile error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -163,6 +169,7 @@ exports.updateProfile = async (req, res) => {
       message: 'Profile updated successfully'
     });
   } catch (error) {
+    console.error('Update profile error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -192,6 +199,7 @@ exports.changePassword = async (req, res) => {
     setRefreshCookie(res, refreshToken);
     res.json({ message: 'Password changed successfully' });
   } catch (error) {
+    console.error('Change password error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -216,6 +224,7 @@ exports.forgotPassword = async (req, res) => {
       resetLink
     });
   } catch (error) {
+    console.error('Forgot password error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -246,6 +255,7 @@ exports.resetPassword = async (req, res) => {
     setRefreshCookie(res, refreshToken);
     res.json({ message: 'Password reset successfully', ...userResponse(user, generateAccessToken(user._id)) });
   } catch (error) {
+    console.error('Reset password error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
