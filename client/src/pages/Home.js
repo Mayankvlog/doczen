@@ -99,6 +99,9 @@ export default function Home() {
   description={t('tool.seo.defaultDesc', 'Doczen is a free online PDF editor and converter. Merge, split, compress, and edit PDFs. Convert PDF to Word, Excel, PPT, JPG and back. Protect, unlock, sign, and rotate PDFs online. No registration required.')}
   keywords={t('tool.seo.defaultKeywords', 'free PDF editor, online PDF tool, merge PDF online, split PDF online, compress PDF, PDF converter, PDF to Word, PDF to JPG, Doczen')}
   canonical="/"
+  type="WebPage"
+    />
+  canonical="/"
   image="/og-home.png"
 />
     <div className="bg-white dark:bg-gray-950">

@@ -128,6 +128,133 @@ app.use((req, res, next) => {
   next();
 });
 
+// SEO: robots.txt middleware - Guides crawlers to sitemap and allows all tools to be crawled
+app.get('/robots.txt', (req, res) => {
+  const robotsTxt = `User-agent: *
+Allow: /
+Allow: /merge-pdf
+Allow: /split-pdf
+Allow: /compress-pdf
+Allow: /rotate-pdf
+Allow: /protect-pdf
+Allow: /unlock-pdf
+Allow: /add-page-numbers
+Allow: /add-watermark
+Allow: /extract-text
+Allow: /reorder-pages
+Allow: /delete-pages
+Allow: /pdf-to-jpg
+Allow: /jpg-to-pdf
+Allow: /pdf-to-txt
+Allow: /pdf-to-word
+Allow: /word-to-pdf
+Allow: /pdf-to-ppt
+Allow: /ppt-to-pdf
+Allow: /pdf-to-excel
+Allow: /excel-to-pdf
+Allow: /edit-pdf
+Allow: /sign-pdf
+Allow: /repair-pdf
+Allow: /pdf-to-pdfa
+Allow: /pdf-metadata
+Allow: /flatten-pdf
+Allow: /html-to-pdf
+Allow: /redact-pdf
+Allow: /remove-annotations
+Allow: /remove-watermark
+Allow: /compare-pdf
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+Sitemap: https://doczen.co.in/sitemap.xml
+Crawl-delay: 1`;
+  res.type('text/plain').send(robotsTxt);
+});
+
+// SEO: sitemap.xml middleware - Dynamic XML sitemap for all tool pages
+app.get('/sitemap.xml', (req, res) => {
+  const tools = [
+    { path: '/merge-pdf', priority: '0.9' },
+    { path: '/split-pdf', priority: '0.9' },
+    { path: '/compress-pdf', priority: '0.9' },
+    { path: '/rotate-pdf', priority: '0.8' },
+    { path: '/protect-pdf', priority: '0.8' },
+    { path: '/unlock-pdf', priority: '0.8' },
+    { path: '/add-page-numbers', priority: '0.7' },
+    { path: '/add-watermark', priority: '0.7' },
+    { path: '/extract-text', priority: '0.8' },
+    { path: '/reorder-pages', priority: '0.7' },
+    { path: '/delete-pages', priority: '0.7' },
+    { path: '/pdf-to-jpg', priority: '0.9' },
+    { path: '/jpg-to-pdf', priority: '0.9' },
+    { path: '/pdf-to-txt', priority: '0.8' },
+    { path: '/pdf-to-word', priority: '0.9' },
+    { path: '/word-to-pdf', priority: '0.9' },
+    { path: '/pdf-to-ppt', priority: '0.8' },
+    { path: '/ppt-to-pdf', priority: '0.8' },
+    { path: '/pdf-to-excel', priority: '0.8' },
+    { path: '/excel-to-pdf', priority: '0.8' },
+    { path: '/edit-pdf', priority: '0.8' },
+    { path: '/sign-pdf', priority: '0.7' },
+    { path: '/repair-pdf', priority: '0.7' },
+    { path: '/pdf-to-pdfa', priority: '0.6' },
+    { path: '/pdf-metadata', priority: '0.6' },
+    { path: '/flatten-pdf', priority: '0.6' },
+    { path: '/html-to-pdf', priority: '0.8' },
+    { path: '/redact-pdf', priority: '0.7' },
+    { path: '/remove-annotations', priority: '0.6' },
+    { path: '/remove-watermark', priority: '0.6' },
+    { path: '/compare-pdf', priority: '0.6' },
+  ];
+
+  const baseUrl = 'https://doczen.co.in';
+  const today = new Date().toISOString().split('T')[0];
+  
+  let sitemapXml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  sitemapXml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n';
+  sitemapXml += '        xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0">\n';
+  
+  // Home page - highest priority
+  sitemapXml += '  <url>\n';
+  sitemapXml += `    <loc>${baseUrl}/</loc>\n`;
+  sitemapXml += `    <lastmod>${today}</lastmod>\n`;
+  sitemapXml += '    <changefreq>weekly</changefreq>\n';
+  sitemapXml += '    <priority>1.0</priority>\n';
+  sitemapXml += '    <mobile:mobile/>\n';
+  sitemapXml += '  </url>\n';
+
+  // All tool pages
+  tools.forEach(tool => {
+    sitemapXml += '  <url>\n';
+    sitemapXml += `    <loc>${baseUrl}${tool.path}</loc>\n`;
+    sitemapXml += `    <lastmod>${today}</lastmod>\n`;
+    sitemapXml += '    <changefreq>monthly</changefreq>\n';
+    sitemapXml += `    <priority>${tool.priority}</priority>\n`;
+    sitemapXml += '    <mobile:mobile/>\n';
+    sitemapXml += '  </url>\n';
+  });
+
+  // Static pages
+  const staticPages = [
+    { path: '/about', priority: '0.6' },
+    { path: '/privacy', priority: '0.5' },
+    { path: '/terms', priority: '0.5' },
+  ];
+  
+  staticPages.forEach(page => {
+    sitemapXml += '  <url>\n';
+    sitemapXml += `    <loc>${baseUrl}${page.path}</loc>\n`;
+    sitemapXml += `    <lastmod>${today}</lastmod>\n`;
+    sitemapXml += '    <changefreq>yearly</changefreq>\n';
+    sitemapXml += `    <priority>${page.priority}</priority>\n`;
+    sitemapXml += '  </url>\n';
+  });
+
+  sitemapXml += '</urlset>';
+  
+  res.type('application/xml').send(sitemapXml);
+});
+
 // DB-health middleware — return 503 immediately instead of hanging when MongoDB is down
 app.use('/api/auth', (req, res, next) => {
   const { isDbConnected } = require('./config/db');

@@ -40,7 +40,8 @@ export default function SEO({
   type = 'website',
   publishedTime,
   author = 'Doczen',
-  noIndex = false
+  noIndex = false,
+  toolName = null  // For tool-specific schema markup
 }) {
   const { lang } = useLanguage();
   const pageTitle = title ? `${title} | Doczen` : `${SITE_NAME} - Free Online PDF Editor`;
@@ -51,15 +52,128 @@ export default function SEO({
   const locale = LOCALE_MAP[lang] || 'en_US';
   const imgUrl = `${BASE_URL}${image}`;
 
+  // Generate comprehensive Schema markup
+  const getSchemaMarkup = () => {
+    const baseSchema = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        // Organization schema
+        {
+          '@type': 'Organization',
+          '@id': `${BASE_URL}/#organization`,
+          name: 'Doczen',
+          url: BASE_URL,
+          logo: {
+            '@type': 'ImageObject',
+            '@id': `${BASE_URL}/#logo`,
+            url: `${BASE_URL}/logo.png`,
+            width: 250,
+            height: 250,
+          },
+          description: 'Free Online PDF Editor - Convert, merge, split, compress and edit PDFs online',
+          sameAs: [
+            'https://www.facebook.com/doczen',
+            'https://twitter.com/doczen',
+          ],
+          contactPoint: {
+            '@type': 'ContactPoint',
+            contactType: 'Customer Service',
+            url: BASE_URL,
+          },
+        },
+        // Website schema
+        {
+          '@type': 'WebSite',
+          '@id': `${BASE_URL}/#website`,
+          url: BASE_URL,
+          name: 'Doczen - Free Online PDF Editor',
+          description: DEFAULT_DESC,
+          publisher: {
+            '@id': `${BASE_URL}/#organization`,
+          },
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: {
+              '@type': 'EntryPoint',
+              urlTemplate: `${BASE_URL}/?s={search_term_string}`,
+            },
+            'query-input': 'required name=search_term_string',
+          },
+        },
+        // Webpage schema
+        {
+          '@type': 'WebPage',
+          '@id': `${url}#webpage`,
+          url: url,
+          name: pageTitle,
+          description: description,
+          isPartOf: {
+            '@id': `${BASE_URL}/#website`,
+          },
+          inLanguage: locale,
+          publisher: {
+            '@id': `${BASE_URL}/#organization`,
+          },
+          image: {
+            '@type': 'ImageObject',
+            url: imgUrl,
+            width: 1200,
+            height: 630,
+          },
+          ...(publishedTime && {
+            datePublished: publishedTime,
+            dateModified: publishedTime,
+          }),
+        },
+      ],
+    };
+
+    // Add tool-specific schema if it's a tool page
+    if (toolName) {
+      const toolSchema = {
+        '@type': 'SoftwareApplication',
+        '@id': `${url}#tool`,
+        name: pageTitle,
+        url: url,
+        description: description,
+        applicationCategory: 'Multimedia',
+        operatingSystem: 'All',
+        browserRequirements: 'Requires JavaScript',
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
+        },
+        author: {
+          '@id': `${BASE_URL}/#organization`,
+        },
+        screenshot: {
+          '@type': 'ImageObject',
+          url: imgUrl,
+        },
+      };
+      baseSchema['@graph'].push(toolSchema);
+    }
+
+    return baseSchema;
+  };
+
   return (
     <Helmet>
       <html lang={lang} />
       <title>{pageTitle}</title>
+      
+      {/* Primary Meta Tags */}
       <meta name="description" content={description} />
       <meta name="keywords" content={pageKeywords} />
       <meta name="author" content={author} />
-      <meta name="robots" content={noIndex ? 'noindex, nofollow' : 'index, follow'} />
+      <meta name="robots" content={noIndex ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'} />
+      <meta name="googlebot" content={noIndex ? 'noindex' : 'index, follow'} />
+      <meta name="bingbot" content={noIndex ? 'noindex' : 'index, follow'} />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
+      
+      {/* Theme and App Meta */}
       <meta name="theme-color" content="#4F46E5" />
       <meta name="application-name" content={SITE_NAME} />
       <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -70,14 +184,20 @@ export default function SEO({
       <meta name="msapplication-TileColor" content="#4F46E5" />
       <meta name="msapplication-tap-highlight" content="no" />
       <meta name="referrer" content="origin-when-cross-origin" />
-
+      
+      {/* Performance & Security */}
+      <meta httpEquiv="x-ua-compatible" content="IE=edge" />
+      <meta name="x-ua-compatible" content="IE=edge" />
+      <meta name="preload-resources" content="high" />
+      
+      {/* Canonical and Language Alternatives */}
       <link rel="canonical" href={url} />
-
       {Object.entries(HREFLANG_MAP).map(([code, hreflang]) => (
         <link key={hreflang} rel="alternate" href={`${BASE_URL}${canonical || '/'}`} hrefLang={hreflang} />
       ))}
       <link rel="alternate" href={`${BASE_URL}${canonical || '/'}`} hrefLang="x-default" />
-
+      
+      {/* Open Graph Tags for Social Sharing */}
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
@@ -89,53 +209,38 @@ export default function SEO({
       <meta property="og:image:alt" content={pageTitle} />
       <meta property="og:locale" content={locale} />
 
+      {/* Twitter Card Tags */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content={SITE_TWITTER} />
+      <meta name="twitter:creator" content={SITE_TWITTER} />
       <meta name="twitter:title" content={pageTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={imgUrl} />
       <meta name="twitter:image:alt" content={pageTitle} />
 
+      {/* Article Meta (if applicable) */}
       {publishedTime && (
-        <meta property="article:published_time" content={publishedTime} />
+        <>
+          <meta property="article:published_time" content={publishedTime} />
+          <meta property="article:modified_time" content={publishedTime} />
+          <meta property="article:author" content={author} />
+        </>
       )}
 
+      {/* JSON-LD Structured Data */}
       <script type="application/ld+json">
-        {JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': type === 'article' ? 'Article' : 'WebApplication',
-          name: pageTitle,
-          url,
-          description,
-          image: imgUrl,
-          author: { '@type': 'Organization', name: author, url: BASE_URL },
-          applicationCategory: 'Multimedia',
-          operatingSystem: 'All',
-          browserRequirements: 'Requires JavaScript',
-          offers: {
-            '@type': 'Offer',
-            price: '0',
-            priceCurrency: 'USD',
-            availability: 'https://schema.org/InStock',
-          },
-          ...(type !== 'article' && {
-            featureList: [
-              'Merge PDF files online',
-              'Split PDF documents',
-              'Compress PDF size',
-              'Convert PDF to Word, Excel, PPT, JPG',
-              'Convert Word, Excel, PPT, JPG to PDF',
-              'Protect PDF with password',
-              'Unlock protected PDF',
-              'Rotate and reorder PDF pages',
-              'Add page numbers and watermarks',
-              'Sign PDF documents',
-              'Edit PDF metadata',
-            ],
-            screenshot: imgUrl,
-          }),
-        })}
+        {JSON.stringify(getSchemaMarkup())}
       </script>
+
+      {/* Preload critical resources for performance */}
+      <link rel="preload" as="style" href="/main.css" />
+      <link rel="preload" as="font" href="/fonts/inter.woff2" crossOrigin="anonymous" />
+      
+      {/* Prefetch DNS for external resources */}
+      <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+      <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+      <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+      <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     </Helmet>
   );
-}
+};
