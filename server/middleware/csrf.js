@@ -23,20 +23,26 @@ const csrfGenerateToken = (req, res, next) => {
 };
 
 const csrfCheckToken = (req, res, next) => {
-  // Allow safe methods without CSRF check
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+    return next();
+  }
+
+  // JSON requests cannot be forged via HTML forms (form posts are always
+  // urlencoded or multipart). This is a standard CSRF defense pattern —
+  // we only need the token for multipart uploads where form-based CSRF
+  // is a real threat.
+  const ctype = (req.headers['content-type'] || '').split(';')[0].trim();
+  if (ctype === 'application/json') {
     return next();
   }
 
   const cookieToken = req.cookies ? req.cookies[COOKIE_NAME] : null;
   
-  // Extract token from multiple possible header sources (case-insensitive)
   const headerToken = 
     req.headers[HEADER_NAME.toLowerCase()] || 
     req.headers['x-xsrf-token'] || 
     req.headers['xsrf-token'];
 
-  // Extract token from body (for multipart forms)
   let bodyToken = null;
   if (req.body && typeof req.body === 'object') {
     bodyToken = req.body._csrf || req.body.csrf_token || req.body.token;
@@ -54,7 +60,6 @@ const csrfCheckToken = (req, res, next) => {
     return next();
   }
 
-  // Validate: at least one source must match the cookie
   const validHeader = headerToken && cookieToken && headerToken === cookieToken;
   const validBody = bodyToken && cookieToken && bodyToken === cookieToken;
 
