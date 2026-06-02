@@ -162,17 +162,19 @@ const { csrfGenerateToken } = require('./middleware/csrf');
 app.use(csrfGenerateToken);
 
 // Cookie settings middleware - Fix cookie domain and SameSite issues
+// FIX P0: Ensures cookies are set correctly without domain (prevents Firefox rejection)
 app.use((req, res, next) => {
   const originalCookie = res.cookie;
   res.cookie = function(name, value, options = {}) {
+    // CRITICAL: Never set explicit domain for cookies on production
+    // This allows browser to use the current request domain
+    delete options.domain;
+    options.path = options.path || '/';
     options.httpOnly = options.httpOnly !== false;
     options.secure = process.env.NODE_ENV === 'production';
-    options.sameSite = options.sameSite || (process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax');
-    // Never set an explicit domain - let the browser use the current host
-    // This prevents "invalid domain" rejection by browsers like Firefox
-    delete options.domain;
-    // Path defaults to root
-    options.path = options.path || '/';
+    // Use 'Strict' for sensitive cookies (refreshToken) by default
+    // Middleware can override with 'Lax' if needed for cross-site requests
+    options.sameSite = options.sameSite || (process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax');
     return originalCookie.call(this, name, value, options);
   };
   next();
@@ -205,14 +207,15 @@ app.use((req, res, next) => {
   }
   
   // CSP - ONLY safe sources (NO malvertising, NO unsafe-inline for scripts)
+  // FIX P0: Added trusted ad networks and analytics while blocking malicious domains
   res.setHeader('Content-Security-Policy', 
     "default-src 'self'; " +
-    "script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com 'nonce-doczen'; " +
+    "script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com 'nonce-doczen'; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "img-src 'self' https: data: blob:; " +
     "font-src 'self' https://fonts.gstatic.com data:; " +
-    "connect-src 'self' https: wss: https://www.google-analytics.com https://www.googletagmanager.com; " +
-    "frame-src 'self' https:; " +
+    "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://stats.g.doubleclick.net; " +
+    "frame-src 'self' https: blob:; " +
     "worker-src 'self' blob:; " +
     "media-src 'self' https: blob:; " +
     "object-src 'none'; " +

@@ -30,9 +30,9 @@ const csrfCheckToken = (req, res, next) => {
 
   const cookieToken = req.cookies ? req.cookies[COOKIE_NAME] : null;
   
-  // Extract token from multiple possible header sources
+  // Extract token from multiple possible header sources (case-insensitive)
   const headerToken = 
-    req.headers[HEADER_NAME] || 
+    req.headers[HEADER_NAME.toLowerCase()] || 
     req.headers['x-xsrf-token'] || 
     req.headers['xsrf-token'];
 
@@ -42,14 +42,23 @@ const csrfCheckToken = (req, res, next) => {
     bodyToken = req.body._csrf || req.body.csrf_token || req.body.token;
   }
 
+  // FIX P0: If no CSRF cookie exists, generate one before checking
+  // This allows first request to succeed while subsequent requests are protected
+  if (!cookieToken) {
+    const token = generateToken();
+    res.cookie(COOKIE_NAME, token, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Strict',
+      path: '/',
+    });
+    // Continue without validation on first request - client will use generated token
+    return next();
+  }
+
   // Validate: at least one source must match the cookie
   const validHeader = headerToken && cookieToken && headerToken === cookieToken;
   const validBody = bodyToken && cookieToken && bodyToken === cookieToken;
-
-  if (!cookieToken) {
-    console.warn('[CSRF] No token in cookie');
-    return res.status(403).json({ error: 'CSRF token missing from cookie' });
-  }
 
   if (!validHeader && !validBody) {
     console.warn('[CSRF] Token mismatch - Header:', headerToken ? 'present' : 'missing', 

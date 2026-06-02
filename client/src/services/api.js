@@ -5,8 +5,10 @@ const API_BASE = process.env.REACT_APP_API_URL || '';
 
 function getCSRFToken() {
   try {
-    const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/);
-    return match ? match[1] : '';
+    // FIX P0: Case-insensitive cookie parsing
+    const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/i);
+    const token = match ? decodeURIComponent(match[1]) : '';
+    return token;
   } catch (_) {
     return '';
   }
@@ -39,10 +41,13 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  // FIX P0: Always attempt to get CSRF token, even if empty
+  // This ensures the middleware receives the request even without token
   const csrfToken = getCSRFToken();
   if (csrfToken) {
     config.headers['X-CSRF-Token'] = csrfToken;
   }
+  // For POST/PUT/PATCH requests without CSRF token, server will generate one
   return config;
 });
 
