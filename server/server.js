@@ -173,7 +173,7 @@ app.use((req, res, next) => {
 
 // CSRF token generation - sets a non-httpOnly cookie for client to read
 // MUST come after cookie-parser AND cookie override so cookie settings are consistent
-const { csrfGenerateToken } = require('./middleware/csrf');
+const { csrfGenerateToken, csrfCheckToken } = require('./middleware/csrf');
 app.use(csrfGenerateToken);
 
 // Security middleware - PHASE 0 CRITICAL FIX
@@ -370,6 +370,10 @@ app.use('/api/auth', (req, res, next) => {
   next();
 });
 app.use('/api/auth', require('./routes/auth'));
+
+// Global CSRF validation for all routes after auth
+app.use(csrfCheckToken);
+
 app.use('/api/pdf', require('./routes/pdf'));
 app.use('/api/history', require('./routes/history'));
 
