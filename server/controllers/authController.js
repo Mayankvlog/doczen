@@ -90,8 +90,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
     const refreshToken = generateRefreshToken();
-    user.refreshToken = refreshToken;
-    await user.save({ validateModifiedOnly: true });
+    await User.updateOne({ _id: user._id }, { $set: { refreshToken } });
     const token = generateAccessToken(user._id);
     setRefreshCookie(res, refreshToken);
     res.json(userResponse(user, token));
@@ -113,8 +112,7 @@ exports.refreshToken = async (req, res) => {
       return res.status(401).json({ message: 'Invalid refresh token' });
     }
     const newRefreshToken = generateRefreshToken();
-    user.refreshToken = newRefreshToken;
-    await user.save({ validateModifiedOnly: true });
+    await User.updateOne({ _id: user._id }, { $set: { refreshToken: newRefreshToken } });
     const accessToken = generateAccessToken(user._id);
     setRefreshCookie(res, newRefreshToken);
     res.json({ ...userResponse(user, accessToken), message: 'Token refreshed' });

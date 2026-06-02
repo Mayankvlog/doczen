@@ -155,6 +155,9 @@ export async function handleToolSubmit(url, formData, fallbackName, retried = fa
     await fetchCSRFToken();
     csrfToken = getCSRFToken();
   }
+  if (csrfToken) {
+    formData.append('csrf_token', csrfToken);
+  }
   const headers = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
   if (csrfToken) {
