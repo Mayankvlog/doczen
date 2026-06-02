@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const restoreSession = async () => {
-      fetchCSRFToken();
+      await fetchCSRFToken();
       const token = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
       if (token && storedUser) {

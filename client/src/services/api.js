@@ -67,13 +67,13 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  // FIX P0: Always attempt to get CSRF token, even if empty
-  // This ensures the middleware receives the request even without token
   const csrfToken = getCSRFToken();
   if (csrfToken) {
     config.headers['X-CSRF-Token'] = csrfToken;
+    if (config.data instanceof FormData) {
+      config.data.append('csrf_token', csrfToken);
+    }
   }
-  // For POST/PUT/PATCH requests without CSRF token, server will generate one
   return config;
 });
 
@@ -148,18 +148,33 @@ async function parseResponseBlob(response, fallbackFilename) {
   return { success: true, filename, blobUrl };
 }
 
-export async function handleToolSubmit(url, formData, fallbackName) {
+export async function handleToolSubmit(url, formData, fallbackName, retried = false) {
   const token = localStorage.getItem('token');
-  const csrfToken = getCSRFToken();
+  let csrfToken = getCSRFToken();
+  if (!csrfToken) {
+    await fetchCSRFToken();
+    csrfToken = getCSRFToken();
+  }
   const headers = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
+  if (csrfToken) {
+    headers['X-CSRF-Token'] = csrfToken;
+  }
   const response = await fetch(`${API_URL}/api${url}`, {
     method: 'POST',
     credentials: 'include',
     headers,
     body: formData
   });
+
+  if (response.status === 403 && !retried) {
+    await fetchCSRFToken();
+    const newToken = getCSRFToken();
+    if (newToken) {
+      formData.append('csrf_token', newToken);
+    }
+    return handleToolSubmit(url, formData, fallbackName, true);
+  }
 
   if (!response.ok) {
     let message = 'Request failed';
