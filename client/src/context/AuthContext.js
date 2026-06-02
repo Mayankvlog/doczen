@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { authAPI } from '../services/api';
+import { authAPI, fetchCSRFToken } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const restoreSession = async () => {
+      fetchCSRFToken();
       const token = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
       if (token && storedUser) {

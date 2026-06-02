@@ -3,14 +3,40 @@ import { useState, useEffect, useCallback } from 'react';
 
 const API_BASE = process.env.REACT_APP_API_URL || '';
 
+let csrfTokenCache = '';
+
 function getCSRFToken() {
   try {
-    // FIX P0: Case-insensitive cookie parsing
     const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/i);
     const token = match ? decodeURIComponent(match[1]) : '';
-    return token;
+    if (token) {
+      csrfTokenCache = token;
+      return token;
+    }
+    return csrfTokenCache;
   } catch (_) {
-    return '';
+    return csrfTokenCache;
+  }
+}
+
+export async function fetchCSRFToken() {
+  try {
+    const response = await fetch(`${API_BASE}/api/csrf-token`, {
+      credentials: 'include',
+    });
+    if (response.ok) {
+      const data = await response.json();
+      if (data.token) {
+        csrfTokenCache = data.token;
+      }
+    }
+    // Also try reading from cookie as fallback
+    const cookieToken = getCSRFToken();
+    if (cookieToken) {
+      csrfTokenCache = cookieToken;
+    }
+  } catch (_) {
+    // Silent fail - will try again on next request
   }
 }
 
@@ -55,6 +81,17 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
+    if (error.response?.status === 403 && !originalRequest._csrfRetry) {
+      originalRequest._csrfRetry = true;
+      await fetchCSRFToken();
+      const newToken = getCSRFToken();
+      if (newToken) {
+        originalRequest.headers['X-CSRF-Token'] = newToken;
+        return api(originalRequest);
+      }
+    }
+
     const isAuthEndpoint = originalRequest?.url?.includes('/auth/login') || originalRequest?.url?.includes('/auth/register') || originalRequest?.url?.includes('/auth/refresh');
 
     if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {

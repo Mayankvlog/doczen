@@ -156,29 +156,25 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
 
-// CSRF token generation - sets a non-httpOnly cookie for client to read
-// MUST come after cookie-parser so it can check if token already exists
-const { csrfGenerateToken } = require('./middleware/csrf');
-app.use(csrfGenerateToken);
-
 // Cookie settings middleware - Fix cookie domain and SameSite issues
-// FIX P0: Ensures cookies are set correctly without domain (prevents Firefox rejection)
+// MUST run BEFORE csrfGenerateToken so all cookies use consistent settings
 app.use((req, res, next) => {
   const originalCookie = res.cookie;
   res.cookie = function(name, value, options = {}) {
-    // CRITICAL: Never set explicit domain for cookies on production
-    // This allows browser to use the current request domain
     delete options.domain;
     options.path = options.path || '/';
     options.httpOnly = options.httpOnly !== false;
     options.secure = process.env.NODE_ENV === 'production';
-    // Use 'Strict' for sensitive cookies (refreshToken) by default
-    // Middleware can override with 'Lax' if needed for cross-site requests
-    options.sameSite = options.sameSite || (process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax');
+    options.sameSite = options.sameSite || (process.env.NODE_ENV === 'production' ? 'Lax' : 'Lax');
     return originalCookie.call(this, name, value, options);
   };
   next();
 });
+
+// CSRF token generation - sets a non-httpOnly cookie for client to read
+// MUST come after cookie-parser AND cookie override so cookie settings are consistent
+const { csrfGenerateToken } = require('./middleware/csrf');
+app.use(csrfGenerateToken);
 
 // Security middleware - PHASE 0 CRITICAL FIX
 app.use((req, res, next) => {
@@ -381,6 +377,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString(), protocol: req.protocol });
+});
+
+app.get('/api/csrf-token', (req, res) => {
+  const token = req.cookies?.csrf_token || '';
+  res.json({ token });
 });
 
 const clientBuild = path.join(__dirname, '../client/build');

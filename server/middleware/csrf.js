@@ -49,10 +49,9 @@ const csrfCheckToken = (req, res, next) => {
     res.cookie(COOKIE_NAME, token, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
+      sameSite: 'Lax',
       path: '/',
     });
-    // Continue without validation on first request - client will use generated token
     return next();
   }
 
