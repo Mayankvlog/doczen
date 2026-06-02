@@ -380,7 +380,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.get('/api/csrf-token', (req, res) => {
-  const token = req.cookies?.csrf_token || '';
+  const token = req.csrfToken || req.cookies?.csrf_token || '';
   res.json({ token });
 });
 

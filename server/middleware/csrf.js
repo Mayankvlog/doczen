@@ -6,13 +6,13 @@ const HEADER_NAME = 'x-csrf-token';
 const generateToken = () => crypto.randomUUID();
 
 const csrfGenerateToken = (req, res, next) => {
-  // Only generate token if it doesn't already exist in cookies
-  // This prevents token regeneration on every request
   if (req.cookies && req.cookies[COOKIE_NAME]) {
+    req.csrfToken = req.cookies[COOKIE_NAME];
     return next();
   }
   
   const token = generateToken();
+  req.csrfToken = token;
   res.cookie(COOKIE_NAME, token, {
     httpOnly: false,
     secure: process.env.NODE_ENV === 'production',
@@ -42,10 +42,9 @@ const csrfCheckToken = (req, res, next) => {
     bodyToken = req.body._csrf || req.body.csrf_token || req.body.token;
   }
 
-  // FIX P0: If no CSRF cookie exists, generate one before checking
-  // This allows first request to succeed while subsequent requests are protected
   if (!cookieToken) {
     const token = generateToken();
+    req.csrfToken = token;
     res.cookie(COOKIE_NAME, token, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
