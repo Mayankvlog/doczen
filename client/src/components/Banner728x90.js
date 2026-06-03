@@ -21,12 +21,14 @@ export default function Banner728x90() {
         params: {},
       })};`;
       s1.defer = true;
+      s1.setAttribute('data-cfasync', 'false');
       ref.current.appendChild(s1);
 
       const s2 = document.createElement('script');
       s2.src = 'https://www.highperformanceformat.com/20c23d55e0aa2d4c55f69cec04907f2b/invoke.js';
       s2.async = true;
       s2.defer = true;
+      s2.setAttribute('data-cfasync', 'false');
       s2.onerror = (err) => {
         console.warn('[Banner728x90] Failed to load ad script:', err);
         setFailed(true);
