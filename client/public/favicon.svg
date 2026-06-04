@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="docGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F8F5FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F0EBFF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main document background -->
+  <rect x="10" y="8" width="108" height="124" rx="12" fill="url(#docGradient)"/>
+  
+  <!-- Folded corner - top right -->
+  <polygon points="118,8 92,8 118,34" fill="#E8D5F8"/>
+  <polygon points="118,8 92,34 118,34" fill="#D9BFF0"/>
+  
+  <!-- Fold line for depth -->
+  <path d="M 92 8 Q 105 20 118 34" stroke="rgba(180,150,210,0.3)" stroke-width="1" fill="none"/>
+  
+  <!-- Text lines (content bars) -->
+  <rect x="28" y="50" width="72" height="7" rx="3.5" fill="#9B8BA3"/>
+  <rect x="28" y="65" width="72" height="7" rx="3.5" fill="#9B8BA3"/>
+  <rect x="28" y="80" width="72" height="7" rx="3.5" fill="#9B8BA3"/>
+  <rect x="28" y="95" width="52" height="7" rx="3.5" fill="#9B8BA3"/>
+</svg>
