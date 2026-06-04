@@ -208,7 +208,7 @@ app.use((req, res, next) => {
     "default-src 'self'; " +
     "script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com 'nonce-doczen'; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-    "img-src 'self' https: data: blob:; " +
+    "img-src 'self' https: data: blob: image/svg+xml; " +
     "font-src 'self' https://fonts.gstatic.com data:; " +
     "connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://www.highperformanceformat.com https://protrafficinspector.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://kettledroopingcontinuation.com https://stats.g.doubleclick.net; " +
     "frame-src 'self' https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://kettledroopingcontinuation.com https: blob:; " +
@@ -378,6 +378,36 @@ app.use('/api/pdf', require('./routes/pdf'));
 app.use('/api/history', require('./routes/history'));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// ✅ FAVICON HANDLER - Explicit endpoint to serve favicon reliably
+app.get('/favicon.svg', (req, res) => {
+  const faviconPaths = [
+    path.join(__dirname, '../client/build/favicon.svg'),
+    path.join(__dirname, '../client/public/favicon.svg')
+  ];
+  
+  for (const faviconPath of faviconPaths) {
+    if (fs.existsSync(faviconPath)) {
+      res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      return res.sendFile(faviconPath);
+    }
+  }
+  
+  // Fallback: Serve inline emoji favicon if file not found
+  res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  return res.send(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📄</text></svg>`);
+});
+
+// ✅ FAVICON.ICO FALLBACK - Prevent 404 in browser console
+app.get('/favicon.ico', (req, res) => {
+  res.setHeader('Content-Type', 'image/x-icon');
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  // 1x1 transparent ICO
+  res.send(Buffer.from([0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01, 0x00, 0x18, 0x00, 0x30, 0x00]));
+});
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString(), protocol: req.protocol });
