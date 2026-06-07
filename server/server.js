@@ -389,26 +389,29 @@ app.get('/favicon.svg', (req, res) => {
   for (const faviconPath of faviconPaths) {
     if (fs.existsSync(faviconPath)) {
       res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
-      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       res.setHeader('X-Content-Type-Options', 'nosniff');
-      // Add ETag for efficient revalidation
-      res.setHeader('ETag', '"' + crypto.randomBytes(8).toString('hex') + '"');
+      res.setHeader('Last-Modified', new Date().toUTCString());
       return res.sendFile(faviconPath);
     }
   }
   
   // Fallback: Serve inline professional favicon if file not found
   res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
-  res.setHeader('ETag', '"' + crypto.randomBytes(8).toString('hex') + '"');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   return res.send(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#4F46E5" rx="20"/><g transform="translate(28, 20)"><rect x="0" y="0" width="44" height="60" fill="white" rx="2"/><polygon points="44,0 44,10 54,0" fill="#E5E7EB"/><line x1="4" y1="12" x2="40" y2="12" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="20" x2="40" y2="20" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="28" x2="40" y2="28" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="36" x2="32" y2="36" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="44" x2="28" y2="44" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="52" x2="24" y2="52" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/></g></svg>`)
 });
 
 // ✅ FAVICON.ICO FALLBACK - Prevent 404 in browser console
 app.get('/favicon.ico', (req, res) => {
   res.setHeader('Content-Type', 'image/x-icon');
-  res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
-  res.setHeader('ETag', '"' + crypto.randomBytes(8).toString('hex') + '"');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   // 1x1 transparent ICO
   res.send(Buffer.from([0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01, 0x00, 0x18, 0x00, 0x30, 0x00]));
 });
