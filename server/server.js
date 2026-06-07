@@ -436,6 +436,9 @@ app.get('*', (req, res) => {
     return res.status(404).json({ message: 'API route not found' });
   }
   if (hasClientBuild) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     res.sendFile(path.join(clientBuild, 'index.html'));
   } else {
     res.status(200).json({ message: 'Doczen API server is running. Frontend not built yet. Run: cd client && npm run build' });
