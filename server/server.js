@@ -389,22 +389,26 @@ app.get('/favicon.svg', (req, res) => {
   for (const faviconPath of faviconPaths) {
     if (fs.existsSync(faviconPath)) {
       res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
-      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
       res.setHeader('X-Content-Type-Options', 'nosniff');
+      // Add ETag for efficient revalidation
+      res.setHeader('ETag', '"' + crypto.randomBytes(8).toString('hex') + '"');
       return res.sendFile(faviconPath);
     }
   }
   
   // Fallback: Serve inline emoji favicon if file not found
   res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+  res.setHeader('ETag', '"' + crypto.randomBytes(8).toString('hex') + '"');
   return res.send(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📄</text></svg>`);
 });
 
 // ✅ FAVICON.ICO FALLBACK - Prevent 404 in browser console
 app.get('/favicon.ico', (req, res) => {
   res.setHeader('Content-Type', 'image/x-icon');
-  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+  res.setHeader('ETag', '"' + crypto.randomBytes(8).toString('hex') + '"');
   // 1x1 transparent ICO
   res.send(Buffer.from([0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01, 0x00, 0x18, 0x00, 0x30, 0x00]));
 });
