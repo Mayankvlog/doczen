@@ -397,11 +397,11 @@ app.get('/favicon.svg', (req, res) => {
     }
   }
   
-  // Fallback: Serve inline emoji favicon if file not found
+  // Fallback: Serve inline professional favicon if file not found
   res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
   res.setHeader('ETag', '"' + crypto.randomBytes(8).toString('hex') + '"');
-  return res.send(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📄</text></svg>`);
+  return res.send(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#4F46E5" rx="20"/><g transform="translate(28, 20)"><rect x="0" y="0" width="44" height="60" fill="white" rx="2"/><polygon points="44,0 44,10 54,0" fill="#E5E7EB"/><line x1="4" y1="12" x2="40" y2="12" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="20" x2="40" y2="20" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="28" x2="40" y2="28" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="36" x2="32" y2="36" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="44" x2="28" y2="44" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="52" x2="24" y2="52" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/></g></svg>`);
 });
 
 // ✅ FAVICON.ICO FALLBACK - Prevent 404 in browser console
