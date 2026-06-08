@@ -126,6 +126,11 @@ jobs:
             # Copy root .env if it exists
             [ -f $GITHUB_WORKSPACE/.env ] && cp $GITHUB_WORKSPACE/.env $APP_DIR/.env
 
+            # Copy nginx config and reload
+            sudo cp $GITHUB_WORKSPACE/nginx.conf /etc/nginx/nginx.conf 2>/dev/null || \
+              sudo cp $GITHUB_WORKSPACE/nginx.conf /etc/nginx/sites-available/doczen 2>/dev/null || \
+              echo "WARNING: Could not copy nginx config - update manually"
+
             # Install production deps on server
             cd $SERVER_DIR && npm ci --omit=dev --ignore-scripts
 
@@ -134,6 +139,6 @@ jobs:
             pm2 save
 
             # Reload nginx
-            sudo nginx -s reload 2>/dev/null || sudo systemctl reload nginx 2>/dev/null || true
+            sudo nginx -t 2>/dev/null && sudo nginx -s reload 2>/dev/null || sudo systemctl reload nginx 2>/dev/null || true
 
             echo "Deployment complete!"
