@@ -230,10 +230,6 @@ export default function SEO({
         {JSON.stringify(getSchemaMarkup())}
       </script>
 
-      {/* Preload critical resources for performance */}
-      <link rel="preload" as="style" href="/main.css" />
-      <link rel="preload" as="font" href="/fonts/inter.woff2" crossOrigin="anonymous" />
-      
       {/* Prefetch DNS for external resources */}
       <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       <link rel="dns-prefetch" href="https://www.googletagmanager.com" />

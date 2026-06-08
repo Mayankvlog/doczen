@@ -206,7 +206,7 @@ app.use((req, res, next) => {
   // FIX P0: Added trusted ad networks and analytics while blocking malicious domains
   res.setHeader('Content-Security-Policy', 
     "default-src 'self'; " +
-    "script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com 'nonce-doczen'; " +
+    "script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://kettledroopingcontinuation.com 'nonce-doczen'; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "img-src 'self' https: data: blob: image/svg+xml; " +
     "font-src 'self' https://fonts.gstatic.com data:; " +
