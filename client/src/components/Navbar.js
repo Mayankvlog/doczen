@@ -191,6 +191,11 @@ export default function Navbar() {
                 <Link to="/register" className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors">
                   {t('nav.register', 'Register')}
                 </Link>
+                <Link to="/forgot-password" className="px-3 py-2 text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors" title={t('login.forgotPassword', 'Forgot password?')}>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                  </svg>
+                </Link>
               </>
             )}
           </div>
@@ -278,6 +283,7 @@ export default function Navbar() {
               <>
                 <Link to="/login" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-indigo-50 transition-colors">{t('nav.login', 'Login')}</Link>
                 <Link to="/register" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-white bg-indigo-600 text-center mt-1 hover:bg-indigo-700 transition-colors">{t('nav.register', 'Register')}</Link>
+                <Link to="/forgot-password" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">{t('login.forgotPassword', 'Forgot Password?')}</Link>
               </>
             )}
           </div>

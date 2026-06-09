@@ -178,8 +178,8 @@ exports.changePassword = async (req, res) => {
     if (!currentPassword || !newPassword) {
       return res.status(400).json({ message: 'Current password and new password are required' });
     }
-    if (newPassword.length < 6) {
-      return res.status(400).json({ message: 'New password must be at least 6 characters' });
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: 'New password must be at least 8 characters' });
     }
     const user = await User.findById(req.user._id);
     if (!user) {
@@ -217,9 +217,9 @@ exports.forgotPassword = async (req, res) => {
     user.resetPasswordExpiry = Date.now() + 30 * 60 * 1000;
     await user.save({ validateModifiedOnly: true });
     const resetLink = `${process.env.FRONTEND_URL || 'https://www.doczen.co.in'}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
+    console.log(`[DEV] Password reset link for ${email}: ${resetLink}`);
     res.json({ 
-      message: 'Password reset link has been sent to your email',
-      resetLink
+      message: 'If an account with that email exists, a password reset link has been sent.'
     });
   } catch (error) {
     console.error('Forgot password error:', error);
@@ -233,8 +233,8 @@ exports.resetPassword = async (req, res) => {
     if (!token || !email || !newPassword) {
       return res.status(400).json({ message: 'Token, email, and new password are required' });
     }
-    if (newPassword.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters' });
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters' });
     }
     const user = await User.findOne({ email, resetPasswordToken: token });
     if (!user) {

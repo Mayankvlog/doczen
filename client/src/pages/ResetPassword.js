@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { authAPI, gtagEvent } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import SEO from '../components/SEO';
 import { useLanguage } from '../index';
 
@@ -8,6 +9,7 @@ export default function ResetPassword() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { t } = useLanguage();
+  const { setUserData } = useAuth();
 
   const token = searchParams.get('token');
   const email = searchParams.get('email');
@@ -39,8 +41,8 @@ export default function ResetPassword() {
       return;
     }
 
-    if (form.newPassword.length < 6) {
-      setError(t('resetPassword.error.shortPassword', 'Password must be at least 6 characters.'));
+    if (form.newPassword.length < 8) {
+      setError(t('resetPassword.error.shortPassword', 'Password must be at least 8 characters.'));
       return;
     }
 
@@ -58,8 +60,7 @@ export default function ResetPassword() {
       });
       
       const { token: newToken, _id, name, email: userEmail, storageUsed, storageLimit } = response.data;
-      localStorage.setItem('token', newToken);
-      localStorage.setItem('user', JSON.stringify({ _id, name, email: userEmail, storageUsed, storageLimit }));
+      setUserData({ _id, name, email: userEmail, storageUsed, storageLimit }, newToken);
       
       setMessage(response.data.message || t('resetPassword.success', 'Password reset successfully!'));
       setSuccess(true);

@@ -24,8 +24,8 @@ const validateRegister = [
     .normalizeEmail(),
   body('password')
     .notEmpty().withMessage('Password is required')
-    .isLength({ min: 10 }).withMessage('Password must be at least 10 characters')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/).withMessage('Password must contain uppercase, lowercase, number, and special character (@$!%*?&)'),
+    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])/).withMessage('Password must contain uppercase and lowercase letters'),
   handleValidationErrors
 ];
 
@@ -50,10 +50,14 @@ const validateForgotPassword = [
 const validateResetPassword = [
   body('token')
     .notEmpty().withMessage('Reset token is required'),
-  body('password')
-    .notEmpty().withMessage('Password is required')
-    .isLength({ min: 10 }).withMessage('Password must be at least 10 characters')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/).withMessage('Password must contain uppercase, lowercase, number, and special character (@$!%*?&)'),
+  body('email')
+    .trim()
+    .isEmail().withMessage('Valid email is required')
+    .normalizeEmail(),
+  body('newPassword')
+    .notEmpty().withMessage('New password is required')
+    .isLength({ min: 8 }).withMessage('New password must be at least 8 characters')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])/).withMessage('New password must contain uppercase and lowercase letters'),
   handleValidationErrors
 ];
 
@@ -62,8 +66,8 @@ const validateChangePassword = [
     .notEmpty().withMessage('Current password is required'),
   body('newPassword')
     .notEmpty().withMessage('New password is required')
-    .isLength({ min: 10 }).withMessage('New password must be at least 10 characters')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/).withMessage('Password must contain uppercase, lowercase, number, and special character (@$!%*?&)'),
+    .isLength({ min: 8 }).withMessage('New password must be at least 8 characters')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])/).withMessage('New password must contain uppercase and lowercase letters'),
   handleValidationErrors
 ];
 

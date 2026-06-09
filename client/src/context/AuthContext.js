@@ -24,24 +24,34 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const extractUser = (data) => ({
+    _id: data._id,
+    name: data.name,
+    email: data.email,
+    storageUsed: data.storageUsed,
+    storageLimit: data.storageLimit,
+  });
+
   useEffect(() => {
     const restoreSession = async () => {
       await fetchCSRFToken();
       const token = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
       if (token && storedUser) {
-        setUser(JSON.parse(storedUser));
         if (isTokenExpired(token)) {
           try {
             const { data } = await authAPI.refresh();
             localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data));
-            setUser(data);
+            const clean = extractUser(data);
+            localStorage.setItem('user', JSON.stringify(clean));
+            setUser(clean);
           } catch {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             setUser(null);
           }
+        } else {
+          setUser(JSON.parse(storedUser));
         }
       }
       setLoading(false);
@@ -51,17 +61,19 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const { data } = await authAPI.login({ email, password });
+    const clean = extractUser(data);
     localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data));
-    setUser(data);
+    localStorage.setItem('user', JSON.stringify(clean));
+    setUser(clean);
     return data;
   };
 
   const register = async (name, email, password) => {
     const { data } = await authAPI.register({ name, email, password });
+    const clean = extractUser(data);
     localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data));
-    setUser(data);
+    localStorage.setItem('user', JSON.stringify(clean));
+    setUser(clean);
     return data;
   };
 
@@ -79,7 +91,8 @@ export const AuthProvider = ({ children }) => {
   const refreshProfile = async () => {
     try {
       const { data } = await authAPI.getProfile();
-      const updatedUser = { ...user, ...data };
+      const current = JSON.parse(localStorage.getItem('user') || '{}');
+      const updatedUser = { ...current, ...data };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
       return data;
@@ -88,8 +101,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const setUserData = (userData, token) => {
+    const clean = extractUser(userData);
+    if (token) localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(clean));
+    setUser(clean);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshProfile }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshProfile, setUserData }}>
       {children}
     </AuthContext.Provider>
   );

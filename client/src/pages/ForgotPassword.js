@@ -31,7 +31,7 @@ export default function ForgotPassword() {
     setLoading(true);
     try {
       const response = await authAPI.forgotPassword({ email });
-      setMessage(response.data.message || t('forgotPassword.success', 'Password reset link has been sent to your email.'));
+      setMessage(response.data.message || t('forgotPassword.success', 'If an account with that email exists, a password reset link has been sent.'));
       setSubmitted(true);
       gtagEvent('forgot_password_success', {});
       setTimeout(() => navigate('/login'), 3000);

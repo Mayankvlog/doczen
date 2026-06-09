@@ -123,9 +123,14 @@ export default function Register() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                {t('register.password', 'Password')}
-              </label>
+              <div className="flex justify-between items-center mb-1.5">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {t('register.password', 'Password')}
+                </label>
+                <Link to="/forgot-password" className="text-xs font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                  {t('login.forgotPassword', 'Forgot?')}
+                </Link>
+              </div>
               <input
                 id="password"
                 name="password"
