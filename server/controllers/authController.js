@@ -210,16 +210,15 @@ exports.forgotPassword = async (req, res) => {
     }
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(200).json({ message: 'If an account with that email exists, a password reset link will be sent.' });
+      return res.status(404).json({ message: 'No account found with that email address.' });
     }
     const resetToken = crypto.randomBytes(32).toString('hex');
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpiry = Date.now() + 30 * 60 * 1000;
     await user.save({ validateModifiedOnly: true });
-    const resetLink = `${process.env.FRONTEND_URL || 'https://www.doczen.co.in'}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
-    console.log(`[DEV] Password reset link for ${email}: ${resetLink}`);
-    res.json({ 
-      message: 'If an account with that email exists, a password reset link has been sent.'
+    res.json({
+      message: 'Verification successful. Please set your new password.',
+      resetToken
     });
   } catch (error) {
     console.error('Forgot password error:', error);

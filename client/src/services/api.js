@@ -70,9 +70,6 @@ api.interceptors.request.use((config) => {
   const csrfToken = getCSRFToken();
   if (csrfToken) {
     config.headers['X-CSRF-Token'] = csrfToken;
-    if (config.data instanceof FormData) {
-      config.data.append('csrf_token', csrfToken);
-    }
   }
   return config;
 });
@@ -155,9 +152,6 @@ export async function handleToolSubmit(url, formData, fallbackName, retried = fa
     await fetchCSRFToken();
     csrfToken = getCSRFToken();
   }
-  if (csrfToken) {
-    formData.append('csrf_token', csrfToken);
-  }
   const headers = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
   if (csrfToken) {
@@ -172,10 +166,6 @@ export async function handleToolSubmit(url, formData, fallbackName, retried = fa
 
   if (response.status === 403 && !retried) {
     await fetchCSRFToken();
-    const newToken = getCSRFToken();
-    if (newToken) {
-      formData.append('csrf_token', newToken);
-    }
     return handleToolSubmit(url, formData, fallbackName, true);
   }
 
