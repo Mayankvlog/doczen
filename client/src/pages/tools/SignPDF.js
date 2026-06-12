@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -125,6 +126,31 @@ export default function SignPDF() {
       <AdsterraNative />
 
       </div>
+
+      <div className="mt-12 space-y-8">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use Sign PDF</h2>
+          <ol className="list-decimal list-inside space-y-2 text-gray-600">
+            <li>Click the upload area and select a PDF file from your device, or drag and drop a file onto the uploader.</li>
+            <li>Type your signature text into the text input field that appears after file upload.</li>
+            <li>Preview the signature style — the text appears in an italic, serif font resembling a handwritten signature.</li>
+            <li>Click the "Sign PDF" button to process your document. The signature will be placed on the first page.</li>
+            <li>Download the signed PDF automatically once processing completes. Use the "Download Again" button if needed.</li>
+          </ol>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Tools</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <Link to="/protect-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Protect PDF</Link>
+            <Link to="/unlock-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Unlock PDF</Link>
+            <Link to="/add-watermark" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Add Watermark</Link>
+            <Link to="/remove-watermark" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Remove Watermark</Link>
+            <Link to="/compare-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Compare PDF</Link>
+          </div>
+        </div>
+      </div>
+
     </div>
     </>
   );

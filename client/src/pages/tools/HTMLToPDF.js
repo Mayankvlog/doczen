@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
 import { useDownloadHandler, gtagEvent } from '../../services/api';
@@ -183,6 +184,31 @@ export default function HTMLToPDF() {
             <ResultCard result={result} onReset={() => { setResult(null); setContent(''); clearDownload(); }} action={t('tool.convertedToPdf', 'converted to PDF')} />
           </div>
         )}
+
+        <div className="mt-12 space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use HTML to PDF</h2>
+            <ol className="list-decimal list-inside space-y-2 text-gray-600">
+              <li>Enter your HTML markup or plain text content into the text area provided on the page.</li>
+              <li>Optionally set the document title and choose a font size from the dropdown menu (10px to 20px).</li>
+              <li>Preview your content in the text area — the tool supports standard HTML tags, headings, and paragraphs.</li>
+              <li>Click the "Convert to PDF" button to generate a PDF document from your content.</li>
+              <li>Download the resulting PDF automatically once the conversion is complete.</li>
+            </ol>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Tools</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <Link to="/word-to-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Word to PDF</Link>
+              <Link to="/image-to-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Image to PDF</Link>
+              <Link to="/merge-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Merge PDF</Link>
+              <Link to="/compress-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Compress PDF</Link>
+              <Link to="/protect-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Protect PDF</Link>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
     </>

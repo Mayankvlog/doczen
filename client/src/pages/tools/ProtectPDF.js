@@ -5,6 +5,7 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 
 export default function ProtectPDF() {
@@ -172,6 +173,29 @@ export default function ProtectPDF() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); setPassword(''); setConfirmPassword(''); clearDownload(); }} action={t('tool.protected', 'protected with password')} />
           </div>
         )}
+        {/* SEO Content Section */}
+        <div className="mt-16 space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Password Protect a PDF Online for Free</h2>
+            <ol className="list-decimal pl-6 space-y-2 text-gray-600">
+              <li>Upload the PDF file you want to secure with a password</li>
+              <li>Enter a strong password (minimum 4 characters required)</li>
+              <li>Re-enter the same password in the confirmation field to verify</li>
+              <li>Click the "Protect PDF" button to encrypt your document</li>
+              <li>Download your password-protected PDF file securely</li>
+            </ol>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related PDF Tools</h2>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/unlock-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.unlockPdf', 'Unlock PDF')}</Link>
+              <Link to="/merge-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.mergePdf', 'Merge PDF')}</Link>
+              <Link to="/compress-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.compressPdf', 'Compress PDF')}</Link>
+              <Link to="/add-watermark" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.addWatermark', 'Add Watermark')}</Link>
+              <Link to="/add-page-numbers" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.addPageNumbers', 'Add Page Numbers')}</Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     </>

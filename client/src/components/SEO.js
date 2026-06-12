@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useLanguage } from '../index';
 
-const BASE_URL = 'https://doczen.co.in';
+const BASE_URL = 'https://www.doczen.co.in';
 const SITE_NAME = 'Doczen';
 const DEFAULT_DESC = 'Doczen - Free Online PDF Editor. Merge, split, compress, convert and edit PDF files online for free. No installation required.';
 

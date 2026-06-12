@@ -5,6 +5,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
+import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 
 export default function ExtractText() {
@@ -160,6 +161,29 @@ export default function ExtractText() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); setExtractedText(''); clearDownload(); }} action="processed" onDownloadAgain={isReady ? handleDownloadAgain : undefined} />
           </div>
         )}
+        {/* SEO Content Section */}
+        <div className="mt-16 space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Extract Text from a PDF Online for Free</h2>
+            <ol className="list-decimal pl-6 space-y-2 text-gray-600">
+              <li>Upload a PDF file that contains text content you want to extract</li>
+              <li>Click the "Extract Text" button to begin the extraction process</li>
+              <li>View the extracted text in the text area displayed on screen</li>
+              <li>Use the "Copy to Clipboard" button to copy the text for reuse</li>
+              <li>Download the extracted text as a .txt file for offline use</li>
+            </ol>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related PDF Tools</h2>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/merge-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.mergePdf', 'Merge PDF')}</Link>
+              <Link to="/split-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.splitPdf', 'Split PDF')}</Link>
+              <Link to="/compress-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.compressPdf', 'Compress PDF')}</Link>
+              <Link to="/rotate-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.rotatePdf', 'Rotate PDF')}</Link>
+              <Link to="/delete-pages" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.deletePages', 'Delete Pages')}</Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     </>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '../../index';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -101,6 +102,26 @@ export default function PDFToTXT() {
 
       <AdsterraNative />
 
+      </div>
+
+      <div className="mt-12 border-t border-gray-200 pt-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use PDF to TXT Extractor</h2>
+        <ol className="list-decimal list-inside space-y-2 text-gray-600">
+          <li>Click the upload area and select a PDF file containing text content.</li>
+          <li>Wait for the file to upload successfully.</li>
+          <li>Click the "Extract Text" button to begin the text extraction process.</li>
+          <li>The extracted text will download as a .txt file once processing is complete.</li>
+          <li>Open the text file in any text editor to view, copy, or edit the extracted content.</li>
+        </ol>
+
+        <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Related Tools</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <Link to="/pdf-to-word" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">PDF to Word</Link>
+          <Link to="/pdf-to-excel" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">PDF to Excel</Link>
+          <Link to="/pdf-to-jpg" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">PDF to JPG</Link>
+          <Link to="/pdf-to-ppt" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">PDF to PPT</Link>
+          <Link to="/edit-pdf" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">Edit PDF</Link>
+        </div>
       </div>
     </div>
     </>

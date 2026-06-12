@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -300,6 +301,31 @@ export default function Metadata() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); setMetadataData(null); clearDownload(); }} action={t('tool.edited', 'processed')} />
           </div>
         )}
+
+        <div className="mt-12 space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use PDF Metadata</h2>
+            <ol className="list-decimal list-inside space-y-2 text-gray-600">
+              <li>Upload a PDF file to view or edit its document properties.</li>
+              <li>Choose between "Read Metadata" mode to view existing properties, or "Write Metadata" mode to edit them.</li>
+              <li>In Read mode, click the button to display the title, author, subject, keywords, page count, and page sizes.</li>
+              <li>In Write mode, fill in the title, author, subject, and keyword fields with your desired values.</li>
+              <li>Click "Update Metadata" to save changes and download the updated PDF with the new properties embedded.</li>
+            </ol>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Tools</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <Link to="/add-page-numbers" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Add Page Numbers</Link>
+              <Link to="/protect-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Protect PDF</Link>
+              <Link to="/pdf-to-pdfa" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">PDF to PDF/A</Link>
+              <Link to="/extract-text" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Extract Text</Link>
+              <Link to="/flatten-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Flatten PDF</Link>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
     </>

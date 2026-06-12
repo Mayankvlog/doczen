@@ -5,6 +5,7 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 
 export default function RotatePDF() {
@@ -167,6 +168,29 @@ export default function RotatePDF() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); clearDownload(); }} action={t('tool.rotated', 'rotated')} />
           </div>
         )}
+        {/* SEO Content Section */}
+        <div className="mt-16 space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Rotate PDF Pages Online for Free</h2>
+            <ol className="list-decimal pl-6 space-y-2 text-gray-600">
+              <li>Upload the PDF file you want to rotate using the upload area above</li>
+              <li>Choose your rotation angle: 90°, 180°, or 270° clockwise</li>
+              <li>The selected angle will be applied to all pages in the document</li>
+              <li>Click the "Rotate PDF" button to process your file</li>
+              <li>Download your rotated PDF with the corrected page orientation</li>
+            </ol>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related PDF Tools</h2>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/merge-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.mergePdf', 'Merge PDF')}</Link>
+              <Link to="/split-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.splitPdf', 'Split PDF')}</Link>
+              <Link to="/compress-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.compressPdf', 'Compress PDF')}</Link>
+              <Link to="/delete-pages" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.deletePages', 'Delete Pages')}</Link>
+              <Link to="/reorder-pages" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.reorderPages', 'Reorder Pages')}</Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     </>

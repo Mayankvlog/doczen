@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -138,6 +139,31 @@ export default function RemoveAnnotations() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); clearDownload(); }} action={t('tool.annotationsRemoved', 'annotations removed')} />
           </div>
         )}
+
+        <div className="mt-12 space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use Remove Annotations</h2>
+            <ol className="list-decimal list-inside space-y-2 text-gray-600">
+              <li>Upload a PDF that contains comments, highlights, sticky notes, text boxes, or other markup annotations.</li>
+              <li>Review the file name to confirm the correct document is selected for cleaning.</li>
+              <li>Click the "Remove Annotations" button to strip all annotations from the document.</li>
+              <li>Wait for the process to complete — only the annotations are removed; your document content stays intact.</li>
+              <li>Download the cleaned PDF automatically and use it for final distribution without reviewer markup.</li>
+            </ol>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Tools</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <Link to="/flatten-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Flatten PDF</Link>
+              <Link to="/redact-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Redact PDF</Link>
+              <Link to="/remove-watermark" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Remove Watermark</Link>
+              <Link to="/repair-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Repair PDF</Link>
+              <Link to="/rotate-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Rotate PDF</Link>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
     </>

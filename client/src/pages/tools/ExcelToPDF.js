@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -102,6 +103,26 @@ export default function ExcelToPDF() {
 
       <AdsterraNative />
 
+      </div>
+
+      <div className="mt-12 border-t border-gray-200 pt-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use Excel to PDF Converter</h2>
+        <ol className="list-decimal list-inside space-y-2 text-gray-600">
+          <li>Click the upload area and select an Excel file (.xlsx or .xls) from your device.</li>
+          <li>Wait for the spreadsheet to be uploaded successfully.</li>
+          <li>Click the "Convert to PDF" button to start the conversion process.</li>
+          <li>The PDF file will download automatically once processing is complete.</li>
+          <li>Open the PDF to verify all sheets and data are properly rendered and formatted.</li>
+        </ol>
+
+        <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Related Tools</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <Link to="/pdf-to-excel" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">PDF to Excel</Link>
+          <Link to="/pdf-to-word" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">PDF to Word</Link>
+          <Link to="/word-to-pdf" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">Word to PDF</Link>
+          <Link to="/jpg-to-pdf" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">JPG to PDF</Link>
+          <Link to="/edit-pdf" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">Edit PDF</Link>
+        </div>
       </div>
     </div>
     </>

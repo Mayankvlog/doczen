@@ -5,6 +5,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
+import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 
 export default function DeletePages() {
@@ -168,6 +169,29 @@ export default function DeletePages() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); setPagesToDelete(''); clearDownload(); }} action={t('tool.cleaned', 'cleaned')} />
           </div>
         )}
+        {/* SEO Content Section */}
+        <div className="mt-16 space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Delete Pages from a PDF Online for Free</h2>
+            <ol className="list-decimal pl-6 space-y-2 text-gray-600">
+              <li>Upload the PDF file you want to remove pages from</li>
+              <li>Enter the page numbers to delete as comma-separated values like 2, 4, 6</li>
+              <li>Review the page numbers to make sure they are correct before processing</li>
+              <li>Click the "Delete Pages" button to remove the specified pages</li>
+              <li>Download your cleaned PDF with the unwanted pages removed</li>
+            </ol>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related PDF Tools</h2>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/reorder-pages" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.reorderPages', 'Reorder Pages')}</Link>
+              <Link to="/split-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.splitPdf', 'Split PDF')}</Link>
+              <Link to="/merge-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.mergePdf', 'Merge PDF')}</Link>
+              <Link to="/compress-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.compressPdf', 'Compress PDF')}</Link>
+              <Link to="/extract-text" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.extractText', 'Extract Text')}</Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     </>

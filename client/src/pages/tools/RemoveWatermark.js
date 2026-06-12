@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -223,6 +224,31 @@ export default function RemoveWatermark() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); setRemovalResult(null); clearDownload(); }} action={t('tool.watermarkRemovedResult', 'watermark removed')} />
           </div>
         )}
+
+        <div className="mt-12 space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use Remove Watermark</h2>
+            <ol className="list-decimal list-inside space-y-2 text-gray-600">
+              <li>Upload a PDF file that contains a watermark you want to remove from the document.</li>
+              <li>Optionally enter the known watermark text (e.g., CONFIDENTIAL, DRAFT, SAMPLE) to improve detection accuracy.</li>
+              <li>Choose a removal mode — "Auto" tries all strategies or "Text" targets text-based watermarks only.</li>
+              <li>Click the "Remove Watermark" button to scan and remove the watermark from your document.</li>
+              <li>Download the cleaned PDF automatically. If the watermark is flattened or embedded, the tool will notify you that auto-removal was not possible.</li>
+            </ol>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Tools</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <Link to="/add-watermark" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Add Watermark</Link>
+              <Link to="/redact-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Redact PDF</Link>
+              <Link to="/remove-annotations" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Remove Annotations</Link>
+              <Link to="/flatten-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Flatten PDF</Link>
+              <Link to="/protect-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Protect PDF</Link>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
     </>

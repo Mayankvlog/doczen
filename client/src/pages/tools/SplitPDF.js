@@ -138,10 +138,11 @@ export default function SplitPDF() {
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.howToSplit', 'How to Split a PDF Online for Free')}</h2>
             <ol className="list-decimal pl-6 space-y-2 text-gray-600">
-              <li>{t('tool.splitStep1', 'Upload your PDF file by clicking the upload area above')}</li>
-              <li>{t('tool.splitStep2', 'Select the pages you want to extract or split by page ranges')}</li>
-              <li>{t('tool.splitStep3', 'Click "Split PDF" and wait for processing')}</li>
-              <li>{t('tool.splitStep4', 'Download your separated PDF pages as individual files')}</li>
+              <li>Upload your PDF file by clicking the upload area above or dragging and dropping a file</li>
+              <li>Select the pages you want to extract or specify page ranges to split by</li>
+              <li>Choose whether to split every page individually or into custom page groups</li>
+              <li>Click "Split PDF" and wait for the processing to complete</li>
+              <li>Download your separated PDF pages as individual files in a ZIP archive</li>
             </ol>
           </div>
           <div>

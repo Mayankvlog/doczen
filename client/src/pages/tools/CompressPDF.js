@@ -176,10 +176,11 @@ export default function CompressPDF() {
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.howToCompress', 'How to Compress a PDF Online for Free')}</h2>
             <ol className="list-decimal pl-6 space-y-2 text-gray-600">
-              <li>{t('tool.step1', 'Upload your PDF file by clicking the upload area above (up to 50 MB)')}</li>
-              <li>{t('tool.step2', 'Adjust the compression quality slider — higher compression = smaller file size')}</li>
-              <li>{t('tool.step3', 'Click "Compress PDF" and wait a few seconds for processing')}</li>
-              <li>{t('tool.step4', 'Download your compressed PDF file — smaller, faster, and email-ready')}</li>
+              <li>Upload your PDF file by clicking the upload area above (supports files up to 50 MB)</li>
+              <li>Adjust the compression quality slider — move left for smaller file size or right for better quality</li>
+              <li>Preview the estimated file size based on your quality selection before processing</li>
+              <li>Click "Compress PDF" and wait a few seconds for the optimization to complete</li>
+              <li>Download your compressed PDF file that is smaller, faster to share, and email-ready</li>
             </ol>
           </div>
           <div>

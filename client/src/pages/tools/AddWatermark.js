@@ -5,6 +5,7 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 
 export default function AddWatermark() {
@@ -156,6 +157,29 @@ export default function AddWatermark() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); setWatermarkText(''); clearDownload(); }} action={t('tool.watermarked', 'watermarked')} />
           </div>
         )}
+        {/* SEO Content Section */}
+        <div className="mt-16 space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Add a Watermark to a PDF Online for Free</h2>
+            <ol className="list-decimal pl-6 space-y-2 text-gray-600">
+              <li>Upload the PDF file you want to add a watermark to</li>
+              <li>Enter your watermark text such as "CONFIDENTIAL", "DRAFT", or "SAMPLE"</li>
+              <li>The watermark will be applied diagonally across every page automatically</li>
+              <li>Click the "Add Watermark" button to process your document</li>
+              <li>Download your watermarked PDF with the text overlay on every page</li>
+            </ol>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related PDF Tools</h2>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/protect-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.protectPdf', 'Protect PDF')}</Link>
+              <Link to="/add-page-numbers" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.addPageNumbers', 'Add Page Numbers')}</Link>
+              <Link to="/merge-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.mergePdf', 'Merge PDF')}</Link>
+              <Link to="/compress-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.compressPdf', 'Compress PDF')}</Link>
+              <Link to="/extract-text" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.extractText', 'Extract Text')}</Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     </>
