@@ -18,18 +18,6 @@ const LOCALE_MAP = {
   sl: 'sl_SI', lt: 'lt_LT', lv: 'lv_LV', et: 'et_EE',
 };
 
-const HREFLANG_MAP = {
-  en: 'en', es: 'es', fr: 'fr', de: 'de', it: 'it',
-  pt: 'pt', nl: 'nl', ru: 'ru', ja: 'ja', 'zh-CN': 'zh-Hans',
-  'zh-TW': 'zh-Hant', ko: 'ko', ar: 'ar', hi: 'hi', tr: 'tr',
-  pl: 'pl', sv: 'sv', da: 'da', no: 'no', fi: 'fi',
-  cs: 'cs', sk: 'sk', hu: 'hu', ro: 'ro', bg: 'bg',
-  el: 'el', th: 'th', vi: 'vi', id: 'id', ms: 'ms',
-  uk: 'uk', he: 'he', ca: 'ca', hr: 'hr', sr: 'sr',
-  sl: 'sl', lt: 'lt', lv: 'lv', et: 'et',
-  bn: 'bn',
-};
-
 export default function SEO({
   title,
   description = DEFAULT_DESC,
@@ -46,7 +34,8 @@ export default function SEO({
 }) {
   const { lang } = useLanguage();
   const pageTitle = title ? `${title} | Doczen` : `${SITE_NAME} - Free Online PDF Editor`;
-  const url = canonical ? `${BASE_URL}${canonical}` : BASE_URL;
+  const resolvedPath = canonical || (typeof window !== 'undefined' ? window.location.pathname.replace(/\/+$/, '') || '/' : '/');
+  const url = `${BASE_URL}${resolvedPath}`;
   const pageKeywords = keywords || DEFAULT_KEYWORDS;
   const locale = LOCALE_MAP[lang] || 'en_US';
   const imgUrl = image.startsWith('http') ? image : `${BASE_URL}${image}`;
@@ -184,11 +173,8 @@ export default function SEO({
       <meta name="bingbot" content={noIndex ? 'noindex' : 'index, follow'} />
       
       {/* Canonical URL */}
-      <link rel="canonical" href={canonical ? `${BASE_URL}${canonical}` : url} />
-      {canonical === '/' && Object.entries(HREFLANG_MAP).map(([code, hreflang]) => (
-        <link key={hreflang} rel="alternate" href={`${BASE_URL}${canonical}`} hrefLang={hreflang} />
-      ))}
-      {canonical === '/' && <link rel="alternate" href={`${BASE_URL}${canonical}`} hrefLang="x-default" />}
+      <link rel="canonical" href={url} />
+      {canonical === '/' && <link rel="alternate" href={url} hrefLang="x-default" />}
       
       {/* Open Graph Tags */}
       <meta property="og:title" content={pageTitle} />

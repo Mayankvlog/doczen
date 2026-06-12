@@ -355,6 +355,8 @@ app.get('/sitemap.xml', (req, res) => {
     { path: '/terms-of-service', priority: '0.5', changefreq: 'yearly' },
     { path: '/login', priority: '0.4', changefreq: 'monthly' },
     { path: '/register', priority: '0.4', changefreq: 'monthly' },
+    { path: '/forgot-password', priority: '0.3', changefreq: 'monthly' },
+    { path: '/reset-password', priority: '0.3', changefreq: 'monthly' },
   ];
   
   staticPages.forEach(page => {
