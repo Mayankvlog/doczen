@@ -3,7 +3,6 @@ import { useLanguage } from '../index';
 
 const BASE_URL = 'https://doczen.co.in';
 const SITE_NAME = 'Doczen';
-const SITE_TWITTER = '@doczen';
 const DEFAULT_DESC = 'Doczen - Free Online PDF Editor. Merge, split, compress, convert and edit PDF files online for free. No installation required.';
 
 const DEFAULT_KEYWORDS = 'free online PDF editor, merge PDF, split PDF, compress PDF, convert PDF, PDF tools, Doczen';
@@ -69,7 +68,6 @@ export default function SEO({
         description: 'Free Online PDF Editor - Convert, merge, split, compress and edit PDFs online',
         sameAs: [
           'https://www.facebook.com/doczen',
-          'https://twitter.com/doczen',
           'https://www.instagram.com/doczen',
           'https://www.linkedin.com/company/doczen1/?viewAsMember=true',
         ],
@@ -206,8 +204,6 @@ export default function SEO({
 
       {/* Twitter Card Tags */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content={SITE_TWITTER} />
-      <meta name="twitter:creator" content={SITE_TWITTER} />
       <meta name="twitter:title" content={pageTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={imgUrl} />
