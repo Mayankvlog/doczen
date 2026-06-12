@@ -71,7 +71,7 @@ export default function SEO({
           'https://www.facebook.com/doczen',
           'https://twitter.com/doczen',
           'https://www.instagram.com/doczen',
-          'https://www.linkedin.com/company/doczen',
+          'https://www.linkedin.com/company/doczen1/?viewAsMember=true',
         ],
         contactPoint: {
           '@type': 'ContactPoint',
