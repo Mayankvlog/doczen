@@ -185,10 +185,10 @@ export default function SEO({
       
       {/* Canonical URL */}
       <link rel="canonical" href={canonical ? `${BASE_URL}${canonical}` : url} />
-      {canonical && Object.entries(HREFLANG_MAP).map(([code, hreflang]) => (
+      {canonical === '/' && Object.entries(HREFLANG_MAP).map(([code, hreflang]) => (
         <link key={hreflang} rel="alternate" href={`${BASE_URL}${canonical}`} hrefLang={hreflang} />
       ))}
-      {canonical && <link rel="alternate" href={`${BASE_URL}${canonical}`} hrefLang="x-default" />}
+      {canonical === '/' && <link rel="alternate" href={`${BASE_URL}${canonical}`} hrefLang="x-default" />}
       
       {/* Open Graph Tags */}
       <meta property="og:title" content={pageTitle} />
