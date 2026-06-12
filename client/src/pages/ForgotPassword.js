@@ -105,7 +105,6 @@ export default function ForgotPassword() {
         description={t('tool.seo.forgotPasswordDesc', 'Reset your Doczen account password')}
         keywords={t('tool.seo.forgotPasswordKeywords', 'forgot password, reset password, Doczen')}
         canonical="/forgot-password"
-        noIndex
       />
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
