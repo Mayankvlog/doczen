@@ -187,30 +187,6 @@ export default function PDFToPDFA() {
           </div>
         )}
 
-        <div className="mt-12 space-y-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use PDF to PDF/A</h2>
-            <ol className="list-decimal list-inside space-y-2 text-gray-600">
-              <li>Upload a standard PDF file that you want to convert to PDF/A archival format.</li>
-              <li>Optionally fill in the document information fields — title, author, subject, and keywords for better metadata.</li>
-              <li>Click the "Convert to PDF/A" button to begin the conversion process.</li>
-              <li>Wait for the conversion to complete — PDF/A ensures your document is self-contained and suitable for long-term preservation.</li>
-              <li>Download your PDF/A file automatically once the conversion finishes.</li>
-            </ol>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Tools</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <Link to="/repair-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Repair PDF</Link>
-              <Link to="/compress-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Compress PDF</Link>
-              <Link to="/protect-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Protect PDF</Link>
-              <Link to="/pdf-metadata" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">PDF Metadata</Link>
-              <Link to="/flatten-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Flatten PDF</Link>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
     </>

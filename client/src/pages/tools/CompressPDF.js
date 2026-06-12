@@ -171,41 +171,6 @@ export default function CompressPDF() {
           </div>
         )}
 
-        {/* SEO Content Section */}
-        <div className="mt-16 space-y-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.howToCompress', 'How to Compress a PDF Online for Free')}</h2>
-            <ol className="list-decimal pl-6 space-y-2 text-gray-600">
-              <li>Upload your PDF file by clicking the upload area above (supports files up to 50 MB)</li>
-              <li>Adjust the compression quality slider — move left for smaller file size or right for better quality</li>
-              <li>Preview the estimated file size based on your quality selection before processing</li>
-              <li>Click "Compress PDF" and wait a few seconds for the optimization to complete</li>
-              <li>Download your compressed PDF file that is smaller, faster to share, and email-ready</li>
-            </ol>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.whyCompress', 'Why Compress PDF Files?')}</h2>
-            <p className="text-gray-600 leading-relaxed">
-              {t('tool.whyCompressDesc', 'Large PDF files are hard to share via email, slow to upload, and take up valuable storage space. Compressing your PDF reduces file size significantly while keeping the visual quality intact. Perfect for sending documents through email, uploading to websites, or archiving files.')}
-            </p>
-            <ul className="list-disc pl-6 mt-3 space-y-1 text-gray-600">
-              <li>{t('tool.benefit1', 'Faster email attachments — stay under size limits')}</li>
-              <li>{t('tool.benefit2', 'Quick uploads to websites and cloud storage')}</li>
-              <li>{t('tool.benefit3', 'Save disk space on your devices')}</li>
-              <li>{t('tool.benefit4', 'Faster document processing and downloads')}</li>
-            </ul>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.relatedTools', 'Related PDF Tools')}</h2>
-            <div className="flex flex-wrap gap-3">
-              <Link to="/merge-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.mergePdf', 'Merge PDF')}</Link>
-              <Link to="/split-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.splitPdf', 'Split PDF')}</Link>
-              <Link to="/pdf-to-jpg" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.pdfToJpg', 'PDF to JPG')}</Link>
-              <Link to="/pdf-to-word" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.pdfToWord', 'PDF to Word')}</Link>
-              <Link to="/edit-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.editPdf', 'Edit PDF')}</Link>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
     </>

@@ -159,30 +159,6 @@ export default function RedactPDF() {
           </div>
         )}
 
-        <div className="mt-12 space-y-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use Redact PDF</h2>
-            <ol className="list-decimal list-inside space-y-2 text-gray-600">
-              <li>Upload a PDF file containing sensitive information that you want to permanently remove.</li>
-              <li>Enter the words or phrases you want to redact in the text area — place each term on a separate line.</li>
-              <li>Review the hint: redaction permanently blacks out text and cannot be undone, so keep a backup of your original.</li>
-              <li>Click the "Redact PDF" button to process the document and black out all matching terms.</li>
-              <li>Download the redacted PDF automatically once processing is complete.</li>
-            </ol>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Tools</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <Link to="/remove-watermark" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Remove Watermark</Link>
-              <Link to="/remove-annotations" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Remove Annotations</Link>
-              <Link to="/flatten-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Flatten PDF</Link>
-              <Link to="/protect-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Protect PDF</Link>
-              <Link to="/repair-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Repair PDF</Link>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
     </>

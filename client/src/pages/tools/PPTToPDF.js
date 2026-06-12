@@ -104,25 +104,6 @@ export default function PPTToPDF() {
 
       </div>
 
-      <div className="mt-12 border-t border-gray-200 pt-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use PPT to PDF Converter</h2>
-        <ol className="list-decimal list-inside space-y-2 text-gray-600">
-          <li>Click the upload area and select a PowerPoint file (.ppt or .pptx) from your device.</li>
-          <li>Wait for the presentation to be uploaded successfully.</li>
-          <li>Click the "Convert to PDF" button to start the conversion process.</li>
-          <li>The PDF file will download automatically once processing is finished.</li>
-          <li>Share the PDF with others who may not have PowerPoint installed on their devices.</li>
-        </ol>
-
-        <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Related Tools</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <Link to="/pdf-to-ppt" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">PDF to PPT</Link>
-          <Link to="/pdf-to-word" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">PDF to Word</Link>
-          <Link to="/word-to-pdf" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">Word to PDF</Link>
-          <Link to="/excel-to-pdf" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">Excel to PDF</Link>
-          <Link to="/edit-pdf" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">Edit PDF</Link>
-        </div>
-      </div>
     </div>
     </>
   );

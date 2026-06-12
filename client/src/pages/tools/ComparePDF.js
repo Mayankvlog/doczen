@@ -184,30 +184,6 @@ export default function ComparePDF() {
           </div>
         )}
 
-        <div className="mt-12 space-y-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use Compare PDF</h2>
-            <ol className="list-decimal list-inside space-y-2 text-gray-600">
-              <li>Upload the first PDF file by clicking the "First PDF" upload area or dragging a file onto it.</li>
-              <li>Upload the second PDF file using the "Second PDF" upload area next to the first one.</li>
-              <li>Verify that both file names appear correctly below their respective uploaders.</li>
-              <li>Click the "Compare PDFs" button to analyze the two documents for differences in pages, size, and structure.</li>
-              <li>Review the comparison results showing page counts, file sizes, whether they are identical, and any specific differences found.</li>
-            </ol>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Tools</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <Link to="/merge-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Merge PDF</Link>
-              <Link to="/split-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Split PDF</Link>
-              <Link to="/extract-text" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Extract Text</Link>
-              <Link to="/pdf-to-word" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">PDF to Word</Link>
-              <Link to="/compress-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Compress PDF</Link>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
     </>

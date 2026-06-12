@@ -140,30 +140,6 @@ export default function FlattenPDF() {
           </div>
         )}
 
-        <div className="mt-12 space-y-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use Flatten PDF</h2>
-            <ol className="list-decimal list-inside space-y-2 text-gray-600">
-              <li>Upload a PDF that contains form fields, annotations, comments, or multiple layers that you want to merge.</li>
-              <li>Review the file name to confirm the correct document is selected.</li>
-              <li>Click the "Flatten PDF" button to merge all layers, form inputs, and markups into a single static layer.</li>
-              <li>Wait for the process to complete — flattened PDFs have permanent, non-editable content ideal for final distribution.</li>
-              <li>Download your flattened PDF automatically once processing finishes.</li>
-            </ol>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Tools</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <Link to="/redact-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Redact PDF</Link>
-              <Link to="/remove-annotations" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Remove Annotations</Link>
-              <Link to="/remove-watermark" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Remove Watermark</Link>
-              <Link to="/repair-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Repair PDF</Link>
-              <Link to="/compress-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Compress PDF</Link>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
     </>

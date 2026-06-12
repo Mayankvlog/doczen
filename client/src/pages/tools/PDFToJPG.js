@@ -107,25 +107,6 @@ export default function PDFToJPG() {
 
       </div>
 
-      <div className="mt-12 border-t border-gray-200 pt-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use PDF to JPG Converter</h2>
-        <ol className="list-decimal list-inside space-y-2 text-gray-600">
-          <li>Click the upload area above and select a PDF file from your device.</li>
-          <li>Wait for the file to be uploaded successfully.</li>
-          <li>Click the "Convert to JPG" button to start the conversion process.</li>
-          <li>Once complete, a ZIP file containing JPG images (one per page) will download automatically.</li>
-          <li>Extract the ZIP file to access your individual JPG images.</li>
-        </ol>
-
-        <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Related Tools</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <Link to="/jpg-to-pdf" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">JPG to PDF</Link>
-          <Link to="/pdf-to-word" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">PDF to Word</Link>
-          <Link to="/pdf-to-ppt" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">PDF to PPT</Link>
-          <Link to="/pdf-to-txt" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">PDF to TXT</Link>
-          <Link to="/edit-pdf" className="px-4 py-2 bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:text-indigo-600 transition-colors text-center">Edit PDF</Link>
-        </div>
-      </div>
     </div>
     </>
   );

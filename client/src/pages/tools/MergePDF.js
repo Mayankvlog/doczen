@@ -142,29 +142,6 @@ export default function MergePDF() {
             <ResultCard result={result} onReset={() => { setResult(null); setFiles([]); clearDownload(); }} action={t('tool.merged', 'merged')} />
           </div>
         )}
-        {/* SEO Content Section */}
-        <div className="mt-16 space-y-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Merge PDF Files Online for Free</h2>
-            <ol className="list-decimal pl-6 space-y-2 text-gray-600">
-              <li>Click the upload area above to select multiple PDF files from your computer</li>
-              <li>Drag and drop your PDFs into the upload zone or browse to add them</li>
-              <li>Arrange the files in your desired order before merging</li>
-              <li>Click the "Merge PDFs" button to combine all files into one document</li>
-              <li>Download your merged PDF file instantly</li>
-            </ol>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related PDF Tools</h2>
-            <div className="flex flex-wrap gap-3">
-              <Link to="/split-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.splitPdf', 'Split PDF')}</Link>
-              <Link to="/compress-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.compressPdf', 'Compress PDF')}</Link>
-              <Link to="/rotate-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.rotatePdf', 'Rotate PDF')}</Link>
-              <Link to="/delete-pages" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.deletePages', 'Delete Pages')}</Link>
-              <Link to="/reorder-pages" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.reorderPages', 'Reorder Pages')}</Link>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
     </>

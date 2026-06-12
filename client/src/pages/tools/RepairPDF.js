@@ -140,30 +140,6 @@ export default function RepairPDF() {
           </div>
         )}
 
-        <div className="mt-12 space-y-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use Repair PDF</h2>
-            <ol className="list-decimal list-inside space-y-2 text-gray-600">
-              <li>Upload a corrupted or damaged PDF file by clicking the upload area or dragging and dropping the file.</li>
-              <li>Review the file name that appears to confirm you selected the correct document.</li>
-              <li>Click the "Repair PDF" button to start the repair process. The tool will analyze and fix structural issues.</li>
-              <li>Wait for the repair to complete — the tool fixes truncated files, cross-reference errors, and other common problems.</li>
-              <li>Download the repaired PDF automatically. Use the "Download Again" button if you need another copy.</li>
-            </ol>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Tools</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <Link to="/compress-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Compress PDF</Link>
-              <Link to="/pdf-to-pdfa" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">PDF to PDF/A</Link>
-              <Link to="/flatten-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Flatten PDF</Link>
-              <Link to="/remove-annotations" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Remove Annotations</Link>
-              <Link to="/rotate-pdf" className="p-3 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-gray-700">Rotate PDF</Link>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
     </>

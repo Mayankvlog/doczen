@@ -133,41 +133,6 @@ export default function SplitPDF() {
           </div>
         )}
 
-        {/* SEO Content Section */}
-        <div className="mt-16 space-y-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.howToSplit', 'How to Split a PDF Online for Free')}</h2>
-            <ol className="list-decimal pl-6 space-y-2 text-gray-600">
-              <li>Upload your PDF file by clicking the upload area above or dragging and dropping a file</li>
-              <li>Select the pages you want to extract or specify page ranges to split by</li>
-              <li>Choose whether to split every page individually or into custom page groups</li>
-              <li>Click "Split PDF" and wait for the processing to complete</li>
-              <li>Download your separated PDF pages as individual files in a ZIP archive</li>
-            </ol>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.whySplit', 'Why Split PDF Files?')}</h2>
-            <p className="text-gray-600 leading-relaxed">
-              {t('tool.whySplitDesc', 'Splitting a PDF lets you extract specific pages, remove unwanted sections, or divide a large document into smaller, more manageable files. Perfect for sharing only relevant pages with colleagues, creating custom document sets, or organizing your files.')}
-            </p>
-            <ul className="list-disc pl-6 mt-3 space-y-1 text-gray-600">
-              <li>{t('tool.splitBenefit1', 'Extract specific pages from a large document')}</li>
-              <li>{t('tool.splitBenefit2', 'Remove unwanted pages before sharing')}</li>
-              <li>{t('tool.splitBenefit3', 'Create separate files for each chapter or section')}</li>
-              <li>{t('tool.splitBenefit4', 'Reduce file size by keeping only essential pages')}</li>
-            </ul>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.relatedTools', 'Related PDF Tools')}</h2>
-            <div className="flex flex-wrap gap-3">
-              <Link to="/merge-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.mergePdf', 'Merge PDF')}</Link>
-              <Link to="/compress-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.compressPdf', 'Compress PDF')}</Link>
-              <Link to="/delete-pages" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.deletePages', 'Delete Pages')}</Link>
-              <Link to="/reorder-pages" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.reorderPages', 'Reorder Pages')}</Link>
-              <Link to="/extract-text" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.extractText', 'Extract Text')}</Link>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
     </>

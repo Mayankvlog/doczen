@@ -152,29 +152,6 @@ export default function UnlockPDF() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); setPassword(''); clearDownload(); }} action={t('tool.unlocked', 'unlocked')} />
           </div>
         )}
-        {/* SEO Content Section */}
-        <div className="mt-16 space-y-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Unlock a PDF Online for Free</h2>
-            <ol className="list-decimal pl-6 space-y-2 text-gray-600">
-              <li>Upload the password-protected PDF file you want to unlock</li>
-              <li>Enter the current password of the PDF document</li>
-              <li>Click the "Unlock PDF" button to remove the password protection</li>
-              <li>Wait while the system decrypts your file securely</li>
-              <li>Download your unlocked PDF without any password restrictions</li>
-            </ol>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related PDF Tools</h2>
-            <div className="flex flex-wrap gap-3">
-              <Link to="/protect-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.protectPdf', 'Protect PDF')}</Link>
-              <Link to="/merge-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.mergePdf', 'Merge PDF')}</Link>
-              <Link to="/compress-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.compressPdf', 'Compress PDF')}</Link>
-              <Link to="/rotate-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.rotatePdf', 'Rotate PDF')}</Link>
-              <Link to="/extract-text" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.extractText', 'Extract Text')}</Link>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
     </>

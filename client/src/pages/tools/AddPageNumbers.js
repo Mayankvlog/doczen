@@ -185,29 +185,6 @@ export default function AddPageNumbers() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); clearDownload(); }} action={t('tool.numbered', 'numbered')} />
           </div>
         )}
-        {/* SEO Content Section */}
-        <div className="mt-16 space-y-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Add Page Numbers to a PDF Online for Free</h2>
-            <ol className="list-decimal pl-6 space-y-2 text-gray-600">
-              <li>Upload your PDF document to get started</li>
-              <li>Set the starting page number (default is 1)</li>
-              <li>Choose the font size for the page numbers between 6 and 72</li>
-              <li>Select the position: bottom center or top center of the page</li>
-              <li>Click "Add Page Numbers" and download your numbered PDF</li>
-            </ol>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Related PDF Tools</h2>
-            <div className="flex flex-wrap gap-3">
-              <Link to="/add-watermark" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.addWatermark', 'Add Watermark')}</Link>
-              <Link to="/merge-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.mergePdf', 'Merge PDF')}</Link>
-              <Link to="/split-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.splitPdf', 'Split PDF')}</Link>
-              <Link to="/delete-pages" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.deletePages', 'Delete Pages')}</Link>
-              <Link to="/rotate-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.rotatePdf', 'Rotate PDF')}</Link>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
     </>
