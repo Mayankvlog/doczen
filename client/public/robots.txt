@@ -36,7 +36,17 @@ Allow: /privacy-policy
 Allow: /terms-of-service
 Allow: /login
 Allow: /register
+Allow: /forgot-password
+Allow: /reset-password
 Disallow: /api/
 Disallow: /admin/
+Disallow: /dashboard
+Disallow: /history
+Disallow: /*?s=
+Disallow: /*sort=
+Disallow: /*page=
+Disallow: /*filter=
+Disallow: /uploads/
+Disallow: /converted/
 Sitemap: https://www.doczen.co.in/sitemap.xml
 Crawl-delay: 1

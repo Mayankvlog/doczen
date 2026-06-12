@@ -10,6 +10,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import { gtagPageView, gtagConsent } from './services/api';
+import SEO from './components/SEO';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -57,6 +58,8 @@ const { useLanguage } = require('./index');
 function About() {
   const { t } = useLanguage();
   return (
+    <>
+    <SEO title={t('about.title', 'About Doczen')} description={t('about.metaDesc', 'Learn about Doczen - the free online PDF editor. Our mission is to make PDF editing accessible to everyone with 30+ free tools.')} canonical="/about" />
     <div className="max-w-4xl mx-auto px-4 py-16">
       <h1 className="text-4xl font-bold text-gray-900 mb-6">{t('about.title', 'About Doczen')}</h1>
       <div className="prose prose-gray max-w-none space-y-4 text-gray-600">
@@ -73,12 +76,15 @@ function About() {
         </ul>
       </div>
     </div>
+    </>
   );
 }
 
 function PrivacyPolicy() {
   const { t } = useLanguage();
   return (
+    <>
+    <SEO title={t('privacy.title', 'Privacy Policy')} description={t('privacy.metaDesc', 'Doczen Privacy Policy - Learn how we protect your data and privacy. Your uploaded files are encrypted and automatically deleted within 24 hours.')} canonical="/privacy-policy" />
     <div className="max-w-4xl mx-auto px-4 py-16">
       <h1 className="text-4xl font-bold text-gray-900 mb-6">{t('privacy.title', 'Privacy Policy')}</h1>
       <div className="prose prose-gray max-w-none space-y-4 text-gray-600">
@@ -106,12 +112,15 @@ function PrivacyPolicy() {
         <p>{t('privacy.contactDesc', 'If you have questions about this Privacy Policy, please contact us at support@doczen.com.')}</p>
       </div>
     </div>
+    </>
   );
 }
 
 function TermsOfService() {
   const { t } = useLanguage();
   return (
+    <>
+    <SEO title={t('terms.title', 'Terms of Service')} description={t('terms.metaDesc', 'Doczen Terms of Service - Read the terms governing your use of our free online PDF editing tools and services.')} canonical="/terms-of-service" />
     <div className="max-w-4xl mx-auto px-4 py-16">
       <h1 className="text-4xl font-bold text-gray-900 mb-6">{t('terms.title', 'Terms of Service')}</h1>
       <div className="prose prose-gray max-w-none space-y-4 text-gray-600">
@@ -135,6 +144,7 @@ function TermsOfService() {
         <p>{t('terms.changesDesc', 'We reserve the right to modify these terms at any time. Continued use of the service after changes constitutes acceptance of the new terms.')}</p>
       </div>
     </div>
+    </>
   );
 }
 

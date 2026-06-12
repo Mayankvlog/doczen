@@ -41,94 +41,97 @@ export default function SEO({
   publishedTime,
   author = 'Doczen',
   noIndex = false,
-  toolName = null  // For tool-specific schema markup
+  toolName = null,
+  faqData = null,
+  breadcrumbItems = null,
 }) {
   const { lang } = useLanguage();
   const pageTitle = title ? `${title} | Doczen` : `${SITE_NAME} - Free Online PDF Editor`;
   const url = canonical ? `${BASE_URL}${canonical}` : BASE_URL;
   const pageKeywords = keywords || DEFAULT_KEYWORDS;
   const locale = LOCALE_MAP[lang] || 'en_US';
-  const imgUrl = `${BASE_URL}${image}`;
+  const imgUrl = image.startsWith('http') ? image : `${BASE_URL}${image}`;
 
-  // Generate comprehensive Schema markup
   const getSchemaMarkup = () => {
-    const baseSchema = {
-      '@context': 'https://schema.org',
-      '@graph': [
-        // Organization schema
-        {
-          '@type': 'Organization',
-          '@id': `${BASE_URL}/#organization`,
-          name: 'Doczen',
+    const graph = [
+      {
+        '@type': 'Organization',
+        '@id': `${BASE_URL}/#organization`,
+        name: 'Doczen',
+        url: BASE_URL,
+        logo: {
+          '@type': 'ImageObject',
+          '@id': `${BASE_URL}/#logo`,
+          url: `${BASE_URL}/logo.png`,
+          width: 250,
+          height: 250,
+        },
+        description: 'Free Online PDF Editor - Convert, merge, split, compress and edit PDFs online',
+        sameAs: [
+          'https://www.facebook.com/doczen',
+          'https://twitter.com/doczen',
+          'https://www.instagram.com/doczen',
+          'https://www.linkedin.com/company/doczen',
+        ],
+        contactPoint: {
+          '@type': 'ContactPoint',
+          contactType: 'Customer Service',
           url: BASE_URL,
-          logo: {
-            '@type': 'ImageObject',
-            '@id': `${BASE_URL}/#logo`,
-            url: `${BASE_URL}/logo.png`,
-            width: 250,
-            height: 250,
-          },
-          description: 'Free Online PDF Editor - Convert, merge, split, compress and edit PDFs online',
-          sameAs: [
-            'https://www.facebook.com/doczen',
-            'https://twitter.com/doczen',
-          ],
-          contactPoint: {
-            '@type': 'ContactPoint',
-            contactType: 'Customer Service',
-            url: BASE_URL,
-          },
         },
-        // Website schema
-        {
-          '@type': 'WebSite',
-          '@id': `${BASE_URL}/#website`,
-          url: BASE_URL,
-          name: 'Doczen - Free Online PDF Editor',
-          description: DEFAULT_DESC,
-          publisher: {
-            '@id': `${BASE_URL}/#organization`,
+      },
+      {
+        '@type': 'WebSite',
+        '@id': `${BASE_URL}/#website`,
+        url: BASE_URL,
+        name: 'Doczen - Free Online PDF Editor',
+        description: DEFAULT_DESC,
+        publisher: { '@id': `${BASE_URL}/#organization` },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: {
+            '@type': 'EntryPoint',
+            urlTemplate: `${BASE_URL}/?s={search_term_string}`,
           },
-          potentialAction: {
-            '@type': 'SearchAction',
-            target: {
-              '@type': 'EntryPoint',
-              urlTemplate: `${BASE_URL}/?s={search_term_string}`,
-            },
-            'query-input': 'required name=search_term_string',
-          },
+          'query-input': 'required name=search_term_string',
         },
-        // Webpage schema
-        {
-          '@type': 'WebPage',
-          '@id': `${url}#webpage`,
-          url: url,
-          name: pageTitle,
-          description: description,
-          isPartOf: {
-            '@id': `${BASE_URL}/#website`,
-          },
-          inLanguage: locale,
-          publisher: {
-            '@id': `${BASE_URL}/#organization`,
-          },
-          image: {
-            '@type': 'ImageObject',
-            url: imgUrl,
-            width: 1200,
-            height: 630,
-          },
-          ...(publishedTime && {
-            datePublished: publishedTime,
-            dateModified: publishedTime,
-          }),
+      },
+      {
+        '@type': 'WebPage',
+        '@id': `${url}#webpage`,
+        url: url,
+        name: pageTitle,
+        description: description,
+        isPartOf: { '@id': `${BASE_URL}/#website` },
+        inLanguage: locale,
+        publisher: { '@id': `${BASE_URL}/#organization` },
+        image: {
+          '@type': 'ImageObject',
+          url: imgUrl,
+          width: 1200,
+          height: 630,
         },
-      ],
-    };
+        ...(publishedTime && {
+          datePublished: publishedTime,
+          dateModified: publishedTime,
+        }),
+      },
+    ];
 
-    // Add tool-specific schema if it's a tool page
+    if (breadcrumbItems && breadcrumbItems.length > 0) {
+      graph.push({
+        '@type': 'BreadcrumbList',
+        '@id': `${url}#breadcrumb`,
+        itemListElement: breadcrumbItems.map((item, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: item.name,
+          item: item.item.startsWith('http') ? item.item : `${BASE_URL}${item.item}`,
+        })),
+      });
+    }
+
     if (toolName) {
-      const toolSchema = {
+      graph.push({
         '@type': 'SoftwareApplication',
         '@id': `${url}#tool`,
         name: pageTitle,
@@ -143,18 +146,30 @@ export default function SEO({
           priceCurrency: 'USD',
           availability: 'https://schema.org/InStock',
         },
-        author: {
-          '@id': `${BASE_URL}/#organization`,
-        },
+        author: { '@id': `${BASE_URL}/#organization` },
         screenshot: {
           '@type': 'ImageObject',
           url: imgUrl,
         },
-      };
-      baseSchema['@graph'].push(toolSchema);
+      });
     }
 
-    return baseSchema;
+    if (faqData && faqData.length > 0) {
+      graph.push({
+        '@type': 'FAQPage',
+        '@id': `${url}#faq`,
+        mainEntity: faqData.map((faq) => ({
+          '@type': 'Question',
+          name: faq.q,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.a,
+          },
+        })),
+      });
+    }
+
+    return { '@context': 'https://schema.org', '@graph': graph };
   };
 
   return (
@@ -169,33 +184,15 @@ export default function SEO({
       <meta name="robots" content={noIndex ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'} />
       <meta name="googlebot" content={noIndex ? 'noindex' : 'index, follow'} />
       <meta name="bingbot" content={noIndex ? 'noindex' : 'index, follow'} />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
       
-      {/* Theme and App Meta */}
-      <meta name="theme-color" content="#4F46E5" />
-      <meta name="application-name" content={SITE_NAME} />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-      <meta name="apple-mobile-web-app-title" content={SITE_NAME} />
-      <meta name="format-detection" content="telephone=no" />
-      <meta name="mobile-web-app-capable" content="yes" />
-      <meta name="msapplication-TileColor" content="#4F46E5" />
-      <meta name="msapplication-tap-highlight" content="no" />
-      <meta name="referrer" content="origin-when-cross-origin" />
-      
-      {/* Performance & Security */}
-      <meta httpEquiv="x-ua-compatible" content="IE=edge" />
-      <meta name="x-ua-compatible" content="IE=edge" />
-      <meta name="preload-resources" content="high" />
-      
-      {/* Canonical and Language Alternatives */}
-      <link rel="canonical" href={url} />
-      {Object.entries(HREFLANG_MAP).map(([code, hreflang]) => (
-        <link key={hreflang} rel="alternate" href={`${BASE_URL}${canonical || '/'}`} hrefLang={hreflang} />
+      {/* Canonical URL */}
+      <link rel="canonical" href={canonical ? `${BASE_URL}${canonical}` : url} />
+      {canonical && Object.entries(HREFLANG_MAP).map(([code, hreflang]) => (
+        <link key={hreflang} rel="alternate" href={`${BASE_URL}${canonical}`} hrefLang={hreflang} />
       ))}
-      <link rel="alternate" href={`${BASE_URL}${canonical || '/'}`} hrefLang="x-default" />
+      {canonical && <link rel="alternate" href={`${BASE_URL}${canonical}`} hrefLang="x-default" />}
       
-      {/* Open Graph Tags for Social Sharing */}
+      {/* Open Graph Tags */}
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
@@ -216,7 +213,7 @@ export default function SEO({
       <meta name="twitter:image" content={imgUrl} />
       <meta name="twitter:image:alt" content={pageTitle} />
 
-      {/* Article Meta (if applicable) */}
+      {/* Article Meta */}
       {publishedTime && (
         <>
           <meta property="article:published_time" content={publishedTime} />
@@ -230,11 +227,13 @@ export default function SEO({
         {JSON.stringify(getSchemaMarkup())}
       </script>
 
-      {/* Prefetch DNS for external resources */}
+      {/* DNS prefetch for faster resource loading */}
       <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+      <link rel="dns-prefetch" href="https://www.facebook.com" />
+      <link rel="dns-prefetch" href="https://www.linkedin.com" />
     </Helmet>
   );
 };

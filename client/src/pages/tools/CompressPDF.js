@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -61,7 +62,7 @@ export default function CompressPDF() {
 
   return (
     <>
-    <SEO title={t('seo.compressTitle', 'Compress PDF Online - Reduce PDF File Size Free')} description={t('seo.compressDesc', 'Compress PDF files online to reduce file size without losing quality. Free PDF compressor tool by Doczen.')} keywords={t('tool.compressKeywords', 'compress PDF, reduce PDF size, PDF compressor, shrink PDF, optimize PDF')} canonical="/compress-pdf" />
+    <SEO title={t('seo.compressTitle', 'Compress PDF Online - Reduce PDF File Size Free')} description={t('seo.compressDesc', 'Compress PDF files online to reduce file size without losing quality. Free PDF compressor tool by Doczen. Reduce PDF size from MB to KB instantly.')} keywords={t('tool.compressKeywords', 'compress PDF, reduce PDF size, PDF compressor, shrink PDF, optimize PDF, compress PDF online free')} canonical="/compress-pdf" toolName={t('tool.compressPdf', 'Compress PDF')} />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10 animate-fade-in-down">
@@ -169,6 +170,41 @@ export default function CompressPDF() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); clearDownload(); }} action={t('tool.compressed', 'compressed')} />
           </div>
         )}
+
+        {/* SEO Content Section */}
+        <div className="mt-16 space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.howToCompress', 'How to Compress a PDF Online for Free')}</h2>
+            <ol className="list-decimal pl-6 space-y-2 text-gray-600">
+              <li>{t('tool.step1', 'Upload your PDF file by clicking the upload area above (up to 50 MB)')}</li>
+              <li>{t('tool.step2', 'Adjust the compression quality slider — higher compression = smaller file size')}</li>
+              <li>{t('tool.step3', 'Click "Compress PDF" and wait a few seconds for processing')}</li>
+              <li>{t('tool.step4', 'Download your compressed PDF file — smaller, faster, and email-ready')}</li>
+            </ol>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.whyCompress', 'Why Compress PDF Files?')}</h2>
+            <p className="text-gray-600 leading-relaxed">
+              {t('tool.whyCompressDesc', 'Large PDF files are hard to share via email, slow to upload, and take up valuable storage space. Compressing your PDF reduces file size significantly while keeping the visual quality intact. Perfect for sending documents through email, uploading to websites, or archiving files.')}
+            </p>
+            <ul className="list-disc pl-6 mt-3 space-y-1 text-gray-600">
+              <li>{t('tool.benefit1', 'Faster email attachments — stay under size limits')}</li>
+              <li>{t('tool.benefit2', 'Quick uploads to websites and cloud storage')}</li>
+              <li>{t('tool.benefit3', 'Save disk space on your devices')}</li>
+              <li>{t('tool.benefit4', 'Faster document processing and downloads')}</li>
+            </ul>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.relatedTools', 'Related PDF Tools')}</h2>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/merge-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.mergePdf', 'Merge PDF')}</Link>
+              <Link to="/split-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.splitPdf', 'Split PDF')}</Link>
+              <Link to="/pdf-to-jpg" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.pdfToJpg', 'PDF to JPG')}</Link>
+              <Link to="/pdf-to-word" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.pdfToWord', 'PDF to Word')}</Link>
+              <Link to="/edit-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.editPdf', 'Edit PDF')}</Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     </>

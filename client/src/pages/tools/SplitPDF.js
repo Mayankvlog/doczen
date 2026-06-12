@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -50,7 +51,7 @@ export default function SplitPDF() {
 
   return (
     <>
-    <SEO title={t('seo.splitTitle', 'Split PDF Online - Separate PDF Pages Free')} description={t('seo.splitDesc', 'Split PDF files into multiple documents online for free. Extract pages from PDF or split by page ranges with Doczen.')} keywords={t('tool.splitKeywords', 'split PDF, separate PDF pages, extract PDF pages, PDF splitter, divide PDF')} canonical="/split-pdf" />
+    <SEO title={t('seo.splitTitle', 'Split PDF Online - Separate PDF Pages Free')} description={t('seo.splitDesc', 'Split PDF files into multiple documents online for free. Extract pages from PDF or split by page ranges with Doczen. Free PDF splitter tool.')} keywords={t('tool.splitKeywords', 'split PDF, separate PDF pages, extract PDF pages, PDF splitter, divide PDF, split PDF online free')} canonical="/split-pdf" toolName={t('tool.splitPdf', 'Split PDF')} />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">
@@ -131,6 +132,41 @@ export default function SplitPDF() {
             <ResultCard result={result} onReset={() => { setResult(null); setFile(null); clearDownload(); }} action={t('tool.split', 'split')} />
           </div>
         )}
+
+        {/* SEO Content Section */}
+        <div className="mt-16 space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.howToSplit', 'How to Split a PDF Online for Free')}</h2>
+            <ol className="list-decimal pl-6 space-y-2 text-gray-600">
+              <li>{t('tool.splitStep1', 'Upload your PDF file by clicking the upload area above')}</li>
+              <li>{t('tool.splitStep2', 'Select the pages you want to extract or split by page ranges')}</li>
+              <li>{t('tool.splitStep3', 'Click "Split PDF" and wait for processing')}</li>
+              <li>{t('tool.splitStep4', 'Download your separated PDF pages as individual files')}</li>
+            </ol>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.whySplit', 'Why Split PDF Files?')}</h2>
+            <p className="text-gray-600 leading-relaxed">
+              {t('tool.whySplitDesc', 'Splitting a PDF lets you extract specific pages, remove unwanted sections, or divide a large document into smaller, more manageable files. Perfect for sharing only relevant pages with colleagues, creating custom document sets, or organizing your files.')}
+            </p>
+            <ul className="list-disc pl-6 mt-3 space-y-1 text-gray-600">
+              <li>{t('tool.splitBenefit1', 'Extract specific pages from a large document')}</li>
+              <li>{t('tool.splitBenefit2', 'Remove unwanted pages before sharing')}</li>
+              <li>{t('tool.splitBenefit3', 'Create separate files for each chapter or section')}</li>
+              <li>{t('tool.splitBenefit4', 'Reduce file size by keeping only essential pages')}</li>
+            </ul>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('tool.relatedTools', 'Related PDF Tools')}</h2>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/merge-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.mergePdf', 'Merge PDF')}</Link>
+              <Link to="/compress-pdf" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.compressPdf', 'Compress PDF')}</Link>
+              <Link to="/delete-pages" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.deletePages', 'Delete Pages')}</Link>
+              <Link to="/reorder-pages" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.reorderPages', 'Reorder Pages')}</Link>
+              <Link to="/extract-text" className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors">{t('tool.extractText', 'Extract Text')}</Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     </>

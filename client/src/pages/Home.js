@@ -101,6 +101,8 @@ export default function Home() {
   canonical="/"
   image="/og-home.png"
   type="WebPage"
+  breadcrumbItems={[{ name: t('nav.home', 'Home'), item: '/' }]}
+  faqData={faqs}
     />
     <div className="bg-white dark:bg-gray-950">
       {/* Hero */}
@@ -148,7 +150,7 @@ export default function Home() {
               {t('tools.header', 'Everything You Need')}
             </h2>
             <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">
-              {t('tools.subtitle', 'From quick edits to full conversions — 31 powerful tools at your fingertips.')}
+              {t('tools.subtitle', 'From quick edits to full conversions — 31 powerful PDF tools at your fingertips.')}
             </p>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -163,6 +165,30 @@ export default function Home() {
                 <ToolCard {...tool} />
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section - Trust Signals */}
+      <section className="bg-gray-50 dark:bg-gray-900 px-4 py-16 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold text-indigo-600">31+</div>
+              <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t('stats.tools', 'PDF Tools')}</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-indigo-600">100%</div>
+              <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t('stats.free', 'Free to Use')}</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-indigo-600">24h</div>
+              <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t('stats.autoDelete', 'Auto-Delete')}</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-indigo-600">50MB</div>
+              <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t('stats.maxUpload', 'Max Upload')}</div>
+            </div>
           </div>
         </div>
       </section>
