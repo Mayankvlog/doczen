@@ -69,6 +69,7 @@ export default function Register() {
   description={t('tool.seo.registerDesc', 'Create your free Doczen account and get access to all PDF editing tools. Merge, split, compress and convert PDFs online.')}
   keywords={t('tool.seo.registerKeywords', 'register, sign up, create account, free PDF editor, Doczen registration')}
   canonical="/register"
+  noIndex
 />
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">

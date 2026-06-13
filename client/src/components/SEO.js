@@ -1,6 +1,27 @@
 import { Helmet } from 'react-helmet-async';
 import { useLanguage } from '../index';
 
+const TOOL_PATHS = [
+  'merge-pdf', 'split-pdf', 'compress-pdf', 'rotate-pdf', 'protect-pdf', 'unlock-pdf',
+  'add-page-numbers', 'add-watermark', 'extract-text', 'reorder-pages', 'delete-pages',
+  'pdf-to-jpg', 'jpg-to-pdf', 'pdf-to-txt', 'pdf-to-word', 'word-to-pdf',
+  'pdf-to-ppt', 'ppt-to-pdf', 'pdf-to-excel', 'excel-to-pdf',
+  'edit-pdf', 'sign-pdf', 'repair-pdf', 'pdf-to-pdfa', 'pdf-metadata',
+  'flatten-pdf', 'html-to-pdf', 'redact-pdf', 'remove-annotations',
+  'remove-watermark', 'compare-pdf',
+];
+
+function pathToToolName(path) {
+  const name = path.replace(/^\//, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  return name || null;
+}
+
+function isToolPage(canonical) {
+  if (!canonical) return false;
+  const path = canonical.replace(/^\//, '').replace(/\/$/, '');
+  return TOOL_PATHS.includes(path);
+}
+
 const BASE_URL = 'https://www.doczen.co.in';
 const SITE_NAME = 'Doczen';
 const DEFAULT_DESC = 'Doczen - Free Online PDF Editor. Merge, split, compress, convert and edit PDF files online for free. No installation required.';
@@ -39,6 +60,7 @@ export default function SEO({
   const pageKeywords = keywords || DEFAULT_KEYWORDS;
   const locale = LOCALE_MAP[lang] || 'en_US';
   const imgUrl = image.startsWith('http') ? image : `${BASE_URL}${image}`;
+  const resolvedToolName = toolName || (isToolPage(canonical) ? pathToToolName(canonical) : null);
 
   const getSchemaMarkup = () => {
     const graph = [
@@ -117,7 +139,7 @@ export default function SEO({
       });
     }
 
-    if (toolName) {
+    if (resolvedToolName) {
       graph.push({
         '@type': 'SoftwareApplication',
         '@id': `${url}#tool`,
@@ -174,7 +196,6 @@ export default function SEO({
       
       {/* Canonical URL */}
       <link rel="canonical" href={url} />
-      {canonical === '/' && <link rel="alternate" href={url} hrefLang="x-default" />}
       
       {/* Open Graph Tags */}
       <meta property="og:title" content={pageTitle} />

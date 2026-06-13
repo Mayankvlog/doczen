@@ -83,6 +83,7 @@ export default function ResetPassword() {
         description={t('tool.seo.resetPasswordDesc', 'Create a new password for your Doczen account')}
         keywords={t('tool.seo.resetPasswordKeywords', 'reset password, new password, Doczen')}
         canonical="/reset-password"
+        noIndex
       />
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">

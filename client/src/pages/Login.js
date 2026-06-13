@@ -55,6 +55,7 @@ export default function Login() {
   description={t('tool.seo.loginDesc', 'Sign in to your Doczen account to access all PDF tools, manage your files, and view your processing history.')}
   keywords={t('tool.seo.loginKeywords', 'login, sign in, Doczen account, PDF editor login')}
   canonical="/login"
+  noIndex
 />
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
