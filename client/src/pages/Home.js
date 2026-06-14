@@ -95,8 +95,8 @@ export default function Home() {
   return (
     <>
     <SEO
-  title={t('tool.seo.defaultTitle', 'Free Online PDF Editor - Merge, Split, Compress & Convert PDFs')}
-  description={t('tool.seo.defaultDesc', 'Doczen is a free online PDF editor and converter. Merge, split, compress, and edit PDFs. Convert PDF to Word, Excel, PPT, JPG and back. Protect, unlock, sign, and rotate PDFs online. No registration required.')}
+  title={t('tool.seo.defaultTitle', 'Free PDF Editor - Merge, Split, Compress & Convert PDFs')}
+  description={t('tool.seo.defaultDesc', 'Doczen: free online PDF editor. Merge, split, compress, edit, convert PDFs to Word, Excel, PPT, JPG. Protect, unlock, sign. No registration.')}
   keywords={t('tool.seo.defaultKeywords', 'free PDF editor, online PDF tool, merge PDF online, split PDF online, compress PDF, PDF converter, PDF to Word, PDF to JPG, Doczen')}
   canonical="/"
   image="/og-home.png"
