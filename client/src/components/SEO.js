@@ -25,7 +25,7 @@ function isToolPage(canonical) {
 
 const BASE_URL = 'https://www.doczen.co.in';
 const SITE_NAME = 'Doczen';
-const DEFAULT_DESC = 'Doczen - Free Online PDF Editor. Merge, split, compress, convert and edit PDF files online for free. No installation required.';
+const DEFAULT_DESC = 'Doczen - Free Online PDF Editor. Edit, convert, merge, split and compress PDF files in your browser. No registration required.';
 
 const DEFAULT_KEYWORDS = 'free online PDF editor, merge PDF, split PDF, compress PDF, convert PDF, PDF tools, Doczen';
 
