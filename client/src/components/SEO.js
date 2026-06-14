@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLanguage } from '../index';
 
@@ -61,6 +62,16 @@ export default function SEO({
   const locale = LOCALE_MAP[lang] || 'en_US';
   const imgUrl = image.startsWith('http') ? image : `${BASE_URL}${image}`;
   const resolvedToolName = toolName || (isToolPage(canonical) ? pathToToolName(canonical) : null);
+
+  useEffect(() => {
+    let link = document.querySelector('link[rel="canonical"]');
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'canonical';
+      document.head.appendChild(link);
+    }
+    link.href = url;
+  }, [url]);
 
   const getSchemaMarkup = () => {
     const graph = [
@@ -193,9 +204,6 @@ export default function SEO({
       <meta name="robots" content={noIndex ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'} />
       <meta name="googlebot" content={noIndex ? 'noindex' : 'index, follow'} />
       <meta name="bingbot" content={noIndex ? 'noindex' : 'index, follow'} />
-      
-      {/* Canonical URL */}
-      <link rel="canonical" href={url} />
       
       {/* Open Graph Tags */}
       <meta property="og:title" content={pageTitle} />
