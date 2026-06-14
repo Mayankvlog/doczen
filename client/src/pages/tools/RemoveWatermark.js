@@ -86,7 +86,7 @@ export default function RemoveWatermark() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4m16 0a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2v-6a2 2 0 012-2m16 0V6a2 2 0 00-2-2H6a2 2 0 00-2 2v4" />
             </svg>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.removeWatermark', 'Remove Watermark')}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.removeWatermarkSeoTitle', 'Remove Watermark from PDF Online Free')}</h1>
           <p className="text-lg text-gray-600 mt-2">{t('tool.removeWatermarkDesc2', 'Remove text and image watermarks from your PDF documents')}</p>
         </div>
 

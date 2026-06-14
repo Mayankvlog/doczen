@@ -69,7 +69,7 @@ export default function ExtractText() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.extractText', 'Extract Text')}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('seo.extractText.title', 'Extract Text from PDF Online Free')}</h1>
           <p className="text-lg text-gray-600 mt-2">{t('tool.extractTextDesc2', 'Extract all text content from a PDF document')}</p>
         </div>
 

@@ -96,7 +96,7 @@ export default function Metadata() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.pdfMetadata', 'PDF Metadata')}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.metadataSeoTitle', 'Edit PDF Metadata Online Free - PDF Properties Editor')}</h1>
           <p className="text-lg text-gray-600 mt-2">{t('tool.metadataDesc', 'View and edit PDF document properties')}</p>
         </div>
 

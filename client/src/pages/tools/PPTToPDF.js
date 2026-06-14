@@ -49,7 +49,7 @@ export default function PPTToPDF() {
     <SEO title={t('tool.pptToPdfTitle', 'PPT to PDF Converter Online Free')} description={t('tool.pptToPdfDesc', 'Convert PowerPoint presentations to PDF format online for free. PPT to PDF converter by Doczen.')} keywords={t('tool.pptToPdfKeywords', 'PPT to PDF, convert PowerPoint to PDF, PPTX to PDF, presentation to PDF, slide to PDF')} canonical="/ppt-to-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{t('tool.pptToPdf', 'PPT to PDF')}</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('tool.pptToPdfTitle', 'PPT to PDF Converter Online Free')}</h1>
         <p className="mt-2 text-gray-600">
           {t('tool.pptToPdfDesc2', 'Convert your PowerPoint slides into PDF documents.')}
         </p>

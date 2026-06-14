@@ -50,7 +50,7 @@ export default function PDFToWord() {
     <SEO title={t('seo.pdfToWord.title', 'PDF to Word Converter Online Free')} description={t('seo.pdfToWord.desc', 'Convert PDF files to editable Word documents online for free. Doczen PDF to Word converter preserves formatting.')} keywords={t('seo.pdfToWord.keywords', 'PDF to Word, convert PDF to Word, PDF to DOCX, PDF to DOC, PDF converter')} canonical="/pdf-to-word" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{t('tool.pdfToWord', 'PDF to Word')}</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('seo.pdfToWord.title', 'PDF to Word Converter Online Free')}</h1>
         <p className="mt-2 text-gray-600">
           {t('tool.pdfToWordDesc2', 'Convert your PDF files into editable Word documents.')}
         </p>

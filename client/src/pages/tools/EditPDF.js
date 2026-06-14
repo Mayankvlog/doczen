@@ -56,7 +56,7 @@ export default function EditPDF() {
     <SEO title={t('tool.editPdfTitle', 'Edit PDF Online Free - Edit PDF Files')} description={t('tool.editPdfDesc', 'Edit PDF files online for free. Add text, images, and annotations to your PDF documents with Doczen.')} keywords={t('tool.editPdfKeywords', 'edit PDF, PDF editor, edit PDF online, modify PDF, annotate PDF')} canonical="/edit-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{t('tool.editPdf', 'Edit PDF')}</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('tool.editPdfTitle', 'Edit PDF Online Free - Edit PDF Files')}</h1>
         <p className="mt-2 text-gray-600">
           {t('tool.editDesc', 'Add annotations, highlights, shapes, and text to your PDF documents.')}
         </p>

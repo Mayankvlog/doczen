@@ -63,7 +63,7 @@ export default function ComparePDF() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16l2.879-2.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.comparePdf', 'Compare PDF')}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.compareSeoTitle', 'Compare PDF Files Online Free')}</h1>
           <p className="text-lg text-gray-600 mt-2">{t('tool.compareDesc', 'Compare two PDF files and find differences')}</p>
         </div>
 

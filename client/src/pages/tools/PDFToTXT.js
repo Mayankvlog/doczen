@@ -49,7 +49,7 @@ export default function PDFToTXT() {
     <SEO title={t('seo.pdfToTxt.title', 'PDF to TXT - Extract Text from PDF Free')} description={t('seo.pdfToTxt.desc', 'Extract text from PDF files online for free. Convert PDF to plain text with Doczen\'s PDF text extractor.')} keywords={t('seo.pdfToTxt.keywords', 'PDF to TXT, extract text from PDF, PDF text extraction, convert PDF to text, PDF to plain text')} canonical="/pdf-to-txt" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{t('tool.pdfToTxt', 'PDF to TXT')}</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('seo.pdfToTxt.title', 'PDF to TXT - Extract Text from PDF Free')}</h1>
         <p className="mt-2 text-gray-600">
           {t('tool.pdfToTxtDesc2', 'Extract all text content from your PDF file.')}
         </p>

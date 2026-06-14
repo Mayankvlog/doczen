@@ -60,7 +60,7 @@ export default function SplitPDF() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l-2 2m0 0l-2-2m2 2v6m0 0l2 2m-2-2l-2 2M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
             </svg>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.splitPdf', 'Split PDF')}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('seo.splitTitle', 'Split PDF Online - Separate PDF Pages Free')}</h1>
           <p className="text-lg text-gray-600 mt-2">{t('tool.splitDesc', 'Extract individual pages from a PDF into separate files')}</p>
         </div>
 

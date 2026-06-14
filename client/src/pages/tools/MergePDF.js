@@ -75,7 +75,7 @@ export default function MergePDF() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M8 8l4-4 4 4m-4 4V3" />
             </svg>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.mergePdf', 'Merge PDF')}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('seo.mergeTitle', 'Merge PDF Online - Combine PDF Files Free')}</h1>
           <p className="text-lg text-gray-600 mt-2">{t('tool.mergeDesc', 'Combine multiple PDF files into a single document')}</p>
         </div>
 

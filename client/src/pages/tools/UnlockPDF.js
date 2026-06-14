@@ -66,7 +66,7 @@ export default function UnlockPDF() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.unlockPdf', 'Unlock PDF')}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('seo.unlockTitle', 'Unlock PDF Online - Remove PDF Password Free')}</h1>
           <p className="text-lg text-gray-600 mt-2">{t('tool.unlockDesc', 'Remove password protection from your PDF documents')}</p>
         </div>
 

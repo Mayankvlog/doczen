@@ -75,7 +75,7 @@ export default function AddPageNumbers() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2zm0 0l5-5 5 5M7 3h10" />
             </svg>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.addPageNumbers', 'Add Page Numbers')}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('seo.addPageNumbersTitle', 'Add Page Numbers to PDF Online Free')}</h1>
           <p className="text-lg text-gray-600 mt-2">{t('tool.addPageNumbersDesc', 'Insert page numbers into your PDF document')}</p>
         </div>
 

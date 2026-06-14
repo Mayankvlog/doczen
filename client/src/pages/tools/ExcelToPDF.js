@@ -50,7 +50,7 @@ export default function ExcelToPDF() {
     <SEO title={t('tool.excelToPdfTitle', 'Excel to PDF Converter Online Free')} description={t('tool.excelToPdfDesc', 'Convert Excel spreadsheets to PDF format online for free. XLSX to PDF converter by Doczen.')} keywords={t('tool.excelToPdfKeywords', 'Excel to PDF, convert Excel to PDF, XLSX to PDF, spreadsheet to PDF')} canonical="/excel-to-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{t('tool.excelToPdf', 'Excel to PDF')}</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('tool.excelToPdfTitle', 'Excel to PDF Converter Online Free')}</h1>
         <p className="mt-2 text-gray-600">
           {t('tool.excelToPdfDesc2', 'Convert your Excel spreadsheets into PDF format.')}
         </p>

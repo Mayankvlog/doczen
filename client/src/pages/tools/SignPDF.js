@@ -58,7 +58,7 @@ export default function SignPDF() {
     <SEO title={t('tool.signPdfTitle', 'Sign PDF Online - Add Signature to PDF Free')} description={t('tool.signPdfDesc', 'Sign PDF documents online for free. Add your signature to PDF files electronically with Doczen.')} keywords={t('tool.signPdfKeywords', 'sign PDF, PDF signature, electronic signature, sign document online, digital signature PDF')} canonical="/sign-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{t('tool.signPdf', 'Sign PDF')}</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('tool.signPdfTitle', 'Sign PDF Online - Add Signature to PDF Free')}</h1>
         <p className="mt-2 text-gray-600">
           {t('tool.signDesc', 'Add your signature to PDF documents quickly and securely.')}
         </p>

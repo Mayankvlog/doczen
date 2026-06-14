@@ -71,7 +71,7 @@ export default function CompressPDF() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.compressPdf', 'Compress PDF')}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('seo.compressTitle', 'Compress PDF Online - Reduce PDF File Size Free')}</h1>
           <p className="text-lg text-gray-600 mt-2">{t('tool.compressDesc', 'Reduce the file size of your PDF without losing quality')}</p>
         </div>
 
