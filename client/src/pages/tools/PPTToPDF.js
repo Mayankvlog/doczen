@@ -7,6 +7,7 @@ import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
+import RelatedTools from '../../components/RelatedTools';
 
 export default function PPTToPDF() {
   const { t } = useLanguage();
@@ -105,6 +106,7 @@ export default function PPTToPDF() {
       </div>
 
     </div>
+      <RelatedTools />
     </>
   );
 }

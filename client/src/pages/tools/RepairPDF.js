@@ -7,6 +7,7 @@ import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
+import RelatedTools from '../../components/RelatedTools';
 
 export default function RepairPDF() {
   const { t } = useLanguage();
@@ -142,6 +143,7 @@ export default function RepairPDF() {
 
       </div>
     </div>
+      <RelatedTools />
     </>
   );
 }

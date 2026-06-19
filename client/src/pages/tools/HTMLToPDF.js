@@ -7,6 +7,7 @@ const API_BASE = process.env.REACT_APP_API_URL || '';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
+import RelatedTools from '../../components/RelatedTools';
 
 export default function HTMLToPDF() {
   const [content, setContent] = useState('');
@@ -187,6 +188,7 @@ export default function HTMLToPDF() {
 
       </div>
     </div>
+      <RelatedTools />
     </>
   );
 }

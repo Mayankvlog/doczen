@@ -7,6 +7,7 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import AdsterraNative from '../../components/AdsterraNative';
+import RelatedTools from '../../components/RelatedTools';
 
 export default function PDFToWord() {
   const [file, setFile] = useState(null);
@@ -106,6 +107,7 @@ export default function PDFToWord() {
       </div>
 
     </div>
+      <RelatedTools />
     </>
   );
 }

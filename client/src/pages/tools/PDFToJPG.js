@@ -7,6 +7,7 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import AdsterraNative from '../../components/AdsterraNative';
+import RelatedTools from '../../components/RelatedTools';
 
 export default function PDFToJPG() {
   const [file, setFile] = useState(null);
@@ -108,6 +109,7 @@ export default function PDFToJPG() {
       </div>
 
     </div>
+      <RelatedTools />
     </>
   );
 }

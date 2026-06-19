@@ -8,6 +8,7 @@ import { useToast } from '../../context/ToastContext';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
+import RelatedTools from '../../components/RelatedTools';
 
 export default function CompressPDF() {
   const { t } = useLanguage();
@@ -173,6 +174,7 @@ export default function CompressPDF() {
 
       </div>
     </div>
+      <RelatedTools />
     </>
   );
 }

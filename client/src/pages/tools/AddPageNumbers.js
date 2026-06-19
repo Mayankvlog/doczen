@@ -7,6 +7,7 @@ import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
+import RelatedTools from '../../components/RelatedTools';
 
 export default function AddPageNumbers() {
   const { t } = useLanguage();
@@ -187,6 +188,7 @@ export default function AddPageNumbers() {
         )}
       </div>
     </div>
+      <RelatedTools />
     </>
   );
 }

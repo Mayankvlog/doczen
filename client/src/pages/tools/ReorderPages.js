@@ -7,6 +7,7 @@ import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/
 import SEO from '../../components/SEO';
 import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
+import RelatedTools from '../../components/RelatedTools';
 
 export default function ReorderPages() {
   const [file, setFile] = useState(null);
@@ -171,6 +172,7 @@ export default function ReorderPages() {
         )}
       </div>
     </div>
+      <RelatedTools />
     </>
   );
 }
