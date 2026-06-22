@@ -90,7 +90,7 @@ export default function SEO({
         description: 'Free Online PDF Editor - Convert, merge, split, compress and edit PDFs online',
         sameAs: [
           'https://www.facebook.com/profile.php?id=61590871045606&sk=directory_links',
-          'https://www.instagram.com/doczen',
+          'https://www.instagram.com/doczen11/',
           'https://www.linkedin.com/company/doczen1/?viewAsMember=true',
         ],
         contactPoint: {
