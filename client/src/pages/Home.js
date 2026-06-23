@@ -49,7 +49,7 @@ export default function Home() {
   const faqs = [
     { q: t('faq.q1', 'Is Doczen free to use?'), a: t('faq.a1', 'Yes! Doczen is completely free to use. All PDF tools are available with no hidden charges.') },
     { q: t('faq.q2', 'Are my files secure?'), a: t('faq.a2', 'Absolutely. All files are encrypted during upload and automatically deleted from our servers after 24 hours. We never share your data.') },
-    { q: t('faq.q3', 'What file sizes are supported?'), a: t('faq.a3', 'You can upload files up to 50 MB per document.') },
+    { q: t('faq.q3', 'What file sizes are supported?'), a: t('faq.a3', 'You can upload files up to 100 MB per document.') },
     { q: t('faq.q4', 'How long does processing take?'), a: t('faq.a4', 'Most operations complete within seconds. Complex conversions may take a bit longer, but we optimize everything for speed.') },
     { q: t('faq.q5', 'Is there a daily limit?'), a: t('faq.a5', 'No limits at all! Process as many files as you need, completely free.') },
     { q: t('faq.q6', 'What happens to my data?'), a: t('faq.a6', 'All uploaded files are automatically deleted from our servers within 24 hours. You can also manually delete your history at any time.') },
@@ -186,7 +186,7 @@ export default function Home() {
               <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t('stats.autoDelete', 'Auto-Delete')}</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-indigo-600">50MB</div>
+              <div className="text-4xl font-bold text-indigo-600">100MB</div>
               <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t('stats.maxUpload', 'Max Upload')}</div>
             </div>
           </div>

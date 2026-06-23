@@ -152,8 +152,8 @@ try {
   app.set('trust proxy', true);
 }
 
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 app.use(cookieParser());
 
 // Cookie settings middleware - Fix cookie domain and SameSite issues
@@ -463,7 +463,7 @@ app.use((err, req, res, next) => {
     return res.status(400).json({ message: 'Invalid URL encoding' });
   }
   if (err.code === 'LIMIT_FILE_SIZE') {
-    return res.status(413).json({ message: 'File too large. Maximum size is 50MB' });
+    return res.status(413).json({ message: 'File too large. Maximum size is 100MB' });
   }
   if (err.code === 'LIMIT_UNEXPECTED_FILE') {
     return res.status(400).json({ message: 'Unexpected file field. Please check the field name.' });

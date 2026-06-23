@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useLanguage } from '../index';
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024;
+const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
 const formatSize = (bytes) => {
   if (bytes < 1024) return bytes + ' B';
@@ -56,7 +56,7 @@ export default function FileUploader({
 
       const oversized = accepted.filter(f => f.size > MAX_FILE_SIZE);
       if (oversized.length > 0) {
-        setError(t('upload.error.fileTooLarge', `File too large. Maximum size is 50MB. "${oversized[0].name}" is ${formatSize(oversized[0].size)}.`));
+        setError(t('upload.error.fileTooLarge', `File too large. Maximum size is 100MB. "${oversized[0].name}" is ${formatSize(oversized[0].size)}.`));
         triggerShake();
         return;
       }

@@ -55,7 +55,7 @@ Doczen is a full-stack web application that provides a comprehensive suite of fr
 | **Database** | MongoDB (Mongoose ODM) |
 | **Authentication** | JWT (access tokens) + httpOnly refresh token cookies, bcryptjs |
 | **PDF Processing** | pdf-lib, pdf-parse, sharp |
-| **File Upload** | Multer (disk storage, 50MB limit) |
+| **File Upload** | Multer (disk storage, 100MB limit) |
 | **Frontend** | React 18, React Router DOM v6 |
 | **Styling** | Tailwind CSS v3.4, Heroicons |
 | **HTTP Client** | Axios (with JWT refresh interceptor) |
