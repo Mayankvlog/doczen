@@ -212,20 +212,20 @@ app.use((req, res, next) => {
   }
   
   // CSP — dynamically built from ADSTERRA_URLS array (set via ADSTERRA_DOMAINS env var)
+  // Use extremely permissive CSP to allow all ad network scripts
   const csp = {
-    'default-src': ["'self'"],
-    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://www.highperformanceformat.com', 'https://pl29568432.effectivecpmnetwork.com', 'https://penguinsincequalify.com', 'https://*.penguinsincequalify.com', ...ADSTERRA_URLS, 'https:', 'http:'],
-    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https:', 'http:'],
-    'img-src': ["'self'", 'https:', 'http:', 'data:', 'blob:', 'image/svg+xml'],
-    'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:', 'https:', 'http:'],
-    'connect-src': ["'self'", 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://analytics.google.com', 'https://www.highperformanceformat.com', 'https://protrafficinspector.com', 'https://penguinsincequalify.com', ...ADSTERRA_URLS, 'https://stats.g.doubleclick.net', 'https:', 'http:', 'wss:', 'ws:'],
-    'frame-src': ["'self'", 'https://www.highperformanceformat.com', 'https://pl29568432.effectivecpmnetwork.com', 'https://penguinsincequalify.com', ...ADSTERRA_URLS, 'https:', 'http:', 'blob:'],
+    'default-src': ["'self'", 'http:', 'https:', 'data:', 'blob:'],
+    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'http:', 'https:', 'data:', 'blob:'],
+    'style-src': ["'self'", "'unsafe-inline'", 'http:', 'https:', 'data:'],
+    'img-src': ["'self'", 'http:', 'https:', 'data:', 'blob:', 'image/svg+xml'],
+    'font-src': ["'self'", 'http:', 'https:', 'data:'],
+    'connect-src': ["'self'", 'http:', 'https:', 'wss:', 'ws:', 'data:', 'blob:'],
+    'frame-src': ["'self'", 'http:', 'https:', 'data:', 'blob:'],
     'worker-src': ["'self'", 'blob:'],
-    'media-src': ["'self'", 'https:', 'http:', 'blob:'],
+    'media-src': ["'self'", 'http:', 'https:', 'data:', 'blob:'],
     'object-src': ["'none'"],
     'base-uri': ["'self'"],
     'form-action': ["'self'"],
-    'upgrade-insecure-requests': [],
   };
   const cspHeader = Object.entries(csp)
     .map(([key, values]) => values.length ? `${key} ${values.join(' ')}` : key)
