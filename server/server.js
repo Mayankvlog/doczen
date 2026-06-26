@@ -226,7 +226,7 @@ app.use((req, res, next) => {
   const cspHeader = Object.entries(csp)
     .map(([key, values]) => values.length ? `${key} ${values.join(' ')}` : key)
     .join('; ');
-  //res.setHeader('Content-Security-Policy', cspHeader);
+  res.setHeader('Content-Security-Policy', cspHeader);
   
   next();
 });
