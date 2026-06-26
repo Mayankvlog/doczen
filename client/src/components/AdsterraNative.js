@@ -8,6 +8,11 @@ function queueAd(src, config, onerror, container) {
     window._processAdQueue = function() {
       if (window._adQueue.length === 0) return;
       var item = window._adQueue[0];
+      if (!item.container || !document.body.contains(item.container)) {
+        window._adQueue.shift();
+        window._processAdQueue();
+        return;
+      }
       window.atOptions = item.config;
       var s = document.createElement('script');
       s.src = item.src;
@@ -22,11 +27,9 @@ function queueAd(src, config, onerror, container) {
         if (item.onerror) item.onerror();
         setTimeout(window._processAdQueue, 100);
       };
-      (item.container || document.body).appendChild(s);
+      item.container.appendChild(s);
     };
   }
-  var alreadyQueued = window._adQueue.some(function(i) { return i.src === src; });
-  if (alreadyQueued) return;
   window._adQueue.push({ src: src, config: config, onerror: onerror, container: container });
   if (window._adQueue.length === 1) {
     window._processAdQueue();
@@ -52,6 +55,14 @@ export default function AdsterraNative() {
       function() { setFailed(true); },
       ref.current
     );
+
+    return function() {
+      if (window._adQueue) {
+        window._adQueue = window._adQueue.filter(function(item) {
+          return item.container !== ref.current;
+        });
+      }
+    };
   }, [failed]);
 
   return (
