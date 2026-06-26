@@ -23,10 +23,10 @@ function queueAd(src, config, onerror, container) {
         if (item.onerror) item.onerror();
         setTimeout(window._processAdQueue, 100);
       };
-      document.body.appendChild(s);
+      (item.container || document.body).appendChild(s);
     };
   }
-  var alreadyQueued = window._adQueue.some(function(i) { return i.src === src; });
+  var alreadyQueued = window._adQueue.some(function(i) { return i.src === src && i.container === container; });
   if (alreadyQueued) return;
   window._adQueue.push({ src: src, config: config, onerror: onerror, container: container });
   if (window._adQueue.length === 1) {

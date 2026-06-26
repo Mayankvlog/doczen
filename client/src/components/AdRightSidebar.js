@@ -23,10 +23,10 @@ function queueAd(src, config, onerror, container) {
         if (item.onerror) item.onerror();
         setTimeout(window._processAdQueue, 100);
       };
-      document.body.appendChild(s);
+      (item.container || document.body).appendChild(s);
     };
   }
-  var alreadyQueued = window._adQueue.some(function(i) { return i.src === src; });
+  var alreadyQueued = window._adQueue.some(function(i) { return i.src === src && i.container === container; });
   if (alreadyQueued) return;
   window._adQueue.push({ src: src, config: config, onerror: onerror, container: container });
   if (window._adQueue.length === 1) {
@@ -49,6 +49,7 @@ export default function AdRightSidebar() {
         format: 'iframe',
         height: 300,
         width: 160,
+        container: 'sbRight-' + AD_KEY,
         params: {},
       },
       function() { 
@@ -71,6 +72,7 @@ export default function AdRightSidebar() {
     <div className="hidden lg:block fixed right-0 top-1/2 -translate-y-1/2 z-40 w-[160px]">
       <div
         ref={ref}
+        id={'sbRight-' + AD_KEY}
         className="flex justify-center items-center"
         style={{ minHeight: '300px' }}
       >
