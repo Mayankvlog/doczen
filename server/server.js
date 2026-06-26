@@ -212,15 +212,15 @@ app.use((req, res, next) => {
   }
   
   // CSP — dynamically built from ADSTERRA_URLS array (set via ADSTERRA_DOMAINS env var)
-  // Use extremely permissive CSP to allow all ad network scripts
+  // Explicitly include all ad network domains to ensure ad scripts can load
   const csp = {
     'default-src': ["'self'", 'http:', 'https:', 'data:', 'blob:'],
-    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'http:', 'https:', 'data:', 'blob:'],
+    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'http:', 'https:', 'data:', 'blob:', ...ADSTERRA_URLS, 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://www.highperformanceformat.com'],
     'style-src': ["'self'", "'unsafe-inline'", 'http:', 'https:', 'data:'],
-    'img-src': ["'self'", 'http:', 'https:', 'data:', 'blob:', 'image/svg+xml'],
+    'img-src': ["'self'", 'http:', 'https:', 'data:', 'blob:', 'image/svg+xml', ...ADSTERRA_URLS],
     'font-src': ["'self'", 'http:', 'https:', 'data:'],
-    'connect-src': ["'self'", 'http:', 'https:', 'wss:', 'ws:', 'data:', 'blob:'],
-    'frame-src': ["'self'", 'http:', 'https:', 'data:', 'blob:'],
+    'connect-src': ["'self'", 'http:', 'https:', 'wss:', 'ws:', 'data:', 'blob:', ...ADSTERRA_URLS],
+    'frame-src': ["'self'", 'http:', 'https:', 'data:', 'blob:', ...ADSTERRA_URLS],
     'worker-src': ["'self'", 'blob:'],
     'media-src': ["'self'", 'http:', 'https:', 'data:', 'blob:'],
     'object-src': ["'none'"],

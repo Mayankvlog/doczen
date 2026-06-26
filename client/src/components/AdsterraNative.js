@@ -49,8 +49,12 @@ export default function AdsterraNative() {
     var containerId = 'atContainer-' + AD_KEY;
     var container = document.getElementById(containerId);
     
-    if (!container) return;
+    if (!container) {
+      console.warn('[AdsterraNative] Container not found:', containerId);
+      return;
+    }
 
+    console.log('[AdsterraNative] Loading ad from:', 'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js');
     queueAd(
       'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
       {
@@ -61,7 +65,10 @@ export default function AdsterraNative() {
         container: containerId,
         params: {},
       },
-      function() { setFailed(true); },
+      function() { 
+        console.error('[AdsterraNative] Failed to load ad script');
+        setFailed(true); 
+      },
       container
     );
 
