@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 const AD_KEY = '466be459b6a86595592eb7b4c62c5b3c';
+const AD_DOMAIN = process.env.REACT_APP_ADSTERRA_DOMAIN || 'penguinsincequalify.com';
 
 function queueAd(src, config, onerror, container) {
   if (!window._adQueue) {
@@ -41,7 +42,7 @@ export default function AdsterraNative() {
     if (!ref.current || failed) return;
 
     queueAd(
-      'https://penguinsincequalify.com/' + AD_KEY + '/invoke.js',
+      'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
       {
         key: AD_KEY,
         format: 'native',

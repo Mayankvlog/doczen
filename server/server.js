@@ -31,6 +31,11 @@ if (!process.env.JWT_SECRET) {
   console.warn('WARNING: JWT_SECRET not found in .env. Auth features (login, register, profile) will fail with 500.');
 }
 
+// Parse ad network domains from env (comma-separated) — update ADSTERRA_DOMAINS in .env when domains change, no code changes needed
+const ADSTERRA_DOMAINS = (process.env.ADSTERRA_DOMAINS || 'penguinsincequalify.com,zoologyfibre.com,workdeadlinededicate.com,realizationnewestfangs.com,spendsdetachment.com,kettledroopingcontinuation.com')
+  .split(',').map(s => s.trim()).filter(Boolean);
+const ADSTERRA_URLS = ADSTERRA_DOMAINS.map(d => `https://${d}`);
+
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
@@ -202,23 +207,26 @@ app.use((req, res, next) => {
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   }
   
-  // CSP - ONLY safe sources (NO malvertising, NO unsafe-inline for scripts)
-  // FIX P0: Added trusted ad networks and analytics while blocking malicious domains
-  res.setHeader('Content-Security-Policy', 
-    "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com https://penguinsincequalify.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://kettledroopingcontinuation.com 'nonce-doczen'; " +
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-    "img-src 'self' https: data: blob: image/svg+xml; " +
-    "font-src 'self' https://fonts.gstatic.com data:; " +
-    "connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://www.highperformanceformat.com https://protrafficinspector.com https://penguinsincequalify.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://kettledroopingcontinuation.com https://stats.g.doubleclick.net; " +
-    "frame-src 'self' https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com https://penguinsincequalify.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://kettledroopingcontinuation.com https: blob:; " +
-    "worker-src 'self' blob:; " +
-    "media-src 'self' https: blob:; " +
-    "object-src 'none'; " +
-    "base-uri 'self'; " +
-    "form-action 'self'; " +
-    "upgrade-insecure-requests;"
-  );
+  // CSP — dynamically built from ADSTERRA_URLS array (set via ADSTERRA_DOMAINS env var)
+  const csp = {
+    'default-src': ["'self'"],
+    'script-src': ["'self'", "'unsafe-inline'", 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://www.highperformanceformat.com', 'https://pl29568432.effectivecpmnetwork.com', ...ADSTERRA_URLS],
+    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+    'img-src': ["'self'", 'https:', 'data:', 'blob:', 'image/svg+xml'],
+    'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
+    'connect-src': ["'self'", 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://analytics.google.com', 'https://www.highperformanceformat.com', 'https://protrafficinspector.com', ...ADSTERRA_URLS, 'https://stats.g.doubleclick.net'],
+    'frame-src': ["'self'", 'https://www.highperformanceformat.com', 'https://pl29568432.effectivecpmnetwork.com', ...ADSTERRA_URLS, 'https:', 'blob:'],
+    'worker-src': ["'self'", 'blob:'],
+    'media-src': ["'self'", 'https:', 'blob:'],
+    'object-src': ["'none'"],
+    'base-uri': ["'self'"],
+    'form-action': ["'self'"],
+    'upgrade-insecure-requests': [],
+  };
+  const cspHeader = Object.entries(csp)
+    .map(([key, values]) => values.length ? `${key} ${values.join(' ')}` : key)
+    .join('; ');
+  res.setHeader('Content-Security-Policy', cspHeader);
   
   next();
 });
