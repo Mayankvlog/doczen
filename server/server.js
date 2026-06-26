@@ -215,12 +215,12 @@ app.use((req, res, next) => {
   // Explicitly include all ad network domains to ensure ad scripts can load
   const csp = {
     'default-src': ["'self'", 'http:', 'https:', 'data:', 'blob:'],
-    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'http:', 'https:', 'data:', 'blob:', ...ADSTERRA_URLS, 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://www.highperformanceformat.com'],
+    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'http:', 'https:', 'data:', 'blob:', 'https://penguinsincequalify.com', ...ADSTERRA_URLS, 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://www.highperformanceformat.com'],
     'style-src': ["'self'", "'unsafe-inline'", 'http:', 'https:', 'data:'],
-    'img-src': ["'self'", 'http:', 'https:', 'data:', 'blob:', 'image/svg+xml', ...ADSTERRA_URLS],
+    'img-src': ["'self'", 'http:', 'https:', 'data:', 'blob:', 'image/svg+xml', 'https://penguinsincequalify.com', ...ADSTERRA_URLS],
     'font-src': ["'self'", 'http:', 'https:', 'data:'],
-    'connect-src': ["'self'", 'http:', 'https:', 'wss:', 'ws:', 'data:', 'blob:', ...ADSTERRA_URLS],
-    'frame-src': ["'self'", 'http:', 'https:', 'data:', 'blob:', ...ADSTERRA_URLS],
+    'connect-src': ["'self'", 'http:', 'https:', 'wss:', 'ws:', 'data:', 'blob:', 'https://penguinsincequalify.com', ...ADSTERRA_URLS],
+    'frame-src': ["'self'", 'http:', 'https:', 'data:', 'blob:', 'https://penguinsincequalify.com', ...ADSTERRA_URLS],
     'worker-src': ["'self'", 'blob:'],
     'media-src': ["'self'", 'http:', 'https:', 'data:', 'blob:'],
     'object-src': ["'none'"],
