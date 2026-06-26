@@ -1,37 +1,60 @@
 import { useEffect, useRef, useState } from 'react';
 
+const AD_KEY = '20c23d55e0aa2d4c55f69cec04907f2b';
+
+function queueAd(src, config, onerror, container) {
+  if (!window._adQueue) {
+    window._adQueue = [];
+    window._processAdQueue = function() {
+      if (window._adQueue.length === 0) return;
+      var item = window._adQueue[0];
+      window.atOptions = item.config;
+      var s = document.createElement('script');
+      s.src = item.src;
+      s.async = true;
+      s.setAttribute('data-cfasync', 'false');
+      s.onload = function() {
+        window._adQueue.shift();
+        setTimeout(window._processAdQueue, 100);
+      };
+      s.onerror = function() {
+        window._adQueue.shift();
+        if (item.onerror) item.onerror();
+        setTimeout(window._processAdQueue, 100);
+      };
+      (item.container || document.body).appendChild(s);
+    };
+  }
+  var alreadyQueued = window._adQueue.some(function(i) { return i.src === src; });
+  if (alreadyQueued) return;
+  window._adQueue.push({ src: src, config: config, onerror: onerror, container: container });
+  if (window._adQueue.length === 1) {
+    window._processAdQueue();
+  }
+}
+
 export default function Banner728x90() {
-  const ref = useRef(null);
-  const [failed, setFailed] = useState(false);
+  var ref = useRef(null);
+  var [failed, setFailed] = useState(false);
 
-  useEffect(() => {
+  useEffect(function() {
     if (!ref.current || failed) return;
-    if (ref.current.querySelector('script')) return;
 
-    window.atOptions = {
-      key: '20c23d55e0aa2d4c55f69cec04907f2b',
-      format: 'iframe',
-      height: 90,
-      width: 728,
-      params: {},
-    };
-
-    const s = document.createElement('script');
-    s.src = 'https://www.highperformanceformat.com/20c23d55e0aa2d4c55f69cec04907f2b/invoke.js';
-    s.async = true;
-    s.setAttribute('data-cfasync', 'false');
-    s.onerror = () => {
-      console.warn('[Banner728x90] Failed to load ad script');
-      setFailed(true);
-    };
-    ref.current.appendChild(s);
-
-    return () => {
-      if (ref.current) {
-        const scripts = ref.current.querySelectorAll('script');
-        scripts.forEach(script => script.remove());
-      }
-    };
+    queueAd(
+      'https://www.highperformanceformat.com/' + AD_KEY + '/invoke.js',
+      {
+        key: AD_KEY,
+        format: 'iframe',
+        height: 90,
+        width: 728,
+        params: {},
+      },
+      function() {
+        console.warn('[Banner728x90] Failed to load ad script');
+        setFailed(true);
+      },
+      ref.current
+    );
   }, [failed]);
 
   return (
