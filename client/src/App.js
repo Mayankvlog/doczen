@@ -5,6 +5,8 @@ import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/Navbar';
 import Banner728x90 from './components/Banner728x90';
+import Banner160x600 from './components/Banner160x600';
+import Banner160x300 from './components/Banner160x300';
 import Footer from './components/Footer';
 import LoadingSpinner from './components/LoadingSpinner';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -157,8 +159,21 @@ function ScrollToTop() {
   return null;
 }
 
+const toolPaths = new Set([
+  '/merge-pdf', '/split-pdf', '/compress-pdf', '/rotate-pdf',
+  '/protect-pdf', '/unlock-pdf', '/add-page-numbers', '/add-watermark',
+  '/extract-text', '/reorder-pages', '/delete-pages', '/pdf-to-jpg',
+  '/jpg-to-pdf', '/pdf-to-txt', '/pdf-to-word', '/word-to-pdf',
+  '/pdf-to-ppt', '/ppt-to-pdf', '/pdf-to-excel', '/excel-to-pdf',
+  '/edit-pdf', '/sign-pdf', '/repair-pdf', '/pdf-to-pdfa',
+  '/pdf-metadata', '/flatten-pdf', '/html-to-pdf', '/redact-pdf',
+  '/remove-annotations', '/compare-pdf', '/remove-watermark',
+]);
+
 function AppContent() {
   const { dir } = useLanguage();
+  const { pathname } = useLocation();
+  const isToolPage = toolPaths.has(pathname);
   return (
     <div className="min-h-screen flex flex-col bg-gray-50" dir={dir}>
       <ScrollToTop />
@@ -214,6 +229,12 @@ function AppContent() {
         </Suspense>
         </ErrorBoundary>
       </main>
+      {isToolPage && (
+        <aside className="hidden lg:block fixed right-4 top-32 w-[160px] space-y-4 z-10">
+          <Banner160x600 />
+          <Banner160x300 />
+        </aside>
+      )}
       <Footer />
     </div>
   );
