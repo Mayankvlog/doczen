@@ -23,7 +23,7 @@ function queueAd(src, config, onerror, container) {
         if (item.onerror) item.onerror();
         setTimeout(window._processAdQueue, 100);
       };
-      (item.container || document.body).appendChild(s);
+      document.body.appendChild(s);
     };
   }
   var alreadyQueued = window._adQueue.some(function(i) { return i.src === src; });
@@ -37,9 +37,19 @@ function queueAd(src, config, onerror, container) {
 export default function AdsterraNative() {
   var ref = useRef(null);
   var [failed, setFailed] = useState(false);
+  var [mounted, setMounted] = useState(false);
 
   useEffect(function() {
-    if (!ref.current || failed) return;
+    setMounted(true);
+  }, []);
+
+  useEffect(function() {
+    if (!ref.current || failed || !mounted) return;
+
+    var containerId = 'atContainer-' + AD_KEY;
+    var container = document.getElementById(containerId);
+    
+    if (!container) return;
 
     queueAd(
       'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
@@ -48,21 +58,21 @@ export default function AdsterraNative() {
         format: 'native',
         height: 250,
         width: 300,
-        container: 'atContainer-' + AD_KEY,
+        container: containerId,
         params: {},
       },
       function() { setFailed(true); },
-      ref.current
+      container
     );
 
     return function() {
       if (window._adQueue) {
         window._adQueue = window._adQueue.filter(function(item) {
-          return item.container !== ref.current;
+          return item.container !== container;
         });
       }
     };
-  }, [failed]);
+  }, [failed, mounted]);
 
   return (
     <div className="flex justify-center my-6">

@@ -23,7 +23,7 @@ function queueAd(src, config, onerror, container) {
         if (item.onerror) item.onerror();
         setTimeout(window._processAdQueue, 100);
       };
-      (item.container || document.body).appendChild(s);
+      document.body.appendChild(s);
     };
   }
   var alreadyQueued = window._adQueue.some(function(i) { return i.src === src; });
