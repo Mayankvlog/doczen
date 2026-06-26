@@ -210,12 +210,12 @@ app.use((req, res, next) => {
   // CSP — dynamically built from ADSTERRA_URLS array (set via ADSTERRA_DOMAINS env var)
   const csp = {
     'default-src': ["'self'"],
-    'script-src': ["'self'", "'unsafe-inline'", 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://www.highperformanceformat.com', 'https://pl29568432.effectivecpmnetwork.com', ...ADSTERRA_URLS],
+    'script-src': ["'self'", "'unsafe-inline'", 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://www.highperformanceformat.com', 'https://pl29568432.effectivecpmnetwork.com', 'https://penguinsincequalify.com', 'https://*.penguinsincequalify.com', ...ADSTERRA_URLS],
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
     'img-src': ["'self'", 'https:', 'data:', 'blob:', 'image/svg+xml'],
     'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
-    'connect-src': ["'self'", 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://analytics.google.com', 'https://www.highperformanceformat.com', 'https://protrafficinspector.com', ...ADSTERRA_URLS, 'https://stats.g.doubleclick.net'],
-    'frame-src': ["'self'", 'https://www.highperformanceformat.com', 'https://pl29568432.effectivecpmnetwork.com', ...ADSTERRA_URLS, 'https:', 'blob:'],
+    'connect-src': ["'self'", 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://analytics.google.com', 'https://www.highperformanceformat.com', 'https://protrafficinspector.com', 'https://penguinsincequalify.com', ...ADSTERRA_URLS, 'https://stats.g.doubleclick.net'],
+    'frame-src': ["'self'", 'https://www.highperformanceformat.com', 'https://pl29568432.effectivecpmnetwork.com', 'https://penguinsincequalify.com', ...ADSTERRA_URLS, 'https:', 'blob:'],
     'worker-src': ["'self'", 'blob:'],
     'media-src': ["'self'", 'https:', 'blob:'],
     'object-src': ["'none'"],
