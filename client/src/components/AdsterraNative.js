@@ -7,6 +7,14 @@ export default function AdsterraNative() {
     if (!ref.current) return;
     if (ref.current.querySelector('script')) return;
 
+    window.atOptions = {
+      key: '466be459b6a86595592eb7b4c62c5b3c',
+      format: 'native',
+      height: 250,
+      width: 300,
+      params: {},
+    };
+
     const s = document.createElement('script');
     s.src = 'https://penguinsincequalify.com/466be459b6a86595592eb7b4c62c5b3c/invoke.js';
     s.async = true;

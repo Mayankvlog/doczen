@@ -5,6 +5,8 @@ import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/Navbar';
 import Banner728x90 from './components/Banner728x90';
+import AdLeftSidebar from './components/AdLeftSidebar';
+import AdRightSidebar from './components/AdRightSidebar';
 
 import Footer from './components/Footer';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -178,6 +180,8 @@ function AppContent() {
       <ScrollToTop />
       <Navbar />
       <Banner728x90 />
+      <AdLeftSidebar />
+      <AdRightSidebar />
       <main className="flex-1 page-enter-active">
         {/* ✅ PHASE 1 FIX: Suspense + ErrorBoundary for code-split components */}
         <ErrorBoundary>
