@@ -8,11 +8,6 @@ function queueAd(src, config, onerror, container) {
     window._processAdQueue = function() {
       if (window._adQueue.length === 0) return;
       var item = window._adQueue[0];
-      if (!item.container || !document.body.contains(item.container)) {
-        window._adQueue.shift();
-        window._processAdQueue();
-        return;
-      }
       window.atOptions = item.config;
       var s = document.createElement('script');
       s.src = item.src;
@@ -27,9 +22,11 @@ function queueAd(src, config, onerror, container) {
         if (item.onerror) item.onerror();
         setTimeout(window._processAdQueue, 100);
       };
-      item.container.appendChild(s);
+      (item.container || document.body).appendChild(s);
     };
   }
+  var alreadyQueued = window._adQueue.some(function(i) { return i.src === src; });
+  if (alreadyQueued) return;
   window._adQueue.push({ src: src, config: config, onerror: onerror, container: container });
   if (window._adQueue.length === 1) {
     window._processAdQueue();
@@ -69,8 +66,8 @@ export default function AdRightSidebar() {
     <div className="hidden lg:block fixed right-0 top-1/2 -translate-y-1/2 z-40 w-[160px]">
       <div
         ref={ref}
-        className="flex justify-center"
-        style={{ minHeight: failed ? 'auto' : '300px' }}
+        className="flex justify-center items-center"
+        style={{ minHeight: '300px' }}
       >
         {failed && (
           <div className="w-[160px] h-[300px] bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
