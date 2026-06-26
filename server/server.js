@@ -34,6 +34,10 @@ if (!process.env.JWT_SECRET) {
 // Parse ad network domains from env (comma-separated) — update ADSTERRA_DOMAINS in .env when domains change, no code changes needed
 const ADSTERRA_DOMAINS = (process.env.ADSTERRA_DOMAINS || 'penguinsincequalify.com,zoologyfibre.com,workdeadlinededicate.com,realizationnewestfangs.com,spendsdetachment.com,kettledroopingcontinuation.com')
   .split(',').map(s => s.trim()).filter(Boolean);
+// Ensure penguinsincequalify.com is always included even if missing from env var
+if (!ADSTERRA_DOMAINS.includes('penguinsincequalify.com')) {
+  ADSTERRA_DOMAINS.push('penguinsincequalify.com');
+}
 const ADSTERRA_URLS = ADSTERRA_DOMAINS.map(d => `https://${d}`);
 
 const uploadsDir = path.join(__dirname, 'uploads');
