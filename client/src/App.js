@@ -5,8 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/Navbar';
 import Banner728x90 from './components/Banner728x90';
-import Banner160x600 from './components/Banner160x600';
-import Banner160x300 from './components/Banner160x300';
+import SidebarAds from './components/SidebarAds';
 import Footer from './components/Footer';
 import LoadingSpinner from './components/LoadingSpinner';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -231,8 +230,7 @@ function AppContent() {
       </main>
       {isToolPage && (
         <aside className="hidden lg:block fixed right-4 top-32 w-[160px] space-y-4 z-10">
-          <Banner160x600 />
-          <Banner160x300 />
+          <SidebarAds />
         </aside>
       )}
       <Footer />
