@@ -180,9 +180,9 @@ function AppContent() {
       <ScrollToTop />
       <Navbar />
       <Banner728x90 />
-      <AdLeftSidebar />
-      <AdRightSidebar />
-      <main className="flex-1 page-enter-active">
+      {isToolPage && <AdLeftSidebar />}
+      {isToolPage && <AdRightSidebar />}
+      <main className={'flex-1 page-enter-active' + (isToolPage ? ' lg:mx-[160px]' : '')}>
         {/* ✅ PHASE 1 FIX: Suspense + ErrorBoundary for code-split components */}
         <ErrorBoundary>
         <Suspense fallback={<LoadingSpinner />}>
