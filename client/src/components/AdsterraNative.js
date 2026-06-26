@@ -12,7 +12,7 @@ export default function AdsterraNative() {
       if (existing) return;
 
       const s = document.createElement('script');
-      s.src = 'https://pl29568432.effectivecpmnetwork.com/466be459b6a86595592eb7b4c62c5b3c/invoke.js';
+      s.src = 'https://penguinsincequalify.com/466be459b6a86595592eb7b4c62c5b3c/invoke.js';
       s.async = true;
       s.setAttribute('data-cfasync', 'false');
       s.onerror = (err) => {
