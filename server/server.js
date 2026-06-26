@@ -206,12 +206,12 @@ app.use((req, res, next) => {
   // FIX P0: Added trusted ad networks and analytics while blocking malicious domains
   res.setHeader('Content-Security-Policy', 
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://kettledroopingcontinuation.com https://penguinsincequalify.com 'nonce-doczen'; " +
+    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://kettledroopingcontinuation.com 'nonce-doczen'; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "img-src 'self' https: data: blob: image/svg+xml; " +
     "font-src 'self' https://fonts.gstatic.com data:; " +
-    "connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://www.highperformanceformat.com https://protrafficinspector.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://kettledroopingcontinuation.com https://penguinsincequalify.com https://stats.g.doubleclick.net; " +
-    "frame-src 'self' https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://kettledroopingcontinuation.com https://penguinsincequalify.com https: blob:; " +
+    "connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://www.highperformanceformat.com https://protrafficinspector.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://kettledroopingcontinuation.com https://stats.g.doubleclick.net; " +
+    "frame-src 'self' https://www.highperformanceformat.com https://pl29568432.effectivecpmnetwork.com https://zoologyfibre.com https://workdeadlinededicate.com https://realizationnewestfangs.com https://spendsdetachment.com https://kettledroopingcontinuation.com https: blob:; " +
     "worker-src 'self' blob:; " +
     "media-src 'self' https: blob:; " +
     "object-src 'none'; " +
