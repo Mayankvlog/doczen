@@ -211,26 +211,7 @@ app.use((req, res, next) => {
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   }
   
-  // CSP — dynamically built from ADSTERRA_URLS array (set via ADSTERRA_DOMAINS env var)
-  // Explicitly include all ad network domains to ensure ad scripts can load
-  const csp = {
-    'default-src': ["'self'", 'http:', 'https:', 'data:', 'blob:'],
-    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'http:', 'https:', 'data:', 'blob:', 'https://penguinsincequalify.com', ...ADSTERRA_URLS, 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://www.highperformanceformat.com'],
-    'style-src': ["'self'", "'unsafe-inline'", 'http:', 'https:', 'data:'],
-    'img-src': ["'self'", 'http:', 'https:', 'data:', 'blob:', 'image/svg+xml', 'https://penguinsincequalify.com', ...ADSTERRA_URLS],
-    'font-src': ["'self'", 'http:', 'https:', 'data:'],
-    'connect-src': ["'self'", 'http:', 'https:', 'wss:', 'ws:', 'data:', 'blob:', 'https://penguinsincequalify.com', ...ADSTERRA_URLS],
-    'frame-src': ["'self'", 'http:', 'https:', 'data:', 'blob:', 'https://penguinsincequalify.com', ...ADSTERRA_URLS],
-    'worker-src': ["'self'", 'blob:'],
-    'media-src': ["'self'", 'http:', 'https:', 'data:', 'blob:'],
-    'object-src': ["'none'"],
-    'base-uri': ["'self'"],
-    'form-action': ["'self'"],
-  };
-  const cspHeader = Object.entries(csp)
-    .map(([key, values]) => values.length ? `${key} ${values.join(' ')}` : key)
-    .join('; ');
-  res.setHeader('Content-Security-Policy', cspHeader);
+  // CSP is handled by nginx in production — removed from here to avoid double-header conflicts
   
   next();
 });
