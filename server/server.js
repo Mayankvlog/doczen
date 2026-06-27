@@ -107,9 +107,59 @@ app.use(compression({
   threshold: 1024 // Only compress responses larger than 1KB
 }));
 
-// ✅ PHASE 0 FIX: Apply helmet for security headers
+// ✅ Apply helmet for security headers
 app.use(helmet({
-  contentSecurityPolicy: false, // We set custom CSP below
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      defaultSrc: ["'self'", 'http:', 'https:', 'data:', 'blob:'],
+      scriptSrc: [
+        "'self'", "'unsafe-inline'", "'unsafe-eval'",
+        'http:', 'https:', 'blob:', 'data:',
+        'https://penguinsincequalify.com',
+        'https://zoologyfibre.com',
+        'https://workdeadlinededicate.com',
+        'https://realizationnewestfangs.com',
+        'https://spendsdetachment.com',
+        'https://kettledroopingcontinuation.com',
+        'https://www.highperformanceformat.com',
+        'https://www.googletagmanager.com',
+        'https://www.google-analytics.com',
+      ],
+      styleSrc: ["'self'", "'unsafe-inline'", 'http:', 'https:', 'data:'],
+      imgSrc: ["'self'", 'http:', 'https:', 'data:', 'blob:',
+        'https://penguinsincequalify.com',
+        'https://zoologyfibre.com',
+        'https://workdeadlinededicate.com',
+        'https://realizationnewestfangs.com',
+        'https://spendsdetachment.com',
+        'https://kettledroopingcontinuation.com',
+      ],
+      fontSrc: ["'self'", 'http:', 'https:', 'data:'],
+      connectSrc: ["'self'", 'http:', 'https:', 'wss:', 'blob:', 'data:',
+        'https://penguinsincequalify.com',
+        'https://zoologyfibre.com',
+        'https://workdeadlinededicate.com',
+        'https://realizationnewestfangs.com',
+        'https://spendsdetachment.com',
+        'https://kettledroopingcontinuation.com',
+      ],
+      frameSrc: ["'self'", 'http:', 'https:', 'blob:', 'data:',
+        'https://penguinsincequalify.com',
+        'https://zoologyfibre.com',
+        'https://workdeadlinededicate.com',
+        'https://realizationnewestfangs.com',
+        'https://spendsdetachment.com',
+        'https://kettledroopingcontinuation.com',
+      ],
+      workerSrc: ["'self'", 'blob:'],
+      mediaSrc: ["'self'", 'http:', 'https:', 'blob:', 'data:'],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
+    },
+    reportOnly: false,
+  },
   hsts: {
     maxAge: 31536000,
     includeSubDomains: true,
@@ -211,7 +261,8 @@ app.use((req, res, next) => {
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   }
   
-  // CSP is handled by nginx in production — removed from here to avoid double-header conflicts
+  // CSP is also set by helmet above for Express-served responses (non-nginx environments)
+  // nginx.conf mirrors this policy — keep both in sync when adding new ad domains
   
   next();
 });
