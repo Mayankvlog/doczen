@@ -16866,7 +16866,7 @@ const loadLanguageTranslations = async (lang, enStrings) => {
                    '&langpair=en|' + encodeURIComponent(lang);
     
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
     
     const response = await fetch(apiUrl, {
       method: 'GET',
@@ -16877,30 +16877,28 @@ const loadLanguageTranslations = async (lang, enStrings) => {
     
     clearTimeout(timeoutId);
     
-    if (response.ok) {
-      const data = await response.json();
-      if (data && data.responseData && data.responseData.translatedText) {
-        const translations = {};
-        const translatedText = String(data.responseData.translatedText);
-        const translatedParts = translatedText.split(separator);
-        
-        keys.forEach((key, idx) => {
-          if (translatedParts[idx]) {
-            const translated = String(translatedParts[idx]).trim();
-            // Only add if it's different from English and not empty
-            if (translated && translated.length > 0 && translated !== enStrings[key]) {
-              translations[key] = translated;
-            }
+    if (!response.ok) return null;
+    
+    const data = await response.json();
+    if (data && data.responseData && data.responseData.translatedText) {
+      const translations = {};
+      const translatedText = String(data.responseData.translatedText);
+      const translatedParts = translatedText.split(separator);
+      
+      keys.forEach((key, idx) => {
+        if (translatedParts[idx]) {
+          const translated = String(translatedParts[idx]).trim();
+          if (translated && translated.length > 0 && translated !== enStrings[key]) {
+            translations[key] = translated;
           }
-        });
-        
-        // Return only if we have meaningful translations
-        return Object.keys(translations).length > 0 ? translations : null;
-      }
+        }
+      });
+      
+      return Object.keys(translations).length > 0 ? translations : null;
     }
     return null;
   } catch (err) {
-    // API error or timeout - return null silently
+    return null;
   }
   return null;
 };
