@@ -16851,7 +16851,7 @@ const loadLanguageTranslations = async (lang, enStrings) => {
   const allKeys = Object.keys(enStrings);
   const separator = ' ||| ';
   const translations = {};
-  const MAX_QUERY = 800;
+  const MAX_QUERY = 460;
 
   const fetchBatch = async (keys) => {
     if (keys.length === 0) return;
@@ -16912,11 +16912,13 @@ const loadLanguageTranslations = async (lang, enStrings) => {
     if (data?.responseData?.translatedText) {
       const translatedText = String(data.responseData.translatedText);
       if (translatedText.includes('QUERY LENGTH') || translatedText.includes('MAX ALLOWED QUERY') || translatedText.includes('LIMIT EXCEEDED')) {
-        const mid = Math.floor(keys.length / 2);
+        const mid = Math.floor(batchKeys.length / 2);
         if (mid > 0) {
-          await fetchBatch(keys.slice(0, mid));
-          await fetchBatch(keys.slice(mid));
+          await fetchBatch(batchKeys.slice(0, mid));
+          await fetchBatch(batchKeys.slice(mid));
         }
+        const remaining = keys.filter(k => !batchKeys.includes(k));
+        if (remaining.length > 0) await fetchBatch(remaining);
         return;
       }
 
