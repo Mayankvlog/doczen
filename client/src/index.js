@@ -16854,7 +16854,7 @@ const loadLanguageTranslations = async (lang, enStrings) => {
 
     for (const key of allKeys) {
       const chunk = keys.length === 0 ? enStrings[key] : `${textString}${separator}${enStrings[key]}`;
-      if (chunk.length > 450) break;
+      if (encodeURIComponent(chunk).length > 600) break;
       textString = chunk;
       keys.push(key);
     }
