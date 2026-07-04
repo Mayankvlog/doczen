@@ -16851,7 +16851,7 @@ const loadLanguageTranslations = async (lang, enStrings) => {
   const allKeys = Object.keys(enStrings);
   const separator = ' ||| ';
   const translations = {};
-  const MAX_QUERY = 460;
+  const MAX_QUERY = 400;
 
   const fetchBatch = async (keys) => {
     if (keys.length === 0) return;
@@ -16862,9 +16862,9 @@ const loadLanguageTranslations = async (lang, enStrings) => {
     for (const key of keys) {
       const val = enStrings[key];
       if (!val || typeof val !== 'string') continue;
-      if (encodeURIComponent(val).length > MAX_QUERY) continue;
+      if (val.length > MAX_QUERY) continue;
       const chunk = batchKeys.length === 0 ? val : `${textString}${separator}${val}`;
-      if (encodeURIComponent(chunk).length > MAX_QUERY) break;
+      if (chunk.length > MAX_QUERY) break;
       textString = chunk;
       batchKeys.push(key);
     }
