@@ -16853,7 +16853,7 @@ const loadLanguageTranslations = async (lang, enStrings) => {
     const separator = ' ||| ';
     const keys = [];
     let textString = '';
-    const MAX_QUERY = 450;
+    const MAX_QUERY = 800;
 
     for (const key of allKeys) {
       const val = enStrings[key];
