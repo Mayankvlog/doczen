@@ -16848,67 +16848,98 @@ const autoTranslateLanguages = async () => {
 
 // Load language translations from MyMemory API (free service)
 const loadLanguageTranslations = async (lang, enStrings) => {
-  try {
-    const allKeys = Object.keys(enStrings);
-    const separator = ' ||| ';
-    const keys = [];
-    let textString = '';
-    const MAX_QUERY = 800;
+  const allKeys = Object.keys(enStrings);
+  const separator = ' ||| ';
+  const translations = {};
+  const MAX_QUERY = 800;
 
-    for (const key of allKeys) {
+  const fetchBatch = async (keys) => {
+    if (keys.length === 0) return;
+
+    let textString = '';
+    const batchKeys = [];
+
+    for (const key of keys) {
       const val = enStrings[key];
       if (!val || typeof val !== 'string') continue;
       if (encodeURIComponent(val).length > MAX_QUERY) continue;
-      const chunk = keys.length === 0 ? val : `${textString}${separator}${val}`;
+      const chunk = batchKeys.length === 0 ? val : `${textString}${separator}${val}`;
       if (encodeURIComponent(chunk).length > MAX_QUERY) break;
       textString = chunk;
-      keys.push(key);
+      batchKeys.push(key);
     }
 
-    if (!textString || textString.length < 10 || keys.length === 0) return null;
+    if (textString.length < 10 || batchKeys.length === 0) {
+      const remaining = keys.filter(k => !batchKeys.includes(k));
+      if (remaining.length > 0) await fetchBatch(remaining);
+      return;
+    }
 
-    const apiUrl = 'https://api.mymemory.translated.net/get?q=' + 
-                   encodeURIComponent(textString) + 
+    const apiUrl = 'https://api.mymemory.translated.net/get?q=' +
+                   encodeURIComponent(textString) +
                    '&langpair=en|' + encodeURIComponent(lang);
-    
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
-    
+
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: { 'Accept': 'application/json' },
       signal: controller.signal,
       mode: 'cors'
     });
-    
+
     clearTimeout(timeoutId);
-    
-    if (!response.ok) return null;
-    
+
+    if (!response.ok) {
+      const remaining = keys.filter(k => !batchKeys.includes(k));
+      if (remaining.length > 0) await fetchBatch(remaining);
+      return;
+    }
+
     const data = await response.json();
-    if (data?.responseStatus && Number(data.responseStatus) !== 200) return null;
-    if (data?.responseDetails && typeof data.responseDetails === 'string' && data.responseDetails !== 'OK') return null;
+    if (data?.responseStatus && Number(data.responseStatus) !== 200) {
+      const remaining = keys.filter(k => !batchKeys.includes(k));
+      if (remaining.length > 0) await fetchBatch(remaining);
+      return;
+    }
+    if (data?.responseDetails && typeof data.responseDetails === 'string' && data.responseDetails !== 'OK') {
+      const remaining = keys.filter(k => !batchKeys.includes(k));
+      if (remaining.length > 0) await fetchBatch(remaining);
+      return;
+    }
+
     if (data?.responseData?.translatedText) {
-      const translations = {};
       const translatedText = String(data.responseData.translatedText);
-      if (translatedText.includes('QUERY LENGTH') || translatedText.includes('MAX ALLOWED QUERY') || translatedText.includes('LIMIT EXCEEDED')) return null;
+      if (translatedText.includes('QUERY LENGTH') || translatedText.includes('MAX ALLOWED QUERY') || translatedText.includes('LIMIT EXCEEDED')) {
+        const mid = Math.floor(keys.length / 2);
+        if (mid > 0) {
+          await fetchBatch(keys.slice(0, mid));
+          await fetchBatch(keys.slice(mid));
+        }
+        return;
+      }
+
       const translatedParts = translatedText.split(separator);
-      
-      keys.forEach((key, idx) => {
+      batchKeys.forEach((key, idx) => {
         if (!translatedParts[idx]) return;
         const translated = String(translatedParts[idx]).trim();
         if (!translated || translated.length === 0 || translated === enStrings[key]) return;
         if (translated.includes('QUERY LENGTH') || translated.includes('MAX ALLOWED QUERY') || translated.includes('LIMIT EXCEEDED')) return;
         translations[key] = translated;
       });
-      
-      return Object.keys(translations).length > 0 ? translations : null;
     }
-    return null;
+
+    const remaining = keys.filter(k => !batchKeys.includes(k));
+    if (remaining.length > 0) await fetchBatch(remaining);
+  };
+
+  try {
+    await fetchBatch(allKeys);
+    return Object.keys(translations).length > 0 ? translations : null;
   } catch (err) {
     return null;
   }
-  return null;
 };
 
 // Start auto-translation in background without blocking app
