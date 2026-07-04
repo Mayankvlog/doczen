@@ -14,6 +14,8 @@ const SUPPRESSED_PATTERNS = [
   'Affiliatizer()',
   'InstallTrigger is deprecated',
   'has been rejected for invalid domain',
+  'QUERY LENGTH LIMIT EXCEEDED',
+  'MAX ALLOWED QUERY',
 ];
 
 window.addEventListener('error', (event) => {
@@ -16851,13 +16853,14 @@ const loadLanguageTranslations = async (lang, enStrings) => {
     const separator = ' ||| ';
     const keys = [];
     let textString = '';
+    const MAX_QUERY = 450;
 
     for (const key of allKeys) {
       const val = enStrings[key];
       if (!val || typeof val !== 'string') continue;
-      if (encodeURIComponent(val).length > 450) continue;
+      if (encodeURIComponent(val).length > MAX_QUERY) continue;
       const chunk = keys.length === 0 ? val : `${textString}${separator}${val}`;
-      if (encodeURIComponent(chunk).length > 450) break;
+      if (encodeURIComponent(chunk).length > MAX_QUERY) break;
       textString = chunk;
       keys.push(key);
     }
@@ -16884,18 +16887,19 @@ const loadLanguageTranslations = async (lang, enStrings) => {
     
     const data = await response.json();
     if (data?.responseStatus && Number(data.responseStatus) !== 200) return null;
+    if (data?.responseDetails && typeof data.responseDetails === 'string' && data.responseDetails !== 'OK') return null;
     if (data?.responseData?.translatedText) {
       const translations = {};
       const translatedText = String(data.responseData.translatedText);
+      if (translatedText.includes('QUERY LENGTH') || translatedText.includes('MAX ALLOWED QUERY') || translatedText.includes('LIMIT EXCEEDED')) return null;
       const translatedParts = translatedText.split(separator);
       
       keys.forEach((key, idx) => {
-        if (translatedParts[idx]) {
-          const translated = String(translatedParts[idx]).trim();
-          if (translated && translated.length > 0 && translated !== enStrings[key]) {
-            translations[key] = translated;
-          }
-        }
+        if (!translatedParts[idx]) return;
+        const translated = String(translatedParts[idx]).trim();
+        if (!translated || translated.length === 0 || translated === enStrings[key]) return;
+        if (translated.includes('QUERY LENGTH') || translated.includes('MAX ALLOWED QUERY') || translated.includes('LIMIT EXCEEDED')) return;
+        translations[key] = translated;
       });
       
       return Object.keys(translations).length > 0 ? translations : null;
