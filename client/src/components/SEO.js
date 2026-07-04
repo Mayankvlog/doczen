@@ -31,7 +31,7 @@ const DEFAULT_KEYWORDS = 'free online PDF editor, merge PDF, split PDF, compress
 
 const LOCALE_MAP = {
   en: 'en_US', es: 'es_ES', fr: 'fr_FR', de: 'de_DE', it: 'it_IT',
-  pt: 'pt_BR', nl: 'nl_NL', ru: 'ru_RU', ja: 'ja_JP', 'zh-CN': 'zh_CN',
+  pt: 'pt_BR', ru: 'ru_RU', ja: 'ja_JP', 'zh-CN': 'zh_CN',
   'zh-TW': 'zh_TW', ko: 'ko_KR', ar: 'ar_SA', hi: 'hi_IN', tr: 'tr_TR',
   pl: 'pl_PL', sv: 'sv_SE', da: 'da_DK', no: 'nb_NO', fi: 'fi_FI',
   cs: 'cs_CZ', sk: 'sk_SK', hu: 'hu_HU', ro: 'ro_RO', bg: 'bg_BG',
