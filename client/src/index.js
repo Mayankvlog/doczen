@@ -16776,12 +16776,16 @@ const loadLanguageTranslations = async (lang, enStrings) => {
 
     if (data?.responseData?.translatedText) {
       const translatedText = String(data.responseData.translatedText);
-      if (translatedText.includes('QUERY LENGTH') || translatedText.includes('MAX ALLOWED QUERY') || translatedText.includes('LIMIT EXCEEDED')) {
-        const mid = Math.floor(batchKeys.length / 2);
-        if (mid > 0) {
-          await fetchBatch(batchKeys.slice(0, mid));
-          await fetchBatch(batchKeys.slice(mid));
-        }
+
+      if (
+        translatedText.includes('QUERY LENGTH') ||
+        translatedText.includes('MAX ALLOWED QUERY') ||
+        translatedText.includes('LIMIT EXCEEDED') ||
+        translatedText.includes('500')
+      ) {
+        batchKeys.forEach((key) => {
+          translations[key] = enStrings[key];
+        });
         const remaining = keys.filter(k => !batchKeys.includes(k));
         if (remaining.length > 0) await fetchBatch(remaining);
         return;
@@ -16789,11 +16793,24 @@ const loadLanguageTranslations = async (lang, enStrings) => {
 
       const translatedParts = translatedText.split(separator);
       batchKeys.forEach((key, idx) => {
-        if (!translatedParts[idx]) return;
+        if (!translatedParts[idx]) {
+          translations[key] = enStrings[key];
+          return;
+        }
         const translated = String(translatedParts[idx]).trim();
-        if (!translated || translated.length === 0 || translated === enStrings[key]) return;
-        if (translated.includes('QUERY LENGTH') || translated.includes('MAX ALLOWED QUERY') || translated.includes('LIMIT EXCEEDED')) return;
+        if (!translated || translated.length === 0 || translated === enStrings[key]) {
+          translations[key] = enStrings[key];
+          return;
+        }
+        if (translated.includes('QUERY LENGTH') || translated.includes('MAX ALLOWED QUERY') || translated.includes('LIMIT EXCEEDED')) {
+          translations[key] = enStrings[key];
+          return;
+        }
         translations[key] = translated;
+      });
+    } else {
+      batchKeys.forEach((key) => {
+        translations[key] = enStrings[key];
       });
     }
 
