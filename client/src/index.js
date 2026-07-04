@@ -16853,8 +16853,11 @@ const loadLanguageTranslations = async (lang, enStrings) => {
     let textString = '';
 
     for (const key of allKeys) {
-      const chunk = keys.length === 0 ? enStrings[key] : `${textString}${separator}${enStrings[key]}`;
-      if (encodeURIComponent(chunk).length > 600) break;
+      const val = enStrings[key];
+      if (!val || typeof val !== 'string') continue;
+      if (encodeURIComponent(val).length > 450) continue;
+      const chunk = keys.length === 0 ? val : `${textString}${separator}${val}`;
+      if (encodeURIComponent(chunk).length > 450) break;
       textString = chunk;
       keys.push(key);
     }
@@ -16880,7 +16883,8 @@ const loadLanguageTranslations = async (lang, enStrings) => {
     if (!response.ok) return null;
     
     const data = await response.json();
-    if (data && data.responseData && data.responseData.translatedText) {
+    if (data?.responseStatus && Number(data.responseStatus) !== 200) return null;
+    if (data?.responseData?.translatedText) {
       const translations = {};
       const translatedText = String(data.responseData.translatedText);
       const translatedParts = translatedText.split(separator);
