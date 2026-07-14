@@ -5,6 +5,65 @@ const { execFile } = require('child_process');
 const util = require('util');
 const execFileAsync = util.promisify(execFile);
 
+let _pdfjsLib = null;
+async function getPdfjsLib() {
+  if (!_pdfjsLib) {
+    _pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  }
+  return _pdfjsLib;
+}
+
+function getStandardFontUrl() {
+  return path.join(
+    path.dirname(require.resolve('pdfjs-dist/package.json')),
+    'standard_fonts'
+  ) + '/';
+}
+
+const extractTextFromPdfPages = async (filePath) => {
+  const rawData = await fs.promises.readFile(filePath);
+  const data = new Uint8Array(rawData.buffer, rawData.byteOffset, rawData.byteLength);
+  const pdfjsLib = await getPdfjsLib();
+  const doc = await pdfjsLib.getDocument({ data, standardFontDataUrl: getStandardFontUrl() }).promise;
+  const pagesData = [];
+  for (let i = 1; i <= doc.numPages; i++) {
+    const page = await doc.getPage(i);
+    const textContent = await page.getTextContent();
+    pagesData.push(textContent.items);
+  }
+  return pagesData;
+};
+
+const extractPlainTextFromPdf = async (filePath) => {
+  const pagesData = await extractTextFromPdfPages(filePath);
+  const pageTexts = [];
+  for (const items of pagesData) {
+    const lines = [];
+    let currentLine = [];
+    let lastY = null;
+    const Y_THRESHOLD = 2;
+    for (const item of items) {
+      if (!item.str && !item.hasEOL) continue;
+      const y = Math.round(item.transform[5]);
+      if (lastY !== null && Math.abs(y - lastY) > Y_THRESHOLD) {
+        lines.push(currentLine.join(''));
+        currentLine = [];
+      }
+      currentLine.push(item.str);
+      if (item.hasEOL) {
+        lines.push(currentLine.join(''));
+        currentLine = [];
+        lastY = null;
+        continue;
+      }
+      lastY = y;
+    }
+    if (currentLine.length > 0) lines.push(currentLine.join(''));
+    pageTexts.push(lines.join('\n'));
+  }
+  return pageTexts.join('\f');
+};
+
 const loadPdf = async (filePath, options = {}) => {
   let data;
   try {
@@ -130,12 +189,10 @@ const compressPDF = async (filePath, outputPath, quality = 0.5) => {
     best = await newPdf.save();
   }
 
-  if (best.length >= originalSize && quality < 0.5) {
+    if (best.length >= originalSize && quality < 0.5) {
     const textData = await (async () => {
       try {
-        const pdfParse = require('pdf-parse');
-        const r = await pdfParse(await fs.promises.readFile(filePath));
-        const text = r.text.trim();
+        const text = (await extractPlainTextFromPdf(filePath)).trim();
         if (!text) return null;
         const minimalPdf = await PDFDocument.create();
         const font = await minimalPdf.embedFont(StandardFonts.Helvetica);
@@ -371,11 +428,7 @@ const addWatermark = async (filePath, outputPath, watermarkText, options = {}) =
 };
 
 const extractText = async (filePath) => {
-  const data = await fs.promises.readFile(filePath);
-  let pdfParse;
-  try { pdfParse = require('pdf-parse'); } catch { throw new Error('Dependency missing: pdf-parse module not found'); }
-  const result = await pdfParse(new Uint8Array(data));
-  return result.text;
+  return await extractPlainTextFromPdf(filePath);
 };
 
 const reorderPages = async (filePath, outputPath, pageOrder) => {
@@ -709,67 +762,53 @@ const redactText = async (filePath, outputPath, redactions = []) => {
   }
 
   if (typeof redactions[0] === 'string') {
-    const pdfData = await fs.promises.readFile(filePath);
-    try {
-      const pdfParse = require('pdf-parse');
-      const result = await pdfParse(new Uint8Array(pdfData), {
-        pagerender: async (pageData) => {
-          const textContent = await pageData.getTextContent({ normalizeWhitespace: true });
-          const items = textContent.items.map(item => ({
-            s: item.str,
-            x: item.transform[4],
-            y: item.transform[5],
-            w: item.width,
-            h: item.height || 0
-          }));
-          return JSON.stringify(items);
-        }
-      });
+    const pagesItems = await extractTextFromPdfPages(filePath);
 
-      const pageTextItems = result.text.split('\n\n').filter(p => p.trim()).map(p => {
-        try { return JSON.parse(p); } catch { return []; }
-      });
+    const pageTextItems = pagesItems.map(items => items.map(item => ({
+      s: item.str,
+      x: item.transform[4],
+      y: item.transform[5],
+      w: item.width,
+      h: item.height || 0
+    })));
 
-      for (const term of redactions) {
-        const termLower = term.toLowerCase();
-        const escapedTerm = termLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const boundaryStart = '(?:^|[^a-zA-Z0-9])';
-        const boundaryEnd = '(?=$|[^a-zA-Z0-9])';
-        const wordRegex = new RegExp(boundaryStart + '(' + escapedTerm + ')' + boundaryEnd, 'gi');
-        for (let pi = 0; pi < Math.min(pages.length, pageTextItems.length); pi++) {
-          const items = pageTextItems[pi];
-          if (!items || items.length === 0) continue;
-          const page = pages[pi];
-          for (const item of items) {
-            if (!item.s) continue;
-            const itemText = item.s;
-            const fontSize = item.h || 16;
-            const padding = Math.max(3, fontSize * 0.25);
-            const lineHeight = fontSize + (padding * 2);
-            wordRegex.lastIndex = 0;
-            let match;
-            while ((match = wordRegex.exec(itemText)) !== null) {
-              const matchText = match[1];
-              if (!matchText || itemText.length === 0) continue;
-              const termOffsetInMatch = match[0].toLowerCase().indexOf(matchText.toLowerCase());
-              if (termOffsetInMatch === -1) continue;
-              const matchIdx = match.index + termOffsetInMatch;
-              const beforeText = itemText.substring(0, matchIdx);
-              const matchWidth = estimateTextWidth(matchText, item.w, itemText);
-              const matchX = item.x + estimateTextWidth(beforeText, item.w, itemText);
-              page.drawRectangle({
-                x: Math.max(0, matchX - padding),
-                y: item.y - (fontSize * 0.15) - padding,
-                width: Math.max(4, matchWidth) + (padding * 2),
-                height: lineHeight,
-                color: rgb(0, 0, 0)
-              });
-            }
+    for (const term of redactions) {
+      const termLower = term.toLowerCase();
+      const escapedTerm = termLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const boundaryStart = '(?:^|[^a-zA-Z0-9])';
+      const boundaryEnd = '(?=$|[^a-zA-Z0-9])';
+      const wordRegex = new RegExp(boundaryStart + '(' + escapedTerm + ')' + boundaryEnd, 'gi');
+      for (let pi = 0; pi < Math.min(pages.length, pageTextItems.length); pi++) {
+        const items = pageTextItems[pi];
+        if (!items || items.length === 0) continue;
+        const page = pages[pi];
+        for (const item of items) {
+          if (!item.s) continue;
+          const itemText = item.s;
+          const fontSize = item.h || 16;
+          const padding = Math.max(3, fontSize * 0.25);
+          const lineHeight = fontSize + (padding * 2);
+          wordRegex.lastIndex = 0;
+          let match;
+          while ((match = wordRegex.exec(itemText)) !== null) {
+            const matchText = match[1];
+            if (!matchText || itemText.length === 0) continue;
+            const termOffsetInMatch = match[0].toLowerCase().indexOf(matchText.toLowerCase());
+            if (termOffsetInMatch === -1) continue;
+            const matchIdx = match.index + termOffsetInMatch;
+            const beforeText = itemText.substring(0, matchIdx);
+            const matchWidth = estimateTextWidth(matchText, item.w, itemText);
+            const matchX = item.x + estimateTextWidth(beforeText, item.w, itemText);
+            page.drawRectangle({
+              x: Math.max(0, matchX - padding),
+              y: item.y - (fontSize * 0.15) - padding,
+              width: Math.max(4, matchWidth) + (padding * 2),
+              height: lineHeight,
+              color: rgb(0, 0, 0)
+            });
           }
         }
       }
-    } catch (e) {
-      console.error('Text-based redaction error:', e.message);
     }
   } else {
     for (const redact of redactions) {
@@ -1163,40 +1202,15 @@ const pdfToWord = async (filePath, outputPath) => {
   } catch {
     throw new Error('Failed to convert PDF to Word: docx module not found');
   }
-  const pdfData = await fs.promises.readFile(filePath);
-  let pdfParse;
-  try { pdfParse = require('pdf-parse'); } catch { throw new Error('Failed to convert PDF to Word: pdf-parse module not found'); }
 
   try {
-    const result = await pdfParse(new Uint8Array(pdfData), {
-      pagerender: async (pageData) => {
-        const textContent = await pageData.getTextContent({ normalizeWhitespace: false });
-        const items = textContent.items;
-        if (!items || items.length === 0) return '';
-        const lines = [];
-        let currentLine = [];
-        let lastY = null;
-        const Y_THRESHOLD = 2;
-        for (const item of items) {
-          const y = Math.round(item.transform[5]);
-          if (lastY !== null && Math.abs(y - lastY) > Y_THRESHOLD) {
-            lines.push(currentLine.join(''));
-            currentLine = [];
-          }
-          currentLine.push(item.str);
-          lastY = y;
-        }
-        if (currentLine.length > 0) lines.push(currentLine.join(''));
-        return lines.join('\n');
-      }
-    });
+    const pagesItems = await extractTextFromPdfPages(filePath);
 
-    const pages = result.text.split('\f').filter(p => p.length > 0);
     const sectionChildren = [];
     let totalLines = 0;
 
-    for (let pi = 0; pi < pages.length; pi++) {
-      const page = pages[pi];
+    for (let pi = 0; pi < pagesItems.length; pi++) {
+      const items = pagesItems[pi];
 
       if (pi > 0) {
         sectionChildren.push(
@@ -1208,7 +1222,7 @@ const pdfToWord = async (filePath, outputPath) => {
         );
       }
 
-      if (pages.length > 1) {
+      if (pagesItems.length > 1) {
         sectionChildren.push(
           new Paragraph({
             children: [new TextRun({ text: `--- Page ${pi + 1} ---`, size: 18, font: 'Arial', color: '888888', italics: true })],
@@ -1218,7 +1232,23 @@ const pdfToWord = async (filePath, outputPath) => {
         );
       }
 
-      const lines = page.split('\n');
+      if (!items || items.length === 0) continue;
+
+      const lines = [];
+      let currentLine = [];
+      let lastY = null;
+      const Y_THRESHOLD = 2;
+      for (const item of items) {
+        const y = Math.round(item.transform[5]);
+        if (lastY !== null && Math.abs(y - lastY) > Y_THRESHOLD) {
+          lines.push(currentLine.join(''));
+          currentLine = [];
+        }
+        currentLine.push(item.str);
+        lastY = y;
+      }
+      if (currentLine.length > 0) lines.push(currentLine.join(''));
+
       let consecutiveEmpty = 0;
 
       for (const line of lines) {
@@ -1333,51 +1363,43 @@ const pdfToExcel = async (filePath, outputPath) => {
 };
 
 const pdfToExcelFallback = async (filePath, outputPath) => {
-  const pdfParse = require('pdf-parse');
   const ExcelJS = require('exceljs');
-  const dataBuffer = await fs.promises.readFile(filePath);
 
-  const result = await pdfParse(new Uint8Array(dataBuffer), {
-    pagerender: async (pageData) => {
-      const textContent = await pageData.getTextContent({ normalizeWhitespace: false });
-      const items = textContent.items;
-      if (!items || items.length === 0) return '';
-      const lines = [];
-      let currentLine = [];
-      let lastY = null;
-      const Y_THRESHOLD = 2;
-      for (const item of items) {
-        const y = Math.round(item.transform[5]);
-        if (lastY !== null && Math.abs(y - lastY) > Y_THRESHOLD) {
-          lines.push(currentLine.map(it => ({ text: it.str, x: Math.round(it.transform[4]) })));
-          currentLine = [];
-        }
-        currentLine.push(item);
-        lastY = y;
-      }
-      if (currentLine.length > 0) {
-        lines.push(currentLine.map(it => ({ text: it.str, x: Math.round(it.transform[4]) })));
-      }
-      return JSON.stringify(lines);
+  const pagesItems = await extractTextFromPdfPages(filePath);
+  const pageLinesData = [];
+
+  for (const items of pagesItems) {
+    if (!items || items.length === 0) {
+      pageLinesData.push([]);
+      continue;
     }
-  });
+    const lines = [];
+    let currentLine = [];
+    let lastY = null;
+    const Y_THRESHOLD = 2;
+    for (const item of items) {
+      const y = Math.round(item.transform[5]);
+      if (lastY !== null && Math.abs(y - lastY) > Y_THRESHOLD) {
+        lines.push(currentLine.map(it => ({ text: it.str, x: Math.round(it.transform[4]) })));
+        currentLine = [];
+      }
+      currentLine.push(item);
+      lastY = y;
+    }
+    if (currentLine.length > 0) {
+      lines.push(currentLine.map(it => ({ text: it.str, x: Math.round(it.transform[4]) })));
+    }
+    pageLinesData.push(lines);
+  }
 
-  const pages = result.text.split('\f').filter(p => p.length > 0);
   const workbook = new ExcelJS.Workbook();
 
-  for (let pi = 0; pi < pages.length; pi++) {
-    const pageStr = pages[pi].trim();
-    let pageLines;
-    try {
-      pageLines = JSON.parse(pageStr);
-    } catch (_) {
-      const plainText = pageStr;
-      pageLines = plainText.split('\n').map(line => [{ text: line, x: 0 }]);
-    }
+  for (let pi = 0; pi < pageLinesData.length; pi++) {
+    const pageLines = pageLinesData[pi];
 
     if (!Array.isArray(pageLines) || pageLines.length === 0) continue;
 
-    const sheetName = pages.length > 1 ? `Page ${pi + 1}` : 'PDF Content';
+    const sheetName = pageLinesData.length > 1 ? `Page ${pi + 1}` : 'PDF Content';
     const worksheet = workbook.addWorksheet(sheetName);
 
     const allXPositions = new Set();
