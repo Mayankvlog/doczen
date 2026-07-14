@@ -24,12 +24,26 @@ const extractTextFromPdfPages = async (filePath) => {
   const rawData = await fs.promises.readFile(filePath);
   const data = new Uint8Array(rawData.buffer, rawData.byteOffset, rawData.byteLength);
   const pdfjsLib = await getPdfjsLib();
-  const doc = await pdfjsLib.getDocument({ data, standardFontDataUrl: getStandardFontUrl() }).promise;
+  let doc;
+  try {
+    doc = await pdfjsLib.getDocument({ data, standardFontDataUrl: getStandardFontUrl(), useSystemFonts: true }).promise;
+  } catch (loadErr) {
+    try {
+      doc = await pdfjsLib.getDocument({ data, standardFontDataUrl: getStandardFontUrl(), password: '' }).promise;
+    } catch (retryErr) {
+      throw new Error(`Cannot open PDF: ${loadErr.message}`);
+    }
+  }
   const pagesData = [];
   for (let i = 1; i <= doc.numPages; i++) {
-    const page = await doc.getPage(i);
-    const textContent = await page.getTextContent();
-    pagesData.push(textContent.items);
+    try {
+      const page = await doc.getPage(i);
+      const textContent = await page.getTextContent();
+      pagesData.push(textContent.items || []);
+    } catch (pageErr) {
+      console.warn(`Warning: Could not extract text from page ${i}:`, pageErr.message);
+      pagesData.push([]);
+    }
   }
   return pagesData;
 };
@@ -1195,108 +1209,227 @@ const comparePDFs = async (filePath1, filePath2) => {
   return { file1: meta1, file2: meta2, differences, isIdentical: differences.length === 0 };
 };
 
-const pdfToWord = async (filePath, outputPath) => {
-  let Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle, WidthType, Table, TableRow, TableCell, TableLayoutType;
+const renderPdfPagesAsImages = async (filePath) => {
+  const rawData = await fs.promises.readFile(filePath);
+  const data = new Uint8Array(rawData.buffer, rawData.byteOffset, rawData.byteLength);
+  const pdfjsLib = await getPdfjsLib();
+  const doc = await pdfjsLib.getDocument({ data, standardFontDataUrl: getStandardFontUrl() }).promise;
+
+  let createCanvas;
   try {
-    ({ Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle, WidthType, Table, TableRow, TableCell, TableLayoutType } = require('docx'));
+    ({ createCanvas } = require('@napi-rs/canvas'));
+  } catch {
+    throw new Error('Canvas library not available for image rendering');
+  }
+  let sharp;
+  try { sharp = require('sharp'); } catch (_) {}
+
+  const images = [];
+  const PAGE_WIDTH_PT = 500;
+
+  for (let i = 1; i <= doc.numPages; i++) {
+    try {
+      const page = await doc.getPage(i);
+      const vp1 = page.getViewport({ scale: 1.0 });
+      const scale = Math.max(1.0, Math.min(1600 / vp1.width, 1600 / vp1.height, 4.0));
+      const viewport = page.getViewport({ scale });
+
+      const canvas = createCanvas(viewport.width, viewport.height);
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, viewport.width, viewport.height);
+
+      await page.render({ canvasContext: ctx, viewport }).promise;
+
+      let pngBuffer = canvas.toBuffer('image/png');
+      if (sharp) {
+        try {
+          pngBuffer = await sharp(pngBuffer)
+            .resize(PAGE_WIDTH_PT * 2)
+            .png({ compressionLevel: 6 })
+            .toBuffer();
+        } catch (_) {}
+      }
+
+      const aspectRatio = viewport.height / viewport.width;
+      images.push({
+        buffer: pngBuffer,
+        width: PAGE_WIDTH_PT,
+        height: Math.round(PAGE_WIDTH_PT * aspectRatio),
+        pageNum: i,
+      });
+    } catch (pageErr) {
+      console.warn(`Warning: Could not render page ${i} as image:`, pageErr.message);
+    }
+  }
+  return images;
+};
+
+const pdfToWord = async (filePath, outputPath) => {
+  let Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle, WidthType, Table, TableRow, TableCell, TableLayoutType, ImageRun;
+  try {
+    ({ Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle, WidthType, Table, TableRow, TableCell, TableLayoutType, ImageRun } = require('docx'));
   } catch {
     throw new Error('Failed to convert PDF to Word: docx module not found');
   }
 
   try {
-    const pagesItems = await extractTextFromPdfPages(filePath);
+    let pagesItems = [];
+    let textExtractError = null;
+    try {
+      pagesItems = await extractTextFromPdfPages(filePath);
+    } catch (extractErr) {
+      textExtractError = extractErr;
+      console.warn('Text extraction failed, will try image fallback:', extractErr.message);
+    }
 
     const sectionChildren = [];
     let totalLines = 0;
 
-    for (let pi = 0; pi < pagesItems.length; pi++) {
-      const items = pagesItems[pi];
+    if (!textExtractError && pagesItems.length > 0) {
+      for (let pi = 0; pi < pagesItems.length; pi++) {
+        const items = pagesItems[pi];
 
-      if (pi > 0) {
-        sectionChildren.push(
-          new Paragraph({
-            children: [new TextRun({ text: '', size: 6 })],
-            spacing: { before: 400, after: 0 },
-            pageBreakBefore: true,
-          })
-        );
-      }
-
-      if (pagesItems.length > 1) {
-        sectionChildren.push(
-          new Paragraph({
-            children: [new TextRun({ text: `--- Page ${pi + 1} ---`, size: 18, font: 'Arial', color: '888888', italics: true })],
-            spacing: { before: 100, after: 200 },
-            alignment: AlignmentType.CENTER,
-          })
-        );
-      }
-
-      if (!items || items.length === 0) continue;
-
-      const lines = [];
-      let currentLine = [];
-      let lastY = null;
-      const Y_THRESHOLD = 2;
-      for (const item of items) {
-        const y = Math.round(item.transform[5]);
-        if (lastY !== null && Math.abs(y - lastY) > Y_THRESHOLD) {
-          lines.push(currentLine.join(''));
-          currentLine = [];
-        }
-        currentLine.push(item.str);
-        lastY = y;
-      }
-      if (currentLine.length > 0) lines.push(currentLine.join(''));
-
-      let consecutiveEmpty = 0;
-
-      for (const line of lines) {
-        const trimmed = line.trimEnd();
-        if (trimmed === '') {
-          consecutiveEmpty++;
-          if (consecutiveEmpty <= 2) {
-            sectionChildren.push(
-              new Paragraph({
-                children: [new TextRun({ text: ' ', size: 22, font: 'Arial' })],
-                spacing: { after: 60 },
-              })
-            );
-          }
-        } else {
-          consecutiveEmpty = 0;
-          const leadingSpaces = trimmed.length - trimmed.trimStart().length;
-          const text = trimmed.trimStart();
-          if (text.length === 0) continue;
-
-          const runs = [];
-          if (leadingSpaces > 0) {
-            runs.push(new TextRun({ text: ' '.repeat(Math.min(leadingSpaces, 20)), size: 22, font: 'Courier New' }));
-          }
-
-          const isAllCaps = text === text.toUpperCase() && text.length > 3 && /[A-Z]/.test(text);
-          const isBold = isAllCaps || text.startsWith('#') || /^\d+\.\s/.test(text);
-
-          runs.push(new TextRun({
-            text: text,
-            size: 22,
-            font: 'Arial',
-            bold: isBold,
-          }));
-
+        if (pi > 0) {
           sectionChildren.push(
             new Paragraph({
-              children: runs,
-              spacing: { after: 100 },
+              children: [new TextRun({ text: '', size: 6 })],
+              spacing: { before: 400, after: 0 },
+              pageBreakBefore: true,
             })
           );
-          totalLines++;
+        }
+
+        if (pagesItems.length > 1) {
+          sectionChildren.push(
+            new Paragraph({
+              children: [new TextRun({ text: `--- Page ${pi + 1} ---`, size: 18, font: 'Arial', color: '888888', italics: true })],
+              spacing: { before: 100, after: 200 },
+              alignment: AlignmentType.CENTER,
+            })
+          );
+        }
+
+        if (!items || items.length === 0) continue;
+
+        const lines = [];
+        let currentLine = [];
+        let lastY = null;
+        const Y_THRESHOLD = 2;
+        for (const item of items) {
+          if (!item.str && !item.hasEOL) continue;
+          const y = Math.round(item.transform[5]);
+          if (lastY !== null && Math.abs(y - lastY) > Y_THRESHOLD) {
+            lines.push(currentLine.join(''));
+            currentLine = [];
+          }
+          currentLine.push(item.str || '');
+          if (item.hasEOL) {
+            lines.push(currentLine.join(''));
+            currentLine = [];
+            lastY = null;
+            continue;
+          }
+          lastY = y;
+        }
+        if (currentLine.length > 0) lines.push(currentLine.join(''));
+
+        let consecutiveEmpty = 0;
+
+        for (const line of lines) {
+          const trimmed = line.trimEnd();
+          if (trimmed === '') {
+            consecutiveEmpty++;
+            if (consecutiveEmpty <= 2) {
+              sectionChildren.push(
+                new Paragraph({
+                  children: [new TextRun({ text: ' ', size: 22, font: 'Arial' })],
+                  spacing: { after: 60 },
+                })
+              );
+            }
+          } else {
+            consecutiveEmpty = 0;
+            const leadingSpaces = trimmed.length - trimmed.trimStart().length;
+            const text = trimmed.trimStart();
+            if (text.length === 0) continue;
+
+            const runs = [];
+            if (leadingSpaces > 0) {
+              runs.push(new TextRun({ text: ' '.repeat(Math.min(leadingSpaces, 20)), size: 22, font: 'Courier New' }));
+            }
+
+            const isAllCaps = text === text.toUpperCase() && text.length > 3 && /[A-Z]/.test(text);
+            const isBold = isAllCaps || text.startsWith('#') || /^\d+\.\s/.test(text);
+
+            runs.push(new TextRun({
+              text: text,
+              size: 22,
+              font: 'Arial',
+              bold: isBold,
+            }));
+
+            sectionChildren.push(
+              new Paragraph({
+                children: runs,
+                spacing: { after: 100 },
+              })
+            );
+            totalLines++;
+          }
         }
       }
     }
 
-    if (totalLines === 0 && sectionChildren.length <= 1) {
-      throw new Error('No text content could be extracted from the PDF. The file may contain only images or use unsupported encoding.');
+    if (totalLines === 0) {
+      console.log('No text lines extracted, attempting image-based fallback for PDF to Word...');
+      try {
+        const images = await renderPdfPagesAsImages(filePath);
+        if (images.length > 0) {
+          sectionChildren.length = 0;
+          for (let ii = 0; ii < images.length; ii++) {
+            const img = images[ii];
+            if (ii > 0) {
+              sectionChildren.push(
+                new Paragraph({
+                  children: [new TextRun({ text: '', size: 6 })],
+                  spacing: { before: 400, after: 0 },
+                  pageBreakBefore: true,
+                })
+              );
+            }
+            if (images.length > 1) {
+              sectionChildren.push(
+                new Paragraph({
+                  children: [new TextRun({ text: `--- Page ${img.pageNum} ---`, size: 18, font: 'Arial', color: '888888', italics: true })],
+                  spacing: { before: 100, after: 100 },
+                  alignment: AlignmentType.CENTER,
+                })
+              );
+            }
+            const imageChildren = [
+              new Paragraph({
+                children: [
+                  new ImageRun({
+                    data: img.buffer,
+                    transformation: { width: img.width, height: img.height },
+                    type: 'png',
+                  }),
+                ],
+                alignment: AlignmentType.CENTER,
+              }),
+            ];
+            sectionChildren.push(...imageChildren);
+          }
+          console.log(`Image fallback succeeded: ${images.length} pages rendered`);
+        }
+      } catch (imgErr) {
+        console.warn('Image fallback also failed:', imgErr.message);
+      }
+    }
+
+    if (sectionChildren.length === 0) {
+      throw new Error('No content could be extracted from the PDF. The file may be encrypted, corrupted, or use an unsupported format. Try a different PDF file.');
     }
 
     const doc = new Document({
@@ -1312,6 +1445,9 @@ const pdfToWord = async (filePath, outputPath) => {
     }
     return outputPath;
   } catch (error) {
+    if (error.message && error.message.startsWith('No content could be extracted')) {
+      throw error;
+    }
     throw new Error(`Failed to convert PDF to Word: ${error.message}`);
   }
 };
