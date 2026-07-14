@@ -38,16 +38,18 @@ const originalError = console.error;
 
 console.warn = function(...args) {
   const msg = String(args[0] || '');
-  if (!SUPPRESSED_PATTERNS.some(p => msg.includes(p))) {
-    return originalWarn.apply(console, args);
+  if (SUPPRESSED_PATTERNS.some(p => msg.includes(p))) {
+    return;
   }
+  return originalWarn.apply(console, args);
 };
 
 console.error = function(...args) {
   const msg = String(args[0] || '');
-  if (!SUPPRESSED_PATTERNS.some(p => msg.includes(p))) {
-    return originalError.apply(console, args);
+  if (SUPPRESSED_PATTERNS.some(p => msg.includes(p))) {
+    return;
   }
+  return originalError.apply(console, args);
 };
 
 const i18nResources = {};
@@ -639,6 +641,18 @@ addTranslations('en', {
   'tool.compareDesc': 'Compare two PDF files and find differences',
   'tool.options': 'Options',
   'tool.cleanedDesc': 'Your cleaned PDF is ready. Download started automatically.',
+  'tool.addInternalLinks': 'Add Internal Links',
+  'tool.internalLinksDesc': 'Add clickable links that jump to other pages within the same PDF or to external URLs.',
+  'tool.linkText': 'Link Text',
+  'tool.linkTextPlaceholder': 'e.g. Go to Chapter 1',
+  'tool.linkType': 'Link Type',
+  'tool.linkTypePage': 'Jump to Page',
+  'tool.linkTypeUrl': 'External URL',
+  'tool.targetPage': 'Target Page Number',
+  'tool.of': 'of',
+  'tool.targetUrl': 'Target URL',
+  'tool.addLink': 'Add Link',
+  'tool.page': 'Page',
 });
 
 addTranslations('hi', {

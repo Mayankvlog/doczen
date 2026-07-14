@@ -1157,46 +1157,124 @@ const comparePDFs = async (filePath1, filePath2) => {
 };
 
 const pdfToWord = async (filePath, outputPath) => {
-  let Document, Packer, Paragraph, TextRun, HeadingLevel;
+  let Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle, WidthType, Table, TableRow, TableCell, TableLayoutType;
   try {
-    ({ Document, Packer, Paragraph, TextRun, HeadingLevel } = require('docx'));
+    ({ Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle, WidthType, Table, TableRow, TableCell, TableLayoutType } = require('docx'));
   } catch {
     throw new Error('Failed to convert PDF to Word: docx module not found');
   }
   const pdfData = await fs.promises.readFile(filePath);
   let pdfParse;
   try { pdfParse = require('pdf-parse'); } catch { throw new Error('Failed to convert PDF to Word: pdf-parse module not found'); }
-  
+
   try {
-    const result = await pdfParse(new Uint8Array(pdfData));
-    const text = result.text;
-    
-    const lines = text.split('\n');
-    const children = [];
-    
-    children.push(
-      new Paragraph({
-        text: 'Converted PDF Document',
-        heading: HeadingLevel.HEADING_1,
-        spacing: { after: 300 },
-      })
-    );
-    
-    for (const line of lines) {
-      children.push(
-        new Paragraph({
-          children: [new TextRun({ text: line || ' ', size: 22, font: 'Arial' })],
-          spacing: { after: 120 },
-        })
-      );
+    const result = await pdfParse(new Uint8Array(pdfData), {
+      pagerender: async (pageData) => {
+        const textContent = await pageData.getTextContent({ normalizeWhitespace: false });
+        const items = textContent.items;
+        if (!items || items.length === 0) return '';
+        const lines = [];
+        let currentLine = [];
+        let lastY = null;
+        const Y_THRESHOLD = 2;
+        for (const item of items) {
+          const y = Math.round(item.transform[5]);
+          if (lastY !== null && Math.abs(y - lastY) > Y_THRESHOLD) {
+            lines.push(currentLine.join(''));
+            currentLine = [];
+          }
+          currentLine.push(item.str);
+          lastY = y;
+        }
+        if (currentLine.length > 0) lines.push(currentLine.join(''));
+        return lines.join('\n');
+      }
+    });
+
+    const pages = result.text.split('\f').filter(p => p.length > 0);
+    const sectionChildren = [];
+    let totalLines = 0;
+
+    for (let pi = 0; pi < pages.length; pi++) {
+      const page = pages[pi];
+
+      if (pi > 0) {
+        sectionChildren.push(
+          new Paragraph({
+            children: [new TextRun({ text: '', size: 6 })],
+            spacing: { before: 400, after: 0 },
+            pageBreakBefore: true,
+          })
+        );
+      }
+
+      if (pages.length > 1) {
+        sectionChildren.push(
+          new Paragraph({
+            children: [new TextRun({ text: `--- Page ${pi + 1} ---`, size: 18, font: 'Arial', color: '888888', italics: true })],
+            spacing: { before: 100, after: 200 },
+            alignment: AlignmentType.CENTER,
+          })
+        );
+      }
+
+      const lines = page.split('\n');
+      let consecutiveEmpty = 0;
+
+      for (const line of lines) {
+        const trimmed = line.trimEnd();
+        if (trimmed === '') {
+          consecutiveEmpty++;
+          if (consecutiveEmpty <= 2) {
+            sectionChildren.push(
+              new Paragraph({
+                children: [new TextRun({ text: ' ', size: 22, font: 'Arial' })],
+                spacing: { after: 60 },
+              })
+            );
+          }
+        } else {
+          consecutiveEmpty = 0;
+          const leadingSpaces = trimmed.length - trimmed.trimStart().length;
+          const text = trimmed.trimStart();
+          if (text.length === 0) continue;
+
+          const runs = [];
+          if (leadingSpaces > 0) {
+            runs.push(new TextRun({ text: ' '.repeat(Math.min(leadingSpaces, 20)), size: 22, font: 'Courier New' }));
+          }
+
+          const isAllCaps = text === text.toUpperCase() && text.length > 3 && /[A-Z]/.test(text);
+          const isBold = isAllCaps || text.startsWith('#') || /^\d+\.\s/.test(text);
+
+          runs.push(new TextRun({
+            text: text,
+            size: 22,
+            font: 'Arial',
+            bold: isBold,
+          }));
+
+          sectionChildren.push(
+            new Paragraph({
+              children: runs,
+              spacing: { after: 100 },
+            })
+          );
+          totalLines++;
+        }
+      }
     }
-    
+
+    if (totalLines === 0 && sectionChildren.length <= 1) {
+      throw new Error('No text content could be extracted from the PDF. The file may contain only images or use unsupported encoding.');
+    }
+
     const doc = new Document({
       title: 'Converted PDF Document',
       creator: 'Doczen',
-      sections: [{ children }],
+      sections: [{ children: sectionChildren }],
     });
-    
+
     const buffer = await Packer.toBuffer(doc);
     await fs.promises.writeFile(outputPath, buffer);
     if (!fs.existsSync(outputPath) || fs.statSync(outputPath).size === 0) {
@@ -1220,62 +1298,213 @@ const pdfToExcel = async (filePath, outputPath) => {
   const outDir = path.dirname(outputPath);
   const inputDir = path.dirname(filePath);
 
-  const attempts = [
-    { convertTo: 'xlsx' },
-    { convertTo: 'xlsx', infilter: 'draw_pdf_import' },
-    { convertTo: 'xlsx', infilter: 'impress_pdf_import' },
-  ];
-
-  for (const attempt of attempts) {
-    try {
-      const args = ['--headless'];
-      if (attempt.infilter) args.push(`--infilter=${attempt.infilter}`);
-      args.push('--convert-to', attempt.convertTo, '--outdir', outDir, filePath);
-      await execFileAsync('soffice', args);
-
-      let found = scanForXlsx(outDir);
-      if (!found) found = scanForXlsx(inputDir);
-
-      if (found && fs.statSync(found).size > 0) {
-        if (found !== outputPath) fs.copyFileSync(found, outputPath);
-        return outputPath;
-      }
-    } catch (_) { /* try next */ }
-  }
-
+  let sofficeAvailable = false;
   try {
-    return await pdfToExcelFallback(filePath, outputPath);
-  } catch (fallbackErr) {
-    throw new Error(`PDF to Excel conversion failed: ${fallbackErr.message}`);
+    await execFileAsync('soffice', ['--version']);
+    sofficeAvailable = true;
+  } catch (_) { /* soffice not installed */ }
+
+  if (sofficeAvailable) {
+    const attempts = [
+      { convertTo: 'xlsx' },
+      { convertTo: 'xlsx', infilter: 'draw_pdf_import' },
+      { convertTo: 'xlsx', infilter: 'impress_pdf_import' },
+    ];
+
+    for (const attempt of attempts) {
+      try {
+        const args = ['--headless'];
+        if (attempt.infilter) args.push(`--infilter=${attempt.infilter}`);
+        args.push('--convert-to', attempt.convertTo, '--outdir', outDir, filePath);
+        await execFileAsync('soffice', args, { timeout: 120000 });
+
+        let found = scanForXlsx(outDir);
+        if (!found) found = scanForXlsx(inputDir);
+
+        if (found && fs.statSync(found).size > 0) {
+          if (found !== outputPath) fs.copyFileSync(found, outputPath);
+          return outputPath;
+        }
+      } catch (_) { /* try next */ }
+    }
   }
+
+  return await pdfToExcelFallback(filePath, outputPath);
 };
 
 const pdfToExcelFallback = async (filePath, outputPath) => {
-  let pdfData;
-  try {
-    const pdfParse = require('pdf-parse');
-    const dataBuffer = await fs.promises.readFile(filePath);
-    pdfData = await pdfParse(dataBuffer);
-  } catch (parseErr) {
-    const dataBuffer = await fs.promises.readFile(filePath);
-    const text = dataBuffer.toString('utf8');
-    const textMatch = text.match(/\((.*?)\)/g);
-    pdfData = { text: textMatch ? textMatch.map(m => m.slice(1, -1)).join('\n') : 'Unable to extract text from PDF' };
-  }
+  const pdfParse = require('pdf-parse');
   const ExcelJS = require('exceljs');
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet('PDF Content');
-  const lines = pdfData.text.split('\n');
-  lines.forEach((line, idx) => {
-    if (line.trim()) {
-      worksheet.getCell(`A${idx + 1}`).value = line.trim();
+  const dataBuffer = await fs.promises.readFile(filePath);
+
+  const result = await pdfParse(new Uint8Array(dataBuffer), {
+    pagerender: async (pageData) => {
+      const textContent = await pageData.getTextContent({ normalizeWhitespace: false });
+      const items = textContent.items;
+      if (!items || items.length === 0) return '';
+      const lines = [];
+      let currentLine = [];
+      let lastY = null;
+      const Y_THRESHOLD = 2;
+      for (const item of items) {
+        const y = Math.round(item.transform[5]);
+        if (lastY !== null && Math.abs(y - lastY) > Y_THRESHOLD) {
+          lines.push(currentLine.map(it => ({ text: it.str, x: Math.round(it.transform[4]) })));
+          currentLine = [];
+        }
+        currentLine.push(item);
+        lastY = y;
+      }
+      if (currentLine.length > 0) {
+        lines.push(currentLine.map(it => ({ text: it.str, x: Math.round(it.transform[4]) })));
+      }
+      return JSON.stringify(lines);
     }
   });
+
+  const pages = result.text.split('\f').filter(p => p.length > 0);
+  const workbook = new ExcelJS.Workbook();
+
+  for (let pi = 0; pi < pages.length; pi++) {
+    const pageStr = pages[pi].trim();
+    let pageLines;
+    try {
+      pageLines = JSON.parse(pageStr);
+    } catch (_) {
+      const plainText = pageStr;
+      pageLines = plainText.split('\n').map(line => [{ text: line, x: 0 }]);
+    }
+
+    if (!Array.isArray(pageLines) || pageLines.length === 0) continue;
+
+    const sheetName = pages.length > 1 ? `Page ${pi + 1}` : 'PDF Content';
+    const worksheet = workbook.addWorksheet(sheetName);
+
+    const allXPositions = new Set();
+    for (const line of pageLines) {
+      if (Array.isArray(line)) {
+        for (const item of line) {
+          if (item.x !== undefined) allXPositions.add(item.x);
+        }
+      }
+    }
+
+    const sortedX = Array.from(allXPositions).sort((a, b) => a - b);
+    const columns = detectColumns(pageLines, sortedX);
+
+    if (columns.length <= 1) {
+      for (let i = 0; i < pageLines.length; i++) {
+        const line = pageLines[i];
+        const cell = worksheet.getCell(`A${i + 1}`);
+        if (Array.isArray(line)) {
+          cell.value = line.map(it => it.text || '').join(' ').trim();
+        } else {
+          cell.value = typeof line === 'string' ? line : '';
+        }
+      }
+    } else {
+      for (let i = 0; i < pageLines.length; i++) {
+        const line = pageLines[i];
+        if (!Array.isArray(line)) {
+          worksheet.getCell(`A${i + 1}`).value = typeof line === 'string' ? line : '';
+          continue;
+        }
+        const cellValues = assignCellsToColumns(line, columns);
+        for (let c = 0; c < columns.length; c++) {
+          const colLetter = columnNumberToLetter(c + 1);
+          worksheet.getCell(`${colLetter}${i + 1}`).value = cellValues[c] || '';
+        }
+      }
+    }
+
+    if (pageLines.length > 0) {
+      worksheet.getRow(1).eachCell((cell) => {
+        cell.font = { bold: true };
+      });
+    }
+  }
+
+  if (workbook.worksheets.length === 0) {
+    throw new Error('No content could be extracted from the PDF');
+  }
+
   await workbook.xlsx.writeFile(outputPath);
   if (!fs.existsSync(outputPath) || fs.statSync(outputPath).size === 0) {
-    throw new Error('Fallback Excel output is empty');
+    throw new Error('Excel output file is empty');
   }
   return outputPath;
+};
+
+const detectColumns = (pageLines, sortedX) => {
+  if (sortedX.length <= 1) return [sortedX[0] || 0];
+
+  const GAP_THRESHOLD = 25;
+  const columns = [];
+  let currentGroup = [sortedX[0]];
+
+  for (let i = 1; i < sortedX.length; i++) {
+    if (sortedX[i] - sortedX[i - 1] <= GAP_THRESHOLD) {
+      currentGroup.push(sortedX[i]);
+    } else {
+      columns.push(Math.round(currentGroup.reduce((a, b) => a + b, 0) / currentGroup.length));
+      currentGroup = [sortedX[i]];
+    }
+  }
+  columns.push(Math.round(currentGroup.reduce((a, b) => a + b, 0) / currentGroup.length));
+
+  if (columns.length === 1) return columns;
+
+  const lineFrequency = new Map();
+  for (const line of pageLines) {
+    if (!Array.isArray(line)) continue;
+    for (const item of line) {
+      const nearestCol = findNearestColumn(item.x, columns);
+      lineFrequency.set(nearestCol, (lineFrequency.get(nearestCol) || 0) + 1);
+    }
+  }
+
+  const minFrequency = Math.max(2, pageLines.length * 0.05);
+  return columns.filter(col => (lineFrequency.get(col) || 0) >= minFrequency);
+};
+
+const findNearestColumn = (x, columns) => {
+  let minDist = Infinity;
+  let nearest = columns[0];
+  for (const col of columns) {
+    const dist = Math.abs(x - col);
+    if (dist < minDist) {
+      minDist = dist;
+      nearest = col;
+    }
+  }
+  return nearest;
+};
+
+const assignCellsToColumns = (lineItems, columns) => {
+  const result = new Array(columns.length).fill('');
+
+  for (const item of lineItems) {
+    const colIdx = columns.indexOf(findNearestColumn(item.x, columns));
+    const text = (item.text || '').trim();
+    if (text) {
+      if (result[colIdx]) {
+        result[colIdx] += ' ' + text;
+      } else {
+        result[colIdx] = text;
+      }
+    }
+  }
+  return result;
+};
+
+const columnNumberToLetter = (num) => {
+  let result = '';
+  while (num > 0) {
+    num--;
+    result = String.fromCharCode(65 + (num % 26)) + result;
+    num = Math.floor(num / 26);
+  }
+  return result;
 };
 
 const excelToPdf = async (filePath, outputPath) => {
@@ -1563,24 +1792,131 @@ const wordToPdf = async (filePath, outputPath) => {
 };
 
 const editPdf = async (filePath, outputPath, edits = []) => {
+  const { PDFName, PDFArray, PDFDict, PDFNumber, PDFString, PDFRef } = require('pdf-lib');
   const pdfDoc = await loadPdf(filePath);
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const pages = pdfDoc.getPages();
+  const context = pdfDoc.context;
 
   for (const edit of edits) {
     const { pageIndex = 0, type = 'text', x = 50, y = 50, text = '', fontSize = 12, color = [0, 0, 0] } = edit;
     if (pageIndex >= pages.length) continue;
     const page = pages[pageIndex];
+
     if (type === 'text' && text) {
       page.drawText(sanitizeForPdf(text), {
         x, y, size: fontSize, font,
         color: rgb(color[0], color[1], color[2])
       });
     }
+
+    if (type === 'link') {
+      try {
+        const linkWidth = edit.width || 150;
+        const linkHeight = edit.height || 20;
+
+        const annotDict = context.obj({
+          Type: 'Annot',
+          Subtype: 'Link',
+          Rect: [x, y, x + linkWidth, y + linkHeight],
+          Border: [0, 0, 1],
+          C: [0, 0, 1],
+          H: 'I',
+        });
+
+        if (edit.linkType === 'page' && edit.targetPage) {
+          const targetIdx = Math.max(0, Math.min(edit.targetPage - 1, pages.length - 1));
+          const destArray = context.obj([
+            pages[targetIdx].ref,
+            PDFName.of('XYZ'),
+            PDFNumber.of(0),
+            PDFNumber.of(0),
+            PDFNumber.of(0),
+          ]);
+          annotDict.set(PDFName.of('Dest'), destArray);
+        } else if (edit.linkType === 'url' && edit.targetUrl) {
+          const uriDict = context.obj({
+            S: 'URI',
+            URI: PDFString.of(edit.targetUrl),
+          });
+          annotDict.set(PDFName.of('A'), uriDict);
+        }
+
+        if (text) {
+          const appearanceStream = await createLinkTextAppearance(pdfDoc, text, linkWidth, linkHeight, fontSize, color);
+          if (appearanceStream) {
+            annotDict.set(PDFName.of('AP'), context.obj({ N: appearanceStream }));
+          }
+        }
+
+        const annotRef = context.register(annotDict);
+        let annots = page.node.get(PDFName.of('Annots'));
+        if (!annots) {
+          annots = context.obj([]);
+          page.node.set(PDFName.of('Annots'), annots);
+        }
+        if (annots && typeof annots.push === 'function') {
+          annots.push(annotRef);
+        } else if (annots && annots.constructor && annots.constructor.name === 'PDFRef') {
+          const resolved = context.lookup(annots);
+          if (resolved && typeof resolved.push === 'function') {
+            resolved.push(annotRef);
+          } else {
+            const newArr = context.obj([]);
+            newArr.push(annotRef);
+            page.node.set(PDFName.of('Annots'), newArr);
+          }
+        }
+      } catch (linkErr) {
+        console.error('Failed to create link annotation:', linkErr.message);
+      }
+    }
   }
 
   await savePdf(pdfDoc, outputPath);
   return outputPath;
+};
+
+const createLinkTextAppearance = async (pdfDoc, text, width, height, fontSize, color) => {
+  const { PDFName, PDFRawStream } = require('pdf-lib');
+  const context = pdfDoc.context;
+
+  let displayText = sanitizeForPdf(text);
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const maxWidth = width - 4;
+  if (font.widthOfTextAtSize(displayText, fontSize) > maxWidth) {
+    while (displayText.length > 1 && font.widthOfTextAtSize(displayText + '...', fontSize) > maxWidth) {
+      displayText = displayText.slice(0, -1);
+    }
+    displayText = displayText + '...';
+  }
+
+  const textWidth = font.widthOfTextAtSize(displayText, fontSize);
+  const textX = (width - textWidth) / 2;
+  const textY = (height - fontSize) / 2;
+
+  const streamContent = `BT /F1 ${fontSize} Tf ${color[0]} ${color[1]} ${color[2]} rg ${textX} ${textY} Td (${displayText}) Tj ET`;
+
+  const fontDict = context.obj({
+    Type: 'Font',
+    Subtype: 'Type1',
+    BaseFont: 'Helvetica',
+  });
+  const fontRef = context.register(fontDict);
+
+  const resources = context.obj({
+    Font: context.obj({ F1: fontRef }),
+  });
+
+  const dict = context.obj({
+    Type: 'XObject',
+    Subtype: 'Form',
+    BBox: [0, 0, width, height],
+    Resources: resources,
+  });
+
+  const stream = PDFRawStream.of(dict, new TextEncoder().encode(streamContent));
+  return context.register(stream);
 };
 
 const signPdf = async (filePath, outputPath, signatureData) => {
