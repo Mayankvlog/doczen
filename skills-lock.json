@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "parasite-seo": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "skillPath": "skills/seo/parasite-seo/SKILL.md",
+      "computedHash": "c8ee8782f4464fd4655a776126a5f360745208b1944457f0096ded94cbefab96"
+    }
+  }
+}
