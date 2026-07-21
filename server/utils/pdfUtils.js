@@ -1872,41 +1872,71 @@ const pptToPdf = async (filePath, outputPath) => {
 };
 
 const wordToPdf = async (filePath, outputPath) => {
+  const ext = path.extname(filePath).toLowerCase();
+  const outDir = path.dirname(outputPath);
+
+  // Primary: LibreOffice preserves all formatting (fonts, bold, headings, tables, images, spacing)
+  let sofficeAvailable = false;
+  try {
+    await execFileAsync('soffice', ['--version']);
+    sofficeAvailable = true;
+  } catch (_) { /* soffice not installed */ }
+
+  if (sofficeAvailable) {
+    try {
+      const baseName = path.basename(filePath, ext);
+      const expectedOutput = path.join(outDir, `${baseName}.pdf`);
+
+      await execFileAsync('soffice', [
+        '--headless',
+        '--convert-to', 'pdf',
+        '--outdir', outDir,
+        filePath
+      ], { timeout: 120000 });
+
+      if (fs.existsSync(expectedOutput) && fs.statSync(expectedOutput).size > 0) {
+        if (expectedOutput !== outputPath) {
+          fs.copyFileSync(expectedOutput, outputPath);
+          try { fs.unlinkSync(expectedOutput); } catch (_) {}
+        }
+        return outputPath;
+      }
+    } catch (_) { /* fall through to mammoth fallback */ }
+  }
+
+  // Fallback: mammoth text extraction (loses formatting but produces a readable PDF)
   try {
     let content = '';
-    const ext = path.extname(filePath).toLowerCase();
-    
+
     if (ext === '.docx') {
       let mammoth;
-      try { mammoth = require('mammoth'); } catch { throw new Error('Failed to convert Word to PDF: mammoth module not found'); }
+      try { mammoth = require('mammoth'); } catch { throw new Error('mammoth module not found'); }
       const data = await fs.promises.readFile(filePath);
       const result = await mammoth.extractRawText({ buffer: data });
       content = result.value;
     } else {
-      // For older DOC files, we can't easily extract text without specialized libraries
       content = 'Word document content could not be extracted automatically.\n\n' +
                 'This appears to be an older DOC format. For best results, ' +
                 'please convert to DOCX format first or use manual conversion.';
     }
-    
+
     if (!content.trim()) {
       content = 'Word document\n\nNo text content could be extracted from the document.';
     }
-    
+
     content = sanitizeForPdf(content);
-    
-    // Create PDF from extracted content
+
     const pdfDoc = await PDFDocument.create();
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-    
+
     const pageWidth = 612;
     const pageHeight = 792;
     const margin = 50;
     const maxWidth = pageWidth - margin * 2;
     const fontSize = 12;
     const lineHeight = fontSize * 1.5;
-    
+
     const lines = content.split('\n').flatMap(line => {
       const words = line.split(' ');
       const wrapped = [];
@@ -1923,13 +1953,13 @@ const wordToPdf = async (filePath, outputPath) => {
       if (current) wrapped.push(current);
       return wrapped.length ? wrapped : [''];
     });
-    
+
     let page = pdfDoc.addPage([pageWidth, pageHeight]);
     let y = pageHeight - margin - lineHeight;
-    
+
     page.drawText('Word Document', { x: margin, y: y + lineHeight, size: fontSize + 4, font: boldFont });
     y -= lineHeight * 2;
-    
+
     for (const line of lines) {
       if (y < margin) {
         page = pdfDoc.addPage([pageWidth, pageHeight]);
@@ -1938,7 +1968,7 @@ const wordToPdf = async (filePath, outputPath) => {
       page.drawText(line, { x: margin, y, size: fontSize, font });
       y -= lineHeight;
     }
-    
+
     await savePdf(pdfDoc, outputPath);
     return outputPath;
   } catch (error) {

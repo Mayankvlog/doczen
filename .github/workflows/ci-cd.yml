@@ -131,6 +131,11 @@ jobs:
               sudo cp $GITHUB_WORKSPACE/nginx.conf /etc/nginx/sites-available/doczen 2>/dev/null || \
               echo "WARNING: Could not copy nginx config - update manually"
 
+            # Install LibreOffice for Word/Excel/PPT to PDF conversion (if not present)
+            if ! command -v soffice &>/dev/null; then
+              sudo apt-get update -qq && sudo apt-get install -y -qq libreoffice-core libreoffice-writer libreoffice-calc libreoffice-impress --no-install-recommends
+            fi
+
             # Install production deps on server
             cd $SERVER_DIR && npm ci --omit=dev --ignore-scripts
 
