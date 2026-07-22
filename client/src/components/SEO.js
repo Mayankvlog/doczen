@@ -243,8 +243,6 @@ export default function SEO({
       <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-      <link rel="dns-prefetch" href="https://www.facebook.com" />
-      <link rel="dns-prefetch" href="https://www.linkedin.com" />
     </Helmet>
   );
 };
