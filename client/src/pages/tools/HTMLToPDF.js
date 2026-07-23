@@ -71,7 +71,7 @@ export default function HTMLToPDF() {
 
   return (
     <>
-    <SEO title={t('tool.htmlToPdfSeoTitle', 'HTML to PDF Converter Online Free')} description={t('tool.htmlToPdfSeoDesc', 'Convert HTML and text content to PDF documents online for free. Create PDF from text with Doczen.')} keywords={t('tool.htmlToPdfSeoKeywords', 'HTML to PDF, text to PDF, convert HTML to PDF, create PDF from text, web page to PDF')} canonical="/html-to-pdf" />
+    <SEO title={t('tool.htmlToPdfPageTitle', 'Easily Save Web Pages as High-Quality PDFs')} description={t('tool.htmlToPdfSeoDesc', 'Convert HTML and text content to PDF documents online for free. Create PDF from text with Doczen.')} keywords={t('tool.htmlToPdfSeoKeywords', 'HTML to PDF, text to PDF, convert HTML to PDF, create PDF from text, web page to PDF')} canonical="/html-to-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">
