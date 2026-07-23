@@ -62,9 +62,9 @@ function About() {
   const { t } = useLanguage();
   return (
     <>
-    <SEO title={t('about.title', 'About Doczen')} description={t('about.metaDesc', 'Learn about Doczen - the free online PDF editor. Our mission is to make PDF editing accessible to everyone with 30+ free tools.')} canonical="/about" />
+    <SEO title={t('about.title', 'How Doczen Simplifies Documentation for Your Business')} description={t('about.metaDesc', 'Learn about Doczen - the free online PDF editor. Our mission is to make PDF editing accessible to everyone with 30+ free tools.')} canonical="/about" />
     <div className="max-w-4xl mx-auto px-4 py-16">
-      <h1 className="text-4xl font-bold text-gray-900 mb-6">{t('about.title', 'About Doczen')}</h1>
+      <h1 className="text-4xl font-bold text-gray-900 mb-6">{t('about.title', 'How Doczen Simplifies Documentation for Your Business')}</h1>
       <div className="prose prose-gray max-w-none space-y-4 text-gray-600">
         <p>{t('about.p1', 'Doczen is a free, powerful online PDF editor designed to make document management simple and accessible for everyone. Whether you need to merge, split, compress, convert, or edit PDFs, Doczen provides all the tools you need right in your browser — no downloads, no installations.')}</p>
         <p>{t('about.p2', 'Our mission is to democratize PDF editing by offering a comprehensive suite of tools that are completely free to use. We believe that essential document management should not require expensive software subscriptions.')}</p>

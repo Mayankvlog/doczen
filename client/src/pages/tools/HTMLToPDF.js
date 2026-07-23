@@ -80,7 +80,7 @@ export default function HTMLToPDF() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
             </svg>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.htmlToPdfSeoTitle', 'HTML to PDF Converter Online Free')}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{t('tool.htmlToPdfSeoTitle', 'Easily Save Web Pages as High-Quality PDFs')}</h1>
           <p className="text-lg text-gray-600 mt-2">{t('tool.htmlToPdfDesc2', 'Convert HTML and text content into a PDF document')}</p>
         </div>
 
