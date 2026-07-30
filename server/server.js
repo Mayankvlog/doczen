@@ -462,6 +462,73 @@ app.get('/favicon.svg', (req, res) => {
   return res.send(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#4F46E5" rx="20"/><g transform="translate(28, 20)"><rect x="0" y="0" width="44" height="60" fill="white" rx="2"/><polygon points="44,0 44,10 54,0" fill="#E5E7EB"/><line x1="4" y1="12" x2="40" y2="12" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="20" x2="40" y2="20" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="28" x2="40" y2="28" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="36" x2="32" y2="36" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="44" x2="28" y2="44" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="52" x2="24" y2="52" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/></g></svg>`)
 });
 
+// ✅ OG IMAGE FALLBACK - Serve inline SVG when og-home.png / og-image.png / logo.png don't exist on disk
+function serveOgImageSvg(res, title) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="50%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#DB2777"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" rx="0"/>
+  <rect x="40" y="40" width="1120" height="550" rx="16" fill="white" fill-opacity="0.08"/>
+  <text x="600" y="260" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="72" font-weight="800" fill="white">Doczen</text>
+  <text x="600" y="340" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="32" font-weight="500" fill="rgba(255,255,255,0.85)">${title}</text>
+  <rect x="493" y="380" width="214" height="4" rx="2" fill="rgba(255,255,255,0.4)"/>
+  <text x="600" y="430" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="18" fill="rgba(255,255,255,0.6)">Free Online PDF Editor</text>
+  <text x="600" y="550" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="14" fill="rgba(255,255,255,0.3)">www.doczen.co.in</text>
+</svg>`;
+  res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.send(svg);
+}
+
+// OG image for home page
+app.get('/og-home.png', (req, res) => {
+  const filePath = path.join(__dirname, '../client/build/og-home.png');
+  if (fs.existsSync(filePath)) {
+    return res.sendFile(filePath);
+  }
+  serveOgImageSvg(res, 'Free Online PDF Editor');
+});
+
+// Default OG image for tool pages
+app.get('/og-image.png', (req, res) => {
+  const filePath = path.join(__dirname, '../client/build/og-image.png');
+  if (fs.existsSync(filePath)) {
+    return res.sendFile(filePath);
+  }
+  serveOgImageSvg(res, 'PDF Tools & Converter');
+});
+
+// Organization logo for JSON-LD structured data
+app.get('/logo.png', (req, res) => {
+  const filePath = path.join(__dirname, '../client/build/logo.png');
+  if (fs.existsSync(filePath)) {
+    return res.sendFile(filePath);
+  }
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="250" height="250" viewBox="0 0 250 250">
+  <rect width="250" height="250" fill="#4F46E5" rx="40"/>
+  <g transform="translate(65, 50)">
+    <rect x="0" y="0" width="120" height="150" fill="white" rx="6"/>
+    <polygon points="120,0 120,30 150,0" fill="#E5E7EB"/>
+    <line x1="10" y1="30" x2="100" y2="30" stroke="#4F46E5" stroke-width="6" stroke-linecap="round"/>
+    <line x1="10" y1="50" x2="100" y2="50" stroke="#4F46E5" stroke-width="6" stroke-linecap="round"/>
+    <line x1="10" y1="70" x2="100" y2="70" stroke="#4F46E5" stroke-width="6" stroke-linecap="round"/>
+    <line x1="10" y1="90" x2="80" y2="90" stroke="#4F46E5" stroke-width="6" stroke-linecap="round"/>
+    <line x1="10" y1="110" x2="70" y2="110" stroke="#4F46E5" stroke-width="6" stroke-linecap="round"/>
+    <line x1="10" y1="130" x2="60" y2="130" stroke="#4F46E5" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>`;
+  res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.send(svg);
+});
+
 // ✅ FAVICON.ICO FALLBACK - Prevent 404 in browser console
 app.get('/favicon.ico', (req, res) => {
   res.setHeader('Content-Type', 'image/x-icon');
