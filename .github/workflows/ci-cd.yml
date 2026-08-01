@@ -112,6 +112,8 @@ jobs:
 
             # Stop the app
             pm2 stop doczen-server 2>/dev/null || true
+            # Delete old process so the next start picks up cluster mode from ecosystem.config.js
+            pm2 delete doczen-server 2>/dev/null || true
 
             # Copy new build
             rsync -avz --delete $GITHUB_WORKSPACE/client/build/ $CLIENT_DIR/build/
@@ -139,8 +141,8 @@ jobs:
             # Install production deps on server
             cd $SERVER_DIR && npm ci --omit=dev --ignore-scripts
 
-            # Restart the app
-            pm2 restart doczen-server 2>/dev/null || pm2 start $SERVER_DIR/server.js --name doczen-server
+            # Start the app in cluster mode (uses all CPU cores) via ecosystem.config.js
+            pm2 start $SERVER_DIR/ecosystem.config.js --env production
             pm2 save
 
             # Reload nginx
