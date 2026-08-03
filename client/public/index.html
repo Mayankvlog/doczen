@@ -52,8 +52,20 @@
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500
+      });
+      try {
+        if (localStorage.getItem('doczen_consent') === 'accepted') {
+          gtag('consent', 'update', { analytics_storage: 'granted' });
+        }
+      } catch (e) {}
       gtag('js', new Date());
-      gtag('config', 'G-J0V79VJ0JH');
+      gtag('config', 'G-J0V79VJ0JH', { send_page_view: false });
     </script>
     <!-- Structured Data is managed by SEO component -->
   </head>

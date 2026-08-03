@@ -620,7 +620,6 @@ export function gtagPageView(path) {
     if (typeof window.gtag !== 'function' || !GA_MEASUREMENT_ID) return;
     window.gtag('config', GA_MEASUREMENT_ID, {
       page_path: path,
-      anonymize_ip: true,
     });
   } catch (_) {}
 }
