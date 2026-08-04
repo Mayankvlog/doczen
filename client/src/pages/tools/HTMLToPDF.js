@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -8,6 +8,7 @@ import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
+import BamifyFooterBanner from '../../components/BamifyFooterBanner';
 
 export default function HTMLToPDF() {
   const [content, setContent] = useState('');
@@ -188,6 +189,7 @@ export default function HTMLToPDF() {
 
       </div>
     </div>
+      <BamifyFooterBanner />
       <RelatedTools />
     </>
   );

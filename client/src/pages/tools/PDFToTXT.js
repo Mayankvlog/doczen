@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../index';
 import FileUploader from '../../components/FileUploader';
@@ -8,6 +8,7 @@ import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/
 import SEO from '../../components/SEO';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
+import BamifyFooterBanner from '../../components/BamifyFooterBanner';
 
 export default function PDFToTXT() {
   const [file, setFile] = useState(null);
@@ -106,6 +107,7 @@ export default function PDFToTXT() {
       </div>
 
     </div>
+      <BamifyFooterBanner />
       <RelatedTools />
     </>
   );
