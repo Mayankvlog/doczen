@@ -7,29 +7,38 @@ export default function BamifyFooterBanner() {
   useEffect(function() {
     if (!ref.current || failed) return;
 
+    var container = ref.current;
+
     window.bamAdspace = '6a71f711d54bb';
     window.bamWidth = 468;
     window.bamHeight = 60;
 
-    var script1 = document.createElement('script');
-    script1.type = 'text/javascript';
-    script1.innerHTML = 'var bamAdspace = "6a71f711d54bb"; var bamWidth = 468; var bamHeight = 60;';
-
-    var script2 = document.createElement('script');
-    script2.type = 'text/javascript';
-    script2.src = 'https://www.bamifyads.com/ads.js';
-    script2.async = true;
-    script2.onerror = function() {
-      setFailed(true);
+    var originalWrite = document.write;
+    var captured = '';
+    document.write = function(html) {
+      captured += html;
     };
 
-    ref.current.appendChild(script1);
-    ref.current.appendChild(script2);
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://www.bamifyads.com/ads.js';
+    script.onload = function() {
+      document.write = originalWrite;
+      if (captured && container) {
+        container.innerHTML = captured;
+      }
+      if (!captured && container) {
+        setFailed(true);
+      }
+    };
+    script.onerror = function() {
+      document.write = originalWrite;
+      setFailed(true);
+    };
+    document.body.appendChild(script);
 
     return function() {
-      if (ref.current) {
-        ref.current.innerHTML = '';
-      }
+      document.write = originalWrite;
     };
   }, [failed]);
 
