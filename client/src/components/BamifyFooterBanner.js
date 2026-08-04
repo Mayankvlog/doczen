@@ -1,55 +1,39 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function BamifyFooterBanner() {
   var ref = useRef(null);
-  var [failed, setFailed] = useState(false);
 
   useEffect(function() {
-    if (!ref.current || failed) return;
-
+    if (!ref.current) return;
     var container = ref.current;
+    container.innerHTML = '';
 
-    window.bamAdspace = '6a71f711d54bb';
-    window.bamWidth = 468;
-    window.bamHeight = 60;
+    var iframe = document.createElement('iframe');
+    iframe.style.width = '468px';
+    iframe.style.height = '60px';
+    iframe.style.border = 'none';
+    iframe.style.overflow = 'hidden';
+    iframe.title = 'Advertisement';
 
-    var originalWrite = document.write;
-    var captured = '';
-    document.write = function(html) {
-      captured += html;
-    };
+    var doc =
+      '<!DOCTYPE html><html><head><style>body{margin:0;padding:0;overflow:hidden;}</style></head><body>' +
+      '<script>var bamAdspace="6a71f711d54bb";var bamWidth=468;var bamHeight=60;</script>' +
+      '<script src="https://www.bamifyads.com/ads.js"><\/script>' +
+      '</body></html>';
 
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'https://www.bamifyads.com/ads.js';
-    script.onload = function() {
-      document.write = originalWrite;
-      if (captured && container) {
-        container.innerHTML = captured;
-      }
-      if (!captured && container) {
-        setFailed(true);
-      }
-    };
-    script.onerror = function() {
-      document.write = originalWrite;
-      setFailed(true);
-    };
-    document.body.appendChild(script);
+    container.appendChild(iframe);
+    iframe.contentDocument.open();
+    iframe.contentDocument.write(doc);
+    iframe.contentDocument.close();
 
     return function() {
-      document.write = originalWrite;
+      container.innerHTML = '';
     };
-  }, [failed]);
+  }, []);
 
   return (
     <div className="flex justify-center my-6">
-      {!failed && <div ref={ref} className="w-[468px] h-[60px]"></div>}
-      {failed && (
-        <div className="w-[468px] h-[60px] bg-gray-100 flex items-center justify-center text-gray-400 text-sm rounded">
-          Advertisement
-        </div>
-      )}
+      <div ref={ref} className="w-[468px] h-[60px]"></div>
     </div>
   );
 }
