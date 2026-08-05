@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -8,7 +8,6 @@ import { useLanguage } from '../../index';
 import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
-import BamifyFooterBanner from '../../components/BamifyFooterBanner';
 
 export default function AddPageNumbers() {
   const { t } = useLanguage();
@@ -189,7 +188,6 @@ export default function AddPageNumbers() {
         )}
       </div>
     </div>
-      <BamifyFooterBanner />
       <RelatedTools />
     </>
   );

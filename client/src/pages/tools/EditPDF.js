@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -8,7 +8,6 @@ import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
-import BamifyFooterBanner from '../../components/BamifyFooterBanner';
 
 export default function EditPDF() {
   const { t } = useLanguage();
@@ -220,7 +219,7 @@ export default function EditPDF() {
                       <span className="text-indigo-500">
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
                       </span>
-                      <span className="flex-1 truncate text-gray-700">{link.text} → {link.linkType === 'page' ? `${t('tool.page', 'Page')} ${link.targetPage}` : link.targetUrl}</span>
+                      <span className="flex-1 truncate text-gray-700">{link.text} ? {link.linkType === 'page' ? `${t('tool.page', 'Page')} ${link.targetPage}` : link.targetUrl}</span>
                       <button type="button" onClick={() => removeLink(i)} className="text-red-400 hover:text-red-600">
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                       </button>
@@ -275,7 +274,6 @@ export default function EditPDF() {
       </div>
 
     </div>
-      <BamifyFooterBanner />
       <RelatedTools />
     </>
   );

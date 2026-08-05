@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -8,7 +8,6 @@ import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
-import BamifyFooterBanner from '../../components/BamifyFooterBanner';
 
 export default function SignPDF() {
   const { t } = useLanguage();
@@ -130,7 +129,6 @@ export default function SignPDF() {
       </div>
 
     </div>
-      <BamifyFooterBanner />
       <RelatedTools />
     </>
   );

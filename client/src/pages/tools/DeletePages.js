@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '../../index';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -8,7 +8,6 @@ import SEO from '../../components/SEO';
 import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
-import BamifyFooterBanner from '../../components/BamifyFooterBanner';
 
 export default function DeletePages() {
   const [file, setFile] = useState(null);
@@ -173,7 +172,6 @@ export default function DeletePages() {
         )}
       </div>
     </div>
-      <BamifyFooterBanner />
       <RelatedTools />
     </>
   );

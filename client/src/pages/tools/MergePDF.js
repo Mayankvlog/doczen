@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -9,7 +9,6 @@ import { useLanguage } from '../../index';
 import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
-import BamifyFooterBanner from '../../components/BamifyFooterBanner';
 
 export default function MergePDF() {
   const { t } = useLanguage();
@@ -47,14 +46,14 @@ export default function MergePDF() {
       toast.success(t('tool.toast.merged', 'PDFs merged successfully!'));
       if (data.blobUrl) {
         setDownload(data.blobUrl, data.filename || 'merged.pdf');
-        // ✅ PHASE 1 FIX: Track tool completion and download with GA4
+        // ? PHASE 1 FIX: Track tool completion and download with GA4
         const totalSize = files.reduce((sum, f) => sum + f.size, 0);
         gtagToolCompletion('Merge PDF', totalSize);
         gtagDownloadComplete('merged.pdf', data.size || 0);
       }
     } catch (err) {
       const msg = err.message || t('tool.mergeError', 'Failed to merge PDFs. Please try again.');
-      // ✅ PHASE 1 FIX: Track tool errors with GA4
+      // ? PHASE 1 FIX: Track tool errors with GA4
       gtagToolError('Merge PDF', msg);
       setError(msg);
       toast.error(msg);
@@ -67,7 +66,7 @@ export default function MergePDF() {
 
   return (
     <>
-    {/* ✅ PHASE 1 FIX: Add toolName prop for SoftwareApplication schema generation */}
+    {/* ? PHASE 1 FIX: Add toolName prop for SoftwareApplication schema generation */}
     <SEO title={t('seo.mergeTitle', 'Merge PDF Online - Combine PDF Files Free')} description={t('seo.mergeDesc', 'Merge multiple PDF files into one document online for free. Combine PDFs instantly with Doczen\'s easy-to-use PDF merger tool.')} keywords={t('tool.mergeKeywords', 'merge PDF, combine PDF, join PDF files, PDF merger, merge PDF online free')} canonical="/merge-pdf" toolName="Merge PDF" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
@@ -146,7 +145,6 @@ export default function MergePDF() {
         )}
       </div>
     </div>
-      <BamifyFooterBanner />
       <RelatedTools />
     </>
   );
