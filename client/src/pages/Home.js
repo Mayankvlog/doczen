@@ -144,7 +144,7 @@ export default function Home() {
           <div
             ref={observeSection('tools-header')}
             data-section="tools-header"
-            className={`text-center mb-14 transition-all duration-700 ${visibleSections.has('tools-header') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`text-center mb-14 transition-[opacity,transform] duration-700 ${visibleSections.has('tools-header') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
               {t('tools.header', 'Everything You Need')}
@@ -159,7 +159,7 @@ export default function Home() {
                 key={tool.path}
                 ref={observeSection(`tool-${i}`)}
                 data-section={`tool-${i}`}
-                className={`transition-all duration-500 ${visibleSections.has(`tool-${i}`) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                className={`transition-[opacity,transform] duration-500 ${visibleSections.has(`tool-${i}`) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
                 style={{ transitionDelay: `${(i % 8) * 60}ms` }}
               >
                 <ToolCard {...tool} />
@@ -201,7 +201,7 @@ export default function Home() {
           <div
             ref={observeSection('faq-header')}
             data-section="faq-header"
-            className={`text-center mb-14 transition-all duration-700 ${visibleSections.has('faq-header') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`text-center mb-14 transition-[opacity,transform] duration-700 ${visibleSections.has('faq-header') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
               {t('faq.header', 'Frequently Asked Questions')}
@@ -213,7 +213,7 @@ export default function Home() {
                 key={i}
                 ref={observeSection(`faq-${i}`)}
                 data-section={`faq-${i}`}
-                className={`rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden transition-all duration-500 ${visibleSections.has(`faq-${i}`) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+                className={`rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden transition-[opacity,transform] duration-500 ${visibleSections.has(`faq-${i}`) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
                 style={{ transitionDelay: `${i * 80}ms` }}
               >
                 <button
@@ -248,7 +248,7 @@ export default function Home() {
         <div
           ref={observeSection('cta')}
           data-section="cta"
-          className={`mx-auto max-w-3xl text-center transition-all duration-700 ${visibleSections.has('cta') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+          className={`mx-auto max-w-3xl text-center transition-[opacity,transform] duration-700 ${visibleSections.has('cta') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
         >
           <h2 className="text-3xl font-bold text-white sm:text-4xl">
             {t('cta.header', 'Ready to Simplify Your PDF Workflow?')}

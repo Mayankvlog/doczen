@@ -50,7 +50,6 @@ export default function Banner728x90() {
         params: {},
       },
       function() {
-        console.warn('[Banner728x90] Failed to load ad script');
         setFailed(true);
       },
       ref.current
@@ -61,7 +60,7 @@ export default function Banner728x90() {
     <div
       ref={ref}
       className="flex justify-center bg-gray-100 py-2 overflow-hidden"
-      style={{ minHeight: failed ? 'auto' : '90px', minWidth: '100%' }}
+      style={{ minHeight: '90px', minWidth: '100%', position: 'relative' }}
     >
       {failed && (
         <div className="w-full h-[90px] bg-gray-100 flex items-center justify-center text-gray-400 text-sm">

@@ -126,6 +126,8 @@ addTranslations('en', {
   'nav.register': 'Register',
   'nav.language': 'Language',
   'nav.hello': 'Fully online — no download required',
+  'nav.openMenu': 'Open menu',
+  'nav.closeMenu': 'Close menu',
   'hero.title1': 'Your PDFs,',
   'hero.title2': 'Perfected.',
   'hero.desc': 'Doczen is the all-in-one PDF workspace. Merge, split, convert, compress, edit, and sign documents — all in your browser, free and secure.',

@@ -50,11 +50,9 @@ export default function AdsterraNative() {
     var container = document.getElementById(containerId);
     
     if (!container) {
-      console.warn('[AdsterraNative] Container not found:', containerId);
       return;
     }
 
-    console.log('[AdsterraNative] Loading ad from:', 'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js');
     queueAd(
       'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
       {
@@ -66,7 +64,6 @@ export default function AdsterraNative() {
         params: {},
       },
       function() { 
-        console.error('[AdsterraNative] Failed to load ad script');
         setFailed(true); 
       },
       container
@@ -82,10 +79,10 @@ export default function AdsterraNative() {
   }, [failed, mounted]);
 
   return (
-    <div className="flex justify-center my-6">
-      {!failed && <div ref={ref} id={'atContainer-' + AD_KEY} className="w-[300px] h-[250px]"></div>}
+    <div className="flex justify-center my-6 overflow-hidden">
+      {!failed && <div ref={ref} id={'atContainer-' + AD_KEY} className="w-full max-w-[300px] h-[250px] overflow-hidden relative"></div>}
       {failed && (
-        <div className="w-[300px] h-[250px] bg-gray-100 flex items-center justify-center text-gray-400 text-sm rounded">
+        <div className="w-full max-w-[300px] h-[250px] bg-gray-100 flex items-center justify-center text-gray-400 text-sm rounded overflow-hidden">
           Advertisement
         </div>
       )}

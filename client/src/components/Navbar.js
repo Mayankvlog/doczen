@@ -87,6 +87,8 @@ export default function Navbar() {
                 <div key={link.label} ref={dropdownRef} className="relative">
                   <button
                     onClick={() => setDropdownOpen((prev) => !prev)}
+                    aria-haspopup="true"
+                    aria-expanded={dropdownOpen}
                     className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
                   >
                     {link.label}
@@ -124,6 +126,8 @@ export default function Navbar() {
           <div ref={langRef} className="hidden md:flex items-center relative">
             <button
               onClick={() => setLangOpen((prev) => !prev)}
+              aria-haspopup="true"
+              aria-expanded={langOpen}
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -159,6 +163,8 @@ export default function Navbar() {
               <div ref={userMenuRef} className="relative">
                 <button
                   onClick={() => setUserMenuOpen((prev) => !prev)}
+                  aria-haspopup="true"
+                  aria-expanded={userMenuOpen}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-indigo-50 transition-colors"
                 >
                   <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-semibold">
@@ -202,9 +208,12 @@ export default function Navbar() {
 
           <button
             onClick={() => setMobileOpen((prev) => !prev)}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
             className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-indigo-50 transition-colors"
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span className="sr-only">{mobileOpen ? t('nav.closeMenu', 'Close menu') : t('nav.openMenu', 'Open menu')}</span>
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               {mobileOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -217,7 +226,7 @@ export default function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white">
+        <div id="mobile-menu" className="md:hidden border-t border-gray-200 bg-white">
           <div className="px-4 py-3 space-y-1">
             <div className="px-3 py-2">
               <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-2">

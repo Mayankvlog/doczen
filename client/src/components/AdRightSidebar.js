@@ -41,7 +41,6 @@ export default function AdRightSidebar() {
   useEffect(function() {
     if (!ref.current || failed) return;
 
-    console.log('[AdRightSidebar] Loading ad from:', 'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js');
     queueAd(
       'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
       {
@@ -53,7 +52,6 @@ export default function AdRightSidebar() {
         params: {},
       },
       function() { 
-        console.error('[AdRightSidebar] Failed to load ad script');
         setFailed(true); 
       },
       ref.current

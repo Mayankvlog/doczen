@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script>document.documentElement.className='js';</script>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -49,9 +50,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       body { height: 100%; }
       #root { height: 100%; display: flex; flex-direction: column; }
       html, body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+      html.js .no-js-fallback { display: none; }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" href="https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
     <!-- Google tag (gtag.js) -->
@@ -72,6 +75,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <noscript>You need to enable JavaScript to run Doczen.</noscript>
     <div id="root">
+      <div class="no-js-fallback">
       <nav style="background:#fff;border-bottom:1px solid #e5e7eb;padding:0.75rem 1rem;display:flex;align-items:center;gap:1rem;font-family:Inter,system-ui,sans-serif;flex-wrap:wrap">
         <a href="/" style="font-weight:700;color:#4f46e5;font-size:1.125rem;text-decoration:none">Doczen</a>
         <a href="/merge-pdf" style="text-decoration:none;color:#374151;font-size:0.875rem">Merge PDF</a>
@@ -131,6 +135,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <a href="/terms-of-service" style="color:#818cf8;text-decoration:none">Terms of Service</a>
         </p>
       </footer>
+      </div>
     </div>
     <!-- Ad scripts loaded dynamically via React components (Banner728x90, AdsterraNative) -->
   </body>
