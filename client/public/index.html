@@ -2,12 +2,23 @@
 <html lang="en">
   <head>
     <script>document.documentElement.className='js';</script>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-WNQJ96W5');</script>
+    <!-- Google Tag Manager (deferred after first paint to keep GTM/gtag out of the LCP critical path) -->
+    <script>
+      (function() {
+        function loadGTM() {
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-WNQJ96W5');
+        }
+        if (window.requestIdleCallback) {
+          window.addEventListener('load', function() { requestIdleCallback(loadGTM, { timeout: 2000 }); });
+        } else {
+          window.addEventListener('load', loadGTM);
+        }
+      })();
+    </script>
     <!-- End Google Tag Manager -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover" />
@@ -51,20 +62,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       #root { height: 100%; display: flex; flex-direction: column; }
       html, body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
       html.js .no-js-fallback { display: none; }
+      html.js .static-hero { display: block; }
+      html:not(.js) .static-hero { display: none; }
+      .static-hero h1 { font-size: 2.5rem; line-height: 1.1; }
+      @media (min-width: 640px) { .static-hero h1 { font-size: 3.75rem; } }
+      @media (min-width: 1024px) { .static-hero h1 { font-size: 4.5rem; } }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" href="https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J0V79VJ0JH"></script>
+    <!-- Google tag (gtag.js) - config queued immediately, script loaded after first paint -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
       gtag('config', 'G-J0V79VJ0JH');
+      window.addEventListener('load', function() {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-J0V79VJ0JH';
+        document.body.appendChild(s);
+      });
     </script>
     <!-- Structured Data is managed by SEO component -->
   </head>
@@ -75,6 +96,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <noscript>You need to enable JavaScript to run Doczen.</noscript>
     <div id="root">
+      <div class="static-hero" style="background:linear-gradient(135deg,#4f46e5,#9333ea,#ec4899);padding:96px 16px 128px;text-align:center;font-family:'Inter',system-ui,sans-serif">
+        <div style="max-width:64rem;margin:0 auto">
+          <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);border-radius:9999px;padding:6px 16px;font-size:14px;color:rgba(255,255,255,0.9);margin-bottom:32px">
+            <span style="width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block"></span>
+            Fully online — no download required
+          </div>
+          <h1 style="font-weight:800;letter-spacing:-0.025em;color:#fff;margin:0">Your PDFs, <span style="background:linear-gradient(90deg,#fde68a,#fdba74);-webkit-background-clip:text;background-clip:text;color:transparent">Perfected.</span></h1>
+          <p style="margin:24px auto 0;max-width:42rem;font-size:18px;line-height:1.5;color:#e0e7ff">Doczen is the all-in-one PDF workspace. Merge, split, convert, compress, edit, and sign documents — all in your browser, free and secure.</p>
+        </div>
+      </div>
       <div class="no-js-fallback">
       <nav style="background:#fff;border-bottom:1px solid #e5e7eb;padding:0.75rem 1rem;display:flex;align-items:center;gap:1rem;font-family:Inter,system-ui,sans-serif;flex-wrap:wrap">
         <a href="/" style="font-weight:700;color:#4f46e5;font-size:1.125rem;text-decoration:none">Doczen</a>

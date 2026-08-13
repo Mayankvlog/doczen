@@ -15,12 +15,14 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { gtagPageView, gtagConsent } from './services/api';
 import SEO from './components/SEO';
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import Dashboard from './pages/Dashboard';
-import History from './pages/History';
+
+// ✅ Code-split non-landing pages so they load on-demand (keeps Home + hero on the critical path)
+const Login = React.lazy(() => import('./pages/Login'));
+const Register = React.lazy(() => import('./pages/Register'));
+const ForgotPassword = React.lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
+const Dashboard = React.lazy(() => import('./pages/Dashboard'));
+const History = React.lazy(() => import('./pages/History'));
 
 // ✅ PHASE 1 FIX: Implement code splitting with React.lazy() and Suspense
 // Reduces initial bundle from 500KB+ to ~100KB (80% reduction)
