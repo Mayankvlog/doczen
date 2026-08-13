@@ -392,15 +392,11 @@ app.get('/sitemap.xml', (req, res) => {
     sitemapXml += '  </url>\n';
   });
 
-  // Static pages
+  // Static pages (auth pages excluded — they are noindex and should not be in the sitemap)
   const staticPages = [
     { path: '/about', priority: '0.6', changefreq: 'monthly' },
     { path: '/privacy-policy', priority: '0.5', changefreq: 'yearly' },
     { path: '/terms-of-service', priority: '0.5', changefreq: 'yearly' },
-    { path: '/login', priority: '0.4', changefreq: 'monthly' },
-    { path: '/register', priority: '0.4', changefreq: 'monthly' },
-    { path: '/forgot-password', priority: '0.3', changefreq: 'monthly' },
-    { path: '/reset-password', priority: '0.3', changefreq: 'monthly' },
   ];
   
   staticPages.forEach(page => {

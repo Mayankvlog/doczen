@@ -1,0 +1,58 @@
+# Doczen - Free Online PDF Tools
+
+> Doczen is a free, secure online PDF editor and converter. Merge, split, compress, rotate, protect, unlock, sign and edit PDFs directly in your browser. No registration required. Uploaded files are encrypted and automatically deleted within 24 hours.
+
+## Essential Pages
+
+- [Home](/) : Free online PDF editor with 30+ tools
+- [About](/about) : About Doczen and our mission
+- [Privacy Policy](/privacy-policy) : How we collect, use and protect your data
+- [Terms of Service](/terms-of-service) : Terms governing use of the Doczen service
+- [Login](/login) : Sign in to your Doczen account
+- [Register](/register) : Create a free Doczen account
+
+## Organize & Edit
+
+- [Merge PDF](/merge-pdf) : Combine multiple PDFs into one file
+- [Split PDF](/split-pdf) : Split a PDF into separate documents by pages
+- [Compress PDF](/compress-pdf) : Reduce PDF file size without quality loss
+- [Rotate PDF](/rotate-pdf) : Rotate pages in your PDF to any angle
+- [Reorder Pages](/reorder-pages) : Arrange PDF pages in the order you need
+- [Delete Pages](/delete-pages) : Remove unwanted pages from your PDF
+- [Edit PDF](/edit-pdf) : Edit text, images and pages in your PDF
+- [Add Page Numbers](/add-page-numbers) : Insert page numbers into your PDF
+- [Add Watermark](/add-watermark) : Add text or image watermarks to PDFs
+- [Extract Text](/extract-text) : Extract all text content from a PDF file
+
+## Convert PDF to
+
+- [PDF to Word](/pdf-to-word) : Convert PDF to editable Word documents
+- [PDF to JPG](/pdf-to-jpg) : Convert PDF pages to high-quality JPG images
+- [PDF to TXT](/pdf-to-txt) : Extract PDF text into a TXT file
+- [PDF to PPT](/pdf-to-ppt) : Turn your PDF into PowerPoint slides
+- [PDF to Excel](/pdf-to-excel) : Extract PDF tables into Excel spreadsheets
+- [PDF to PDF/A](/pdf-to-pdfa) : Convert PDFs to archival PDF/A format
+
+## Convert to PDF
+
+- [Word to PDF](/word-to-pdf) : Convert Word documents to PDF format
+- [JPG to PDF](/jpg-to-pdf) : Convert your images into a PDF document
+- [PPT to PDF](/ppt-to-pdf) : Convert PowerPoint presentations to PDF
+- [Excel to PDF](/excel-to-pdf) : Convert Excel spreadsheets to PDF format
+- [HTML to PDF](/html-to-pdf) : Convert web content to PDF documents
+
+## Secure & Sign
+
+- [Protect PDF](/protect-pdf) : Add a password to secure your PDF files
+- [Unlock PDF](/unlock-pdf) : Remove password protection from PDFs
+- [Sign PDF](/sign-pdf) : Add your digital signature to any document
+- [Redact PDF](/redact-pdf) : Permanently remove sensitive information
+
+## Repair & Advanced
+
+- [Repair PDF](/repair-pdf) : Fix corrupted or damaged PDF files
+- [Flatten PDF](/flatten-pdf) : Flatten form fields and annotations
+- [PDF Metadata](/pdf-metadata) : View and edit PDF document properties
+- [Remove Annotations](/remove-annotations) : Clean up comments and markup
+- [Remove Watermark](/remove-watermark) : Remove watermarks from PDF documents
+- [Compare PDF](/compare-pdf) : Compare two PDF files side by side

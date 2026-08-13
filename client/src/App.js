@@ -283,7 +283,7 @@ function CookieConsent() {
             We use cookies to analyze site usage and improve your experience. You can choose to accept or reject analytics cookies.
           </span>
           <a href="/privacy-policy" className="text-indigo-600 hover:text-indigo-800 underline ml-1 whitespace-nowrap">
-            Learn more
+            Read our privacy policy
           </a>
         </div>
         <div className="flex items-center gap-2 shrink-0">
