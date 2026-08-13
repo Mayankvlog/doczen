@@ -63,7 +63,7 @@ export default function Banner728x90() {
       style={{ minHeight: '90px', minWidth: '100%', position: 'relative' }}
     >
       {failed && (
-        <div className="w-full h-[90px] bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+        <div className="w-full h-[90px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm">
           Advertisement
         </div>
       )}

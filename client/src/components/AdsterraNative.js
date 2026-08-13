@@ -82,7 +82,7 @@ export default function AdsterraNative() {
     <div className="flex justify-center my-6 overflow-hidden">
       {!failed && <div ref={ref} id={'atContainer-' + AD_KEY} className="w-full max-w-[300px] h-[250px] overflow-hidden relative"></div>}
       {failed && (
-        <div className="w-full max-w-[300px] h-[250px] bg-gray-100 flex items-center justify-center text-gray-400 text-sm rounded overflow-hidden">
+        <div className="w-full max-w-[300px] h-[250px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm rounded overflow-hidden">
           Advertisement
         </div>
       )}

@@ -75,7 +75,7 @@ export default function AdRightSidebar() {
         style={{ minHeight: '300px' }}
       >
         {failed && (
-          <div className="w-[160px] h-[300px] bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+          <div className="w-[160px] h-[300px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm">
             Ad
           </div>
         )}
