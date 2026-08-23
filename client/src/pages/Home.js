@@ -5,9 +5,14 @@ import AdsterraNative from '../components/AdsterraNative';
 import SEO from '../components/SEO';
 import { useLanguage } from '../index';
 import { gtagEvent } from '../services/api';
+import { getLongTailKeywordSample } from '../data/seoKeywords';
 
 export default function Home() {
   const { t } = useLanguage();
+  const homepageKeywords = [
+    t('tool.seo.defaultKeywords', 'free PDF editor, online PDF tool, merge PDF online, split PDF online, compress PDF, PDF converter, PDF to Word, PDF to JPG, Doczen'),
+    ...getLongTailKeywordSample(),
+  ].join(', ');
 
   useEffect(() => {
     gtagEvent('page_view', { page_name: 'home' });
@@ -97,7 +102,7 @@ export default function Home() {
     <SEO
   title={t('tool.seo.defaultTitle', 'Free Online PDF Editor - Merge, Split & Convert')}
   description={t('tool.seo.defaultDesc', 'Doczen - free online PDF editor. Merge, split, compress, edit PDFs. Convert to Word, Excel, PPT, JPG. Protect, unlock, sign PDFs. No registration needed.')}
-  keywords={t('tool.seo.defaultKeywords', 'free PDF editor, online PDF tool, merge PDF online, split PDF online, compress PDF, PDF converter, PDF to Word, PDF to JPG, Doczen')}
+  keywords={homepageKeywords}
   canonical="/"
   image="/og-home.png"
   type="WebPage"
