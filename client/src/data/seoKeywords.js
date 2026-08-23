@@ -418,7 +418,7 @@ export const LONG_TAIL_KEYWORD_COUNT =
   LONG_TAIL_USE_CASES.length *
   LONG_TAIL_AUDIENCES.length;
 
-export const MIN_LONG_TAIL_KEYWORDS = 50000000;
+export const MIN_LONG_TAIL_KEYWORDS = 500000000;
 
 if (LONG_TAIL_KEYWORD_COUNT < MIN_LONG_TAIL_KEYWORDS) {
   throw new Error(`The long-tail keyword catalog must contain at least ${MIN_LONG_TAIL_KEYWORDS} keywords.`);
