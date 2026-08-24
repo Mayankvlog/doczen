@@ -218,6 +218,16 @@ const PDF_SEARCH_INTENTS = [
   'how to make a PDF searchable with OCR',
   'how to convert a scanned PDF to Word',
   'how to convert a PDF to an image file',
+  'how to annotate a PDF online',
+  'how to fill out a PDF form',
+  'how to create a fillable PDF form',
+  'how to remove annotations from a PDF',
+  'how to remove a watermark from a PDF',
+  'how to compare two PDF files',
+  'how to convert HTML to PDF',
+  'how to convert PDF to SVG',
+  'how to extract images from a PDF',
+  'how to change PDF document properties',
 ];
 
 const LONG_TAIL_VARIANTS = [
@@ -439,7 +449,7 @@ export const LONG_TAIL_KEYWORD_COUNT =
   LONG_TAIL_AUDIENCES.length *
   LONG_TAIL_MARKETS.length;
 
-export const MIN_LONG_TAIL_KEYWORDS = 5000000000;
+export const MIN_LONG_TAIL_KEYWORDS = 10000000000;
 
 if (LONG_TAIL_KEYWORD_COUNT < MIN_LONG_TAIL_KEYWORDS) {
   throw new Error(`The long-tail keyword catalog must contain at least ${MIN_LONG_TAIL_KEYWORDS} keywords.`);
