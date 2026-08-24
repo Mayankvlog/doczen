@@ -410,15 +410,36 @@ const LONG_TAIL_AUDIENCES = [
   'for household paperwork',
 ];
 
+const LONG_TAIL_MARKETS = [
+  'in the United States',
+  'in Canada',
+  'in the European Union',
+  'in the United Kingdom',
+  'in Australia',
+  'in India',
+  'in Singapore',
+  'in New Zealand',
+  'in South Africa',
+  'in the Middle East',
+  'in Latin America',
+  'in Asia',
+  'in Africa',
+  'in Oceania',
+  'for global businesses',
+  'for international businesses',
+  'for international teams',
+];
+
 export const LONG_TAIL_KEYWORD_COUNT =
   PDF_SEARCH_INTENTS.length *
   LONG_TAIL_QUALIFIERS.length *
   (LONG_TAIL_VARIANTS.length + 1) *
   LONG_TAIL_CONTEXTS.length *
   LONG_TAIL_USE_CASES.length *
-  LONG_TAIL_AUDIENCES.length;
+  LONG_TAIL_AUDIENCES.length *
+  LONG_TAIL_MARKETS.length;
 
-export const MIN_LONG_TAIL_KEYWORDS = 500000000;
+export const MIN_LONG_TAIL_KEYWORDS = 5000000000;
 
 if (LONG_TAIL_KEYWORD_COUNT < MIN_LONG_TAIL_KEYWORDS) {
   throw new Error(`The long-tail keyword catalog must contain at least ${MIN_LONG_TAIL_KEYWORDS} keywords.`);
@@ -435,9 +456,11 @@ export function* iterateLongTailKeywords(limit = LONG_TAIL_KEYWORD_COUNT) {
         for (const context of LONG_TAIL_CONTEXTS) {
           for (const useCase of LONG_TAIL_USE_CASES) {
             for (const audience of LONG_TAIL_AUDIENCES) {
-              yield `${phrase} ${qualifier} ${context} ${useCase} ${audience}`;
-              generated += 1;
-              if (generated >= limit) return;
+              for (const market of LONG_TAIL_MARKETS) {
+                yield `${phrase} ${qualifier} ${context} ${useCase} ${audience} ${market}`;
+                generated += 1;
+                if (generated >= limit) return;
+              }
             }
           }
         }
@@ -446,7 +469,7 @@ export function* iterateLongTailKeywords(limit = LONG_TAIL_KEYWORD_COUNT) {
   }
 }
 
-export function generateLongTailKeywords(limit = LONG_TAIL_KEYWORD_COUNT) {
+export function generateLongTailKeywords(limit = 120) {
   return Array.from(iterateLongTailKeywords(limit));
 }
 
