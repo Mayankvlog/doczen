@@ -657,6 +657,12 @@ if (LONG_TAIL_KEYWORD_COUNT < MIN_LONG_TAIL_KEYWORDS) {
 }
 
 export function* iterateLongTailKeywords(limit = LONG_TAIL_KEYWORD_COUNT) {
+  if (!Number.isSafeInteger(limit) || limit < 0) {
+    throw new TypeError('The long-tail keyword limit must be a non-negative safe integer.');
+  }
+
+  if (limit === 0) return;
+
   let generated = 0;
 
   for (const intent of PDF_SEARCH_INTENTS) {
