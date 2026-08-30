@@ -6,12 +6,14 @@ import SEO from '../components/SEO';
 import { useLanguage } from '../index';
 import { gtagEvent } from '../services/api';
 import { getLongTailKeywordSample } from '../data/seoKeywords';
+import { getGeoKeywordSample } from '../data/geoKeywords';
 
 export default function Home() {
   const { t } = useLanguage();
   const homepageKeywords = [
     t('tool.seo.defaultKeywords', 'free PDF editor, online PDF tool, merge PDF online, split PDF online, compress PDF, PDF converter, PDF to Word, PDF to JPG, Doczen'),
     ...getLongTailKeywordSample(),
+    ...getGeoKeywordSample(),
   ].join(', ');
 
   useEffect(() => {
