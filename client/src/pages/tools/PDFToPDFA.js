@@ -60,7 +60,7 @@ export default function PDFToPDFA() {
 
   return (
     <>
-    <SEO title={t('tool.pdfToPdfaTitle', 'PDF to PDF/A Converter Online Free')} description={t('tool.pdfToPdfaDesc', 'Convert PDF files to PDF/A format for long-term archiving. Free PDF/A converter by Doczen.')} keywords={t('tool.pdfToPdfaKeywords', 'PDF to PDF/A, PDF/A converter, archive PDF, PDF archiving, PDF standardization')} canonical="/pdf-to-pdfa" />
+    <SEO title={t('tool.pdfToPdfaTitle', 'PDF to PDF/A Converter - Archive Format')} description={t('tool.pdfToPdfaDesc', 'Convert PDF files to PDF/A format for long-term archiving. ISO compliant output - no sign-up required, 100% free.')} keywords={t('tool.pdfToPdfaKeywords', 'PDF to PDF/A, PDF/A converter, archive PDF, PDF archiving, PDF standardization')} canonical="/pdf-to-pdfa" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

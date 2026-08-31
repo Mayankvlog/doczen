@@ -70,7 +70,7 @@ export default function ReorderPages() {
 
   return (
     <>
-    <SEO title={t('seo.reorderPages.title', 'Reorder PDF Pages Online Free')} description={t('seo.reorderPages.desc', 'Rearrange pages in your PDF document online for free. Change PDF page order easily with Doczen.')} keywords={t('seo.reorderPages.keywords', 'reorder PDF pages, rearrange PDF, PDF page organizer, change PDF page order')} canonical="/reorder-pages" />
+    <SEO title={t('seo.reorderPages.title', 'Reorder PDF Pages Online Free - Drag Drop')} description={t('seo.reorderPages.desc', 'Rearrange pages in your PDF document online. Change page order with drag and drop - no sign-up required, 100% free.')} keywords={t('seo.reorderPages.keywords', 'reorder PDF pages, rearrange PDF, PDF page organizer, change PDF page order')} canonical="/reorder-pages" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

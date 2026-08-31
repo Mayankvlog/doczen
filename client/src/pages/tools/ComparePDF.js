@@ -55,7 +55,7 @@ export default function ComparePDF() {
 
   return (
     <>
-    <SEO title={t('tool.compareSeoTitle', 'Compare PDF Files Online Free')} description={t('tool.compareSeoDesc', 'Compare two PDF files online for free. Find differences in page count, size, and structure with Doczen\'s PDF comparison tool.')} keywords={t('tool.compareSeoKeywords', 'compare PDF, PDF comparison, diff PDF, PDF differences, compare two PDF files')} canonical="/compare-pdf" />
+    <SEO title={t('tool.compareSeoTitle', 'Compare PDF Files Online Free - Diff Tool')} description={t('tool.compareSeoDesc', 'Compare two PDF files online. Find differences in content, size, and structure - no sign-up required, 100% free.')} keywords={t('tool.compareSeoKeywords', 'compare PDF, PDF comparison, diff PDF, PDF differences, compare two PDF files')} canonical="/compare-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

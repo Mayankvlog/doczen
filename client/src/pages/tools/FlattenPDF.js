@@ -52,7 +52,7 @@ export default function FlattenPDF() {
 
   return (
     <>
-    <SEO title={t('tool.flattenSeoTitle', 'Flatten PDF Online Free - Flatten PDF Forms')} description={t('tool.flattenSeoDesc', 'Flatten PDF forms and annotations online for free. Make your PDF content permanent with Doczen\'s PDF flattener.')} keywords={t('tool.flattenSeoKeywords', 'flatten PDF, PDF flattener, flatten PDF form, merge PDF layers, PDF finalize')} canonical="/flatten-pdf" />
+    <SEO title={t('tool.flattenSeoTitle', 'Flatten PDF Online Free - Merge Form Fields')} description={t('tool.flattenSeoDesc', 'Flatten PDF forms and annotations online. Make content permanent and uneditable - no sign-up required, 100% free.')} keywords={t('tool.flattenSeoKeywords', 'flatten PDF, PDF flattener, flatten PDF form, merge PDF layers, PDF finalize')} canonical="/flatten-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

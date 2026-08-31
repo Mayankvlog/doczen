@@ -102,8 +102,8 @@ export default function Home() {
   return (
     <>
     <SEO
-  title={t('tool.seo.defaultTitle', 'Free Online PDF Editor - Merge, Split & Convert')}
-  description={t('tool.seo.defaultDesc', 'Doczen - free online PDF editor. Merge, split, compress, edit PDFs. Convert to Word, Excel, PPT, JPG. Protect, unlock, sign PDFs. No registration needed.')}
+  title={t('tool.seo.defaultTitle', 'Free PDF Editor Online - Merge, Split, Convert')}
+  description={t('tool.seo.defaultDesc', 'Edit, merge, split, compress and convert PDF files online for free. No registration required. Works in your browser - fast and secure.')}
   keywords={homepageKeywords}
   canonical="/"
   image="/og-home.png"

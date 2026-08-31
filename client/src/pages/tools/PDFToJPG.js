@@ -50,7 +50,7 @@ export default function PDFToJPG() {
 
   return (
     <>
-    <SEO title={t('seo.pdfToJpg.title', 'PDF to JPG Converter Online Free')} description={t('seo.pdfToJpg.desc', 'Convert PDF pages to high-quality JPG images online for free. PDF to image converter by Doczen.')} keywords={t('seo.pdfToJpg.keywords', 'PDF to JPG, convert PDF to image, PDF to picture, PDF to JPEG, extract images from PDF')} canonical="/pdf-to-jpg" />
+    <SEO title={t('seo.pdfToJpg.title', 'PDF to JPG Converter - Free Online Tool')} description={t('seo.pdfToJpg.desc', 'Convert PDF pages to high-quality JPG images online. Fast, accurate conversion - no sign-up required, 100% free.')} keywords={t('seo.pdfToJpg.keywords', 'PDF to JPG, convert PDF to image, PDF to picture, PDF to JPEG, extract images from PDF')} canonical="/pdf-to-jpg" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('seo.pdfToJpg.title', 'PDF to JPG Converter Online Free')}</h1>

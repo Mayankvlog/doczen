@@ -88,7 +88,7 @@ export default function Metadata() {
 
   return (
     <>
-    <SEO title={t('tool.metadataSeoTitle', 'Edit PDF Metadata Online Free - PDF Properties Editor')} description={t('tool.metadataSeoDesc', 'View and edit PDF metadata online for free. Change PDF title, author, subject, and keywords with Doczen.')} keywords={t('tool.metadataSeoKeywords', 'PDF metadata, edit PDF properties, PDF info, PDF title author, PDF document info')} canonical="/pdf-metadata" />
+    <SEO title={t('tool.metadataSeoTitle', 'Edit PDF Metadata Online - Properties Editor')} description={t('tool.metadataSeoDesc', 'View and edit PDF metadata online. Change title, author, subject, and keywords - no sign-up required, 100% free.')} keywords={t('tool.metadataSeoKeywords', 'PDF metadata, edit PDF properties, PDF info, PDF title author, PDF document info')} canonical="/pdf-metadata" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

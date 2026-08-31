@@ -47,7 +47,7 @@ export default function JPGToPDF() {
 
   return (
     <>
-    <SEO title={t('seo.jpgToPdf.title', 'JPG to PDF - Convert Images to PDF Free')} description={t('seo.jpgToPdf.desc', 'Convert JPG images to PDF documents online for free. Create PDF from multiple images with Doczen.')} keywords={t('seo.jpgToPdf.keywords', 'JPG to PDF, image to PDF, convert JPG to PDF, pictures to PDF, make PDF from images')} canonical="/jpg-to-pdf" />
+    <SEO title={t('seo.jpgToPdf.title', 'JPG to PDF Converter - Free Online Tool')} description={t('seo.jpgToPdf.desc', 'Convert JPG images to PDF documents online. Create PDFs from multiple images - no sign-up required, 100% free.')} keywords={t('seo.jpgToPdf.keywords', 'JPG to PDF, image to PDF, convert JPG to PDF, pictures to PDF, make PDF from images')} canonical="/jpg-to-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.jpgToPdf', 'JPG to PDF')}</h1>

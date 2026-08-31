@@ -78,7 +78,7 @@ export default function RemoveWatermark() {
 
   return (
     <>
-    <SEO title={t('tool.removeWatermarkSeoTitle', 'Remove Watermark from PDF Online Free')} description={t('tool.removeWatermarkSeoDesc', 'Remove watermarks from PDF files online for free. Clean your PDF documents by removing text and image watermarks with Doczen.')} keywords={t('tool.removeWatermarkSeoKeywords', 'remove watermark from PDF, delete PDF watermark, PDF watermark remover, clean PDF, remove text from PDF')} canonical="/remove-watermark" />
+    <SEO title={t('tool.removeWatermarkSeoTitle', 'Remove Watermark from PDF - Free Online')} description={t('tool.removeWatermarkSeoDesc', 'Remove watermarks from PDF files online. Clean documents by removing text and image watermarks - no sign-up required, 100% free.')} keywords={t('tool.removeWatermarkSeoKeywords', 'remove watermark from PDF, delete PDF watermark, PDF watermark remover, clean PDF, remove text from PDF')} canonical="/remove-watermark" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

@@ -52,7 +52,7 @@ export default function SplitPDF() {
 
   return (
     <>
-    <SEO title={t('seo.splitTitle', 'Split PDF Online - Separate PDF Pages Free')} description={t('seo.splitDesc', 'Split PDF files into multiple documents online for free. Extract pages from PDF or split by page ranges with Doczen. Free PDF splitter tool.')} keywords={t('tool.splitKeywords', 'split PDF, separate PDF pages, extract PDF pages, PDF splitter, divide PDF, split PDF online free')} canonical="/split-pdf" toolName={t('tool.splitPdf', 'Split PDF')} />
+    <SEO title={t('seo.splitTitle', 'Split PDF Online Free - Separate Pages Fast')} description={t('seo.splitDesc', 'Split PDF files into multiple documents online. Extract pages or split by page range in seconds. No sign-up required, 100% free.')} keywords={t('tool.splitKeywords', 'split PDF, separate PDF pages, extract PDF pages, PDF splitter, divide PDF, split PDF online free')} canonical="/split-pdf" toolName={t('tool.splitPdf', 'Split PDF')} />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

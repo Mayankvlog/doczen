@@ -47,7 +47,7 @@ export default function WordToPDF() {
 
   return (
     <>
-    <SEO title={t('seo.wordToPdf.title', 'Word to PDF Converter Online Free')} description={t('seo.wordToPdf.desc', 'Convert Word documents to PDF format online for free. DOCX to PDF converter by Doczen.')} keywords={t('seo.wordToPdf.keywords', 'Word to PDF, convert Word to PDF, DOCX to PDF, DOC to PDF, document to PDF')} canonical="/word-to-pdf" />
+    <SEO title={t('seo.wordToPdf.title', 'Word to PDF Converter - Free Online Tool')} description={t('seo.wordToPdf.desc', 'Convert Word documents to PDF format online. DOCX to PDF in seconds - no sign-up required, 100% free.')} keywords={t('seo.wordToPdf.keywords', 'Word to PDF, convert Word to PDF, DOCX to PDF, DOC to PDF, document to PDF')} canonical="/word-to-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.wordToPdf', 'Word to PDF')}</h1>

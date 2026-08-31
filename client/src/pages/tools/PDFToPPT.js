@@ -48,7 +48,7 @@ export default function PDFToPPT() {
 
   return (
     <>
-    <SEO title={t('tool.pdfToPptTitle', 'PDF to PPT Converter Online Free')} description={t('tool.pdfToPptDesc', 'Convert PDF files to PowerPoint presentations online for free. PDF to PPT converter by Doczen.')} keywords={t('tool.pdfToPptKeywords', 'PDF to PPT, convert PDF to PowerPoint, PDF to presentation, PDF to slides')} canonical="/pdf-to-ppt" />
+    <SEO title={t('tool.pdfToPptTitle', 'PDF to PPT Converter - Free Online Tool')} description={t('tool.pdfToPptDesc', 'Convert PDF files to PowerPoint presentations online. Preserve layouts perfectly - no sign-up required, 100% free.')} keywords={t('tool.pdfToPptKeywords', 'PDF to PPT, convert PDF to PowerPoint, PDF to presentation, PDF to slides')} canonical="/pdf-to-ppt" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.pdfToPpt', 'PDF to PowerPoint')}</h1>

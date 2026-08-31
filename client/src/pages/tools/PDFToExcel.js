@@ -48,7 +48,7 @@ export default function PDFToExcel() {
   
   return (
     <>
-    <SEO title={t('tool.pdfToExcelTitle', 'PDF to Excel Converter Online Free')} description={t('tool.pdfToExcelDesc', 'Convert PDF files to editable Excel spreadsheets online for free. Extract tables from PDF to XLSX with Doczen.')} keywords={t('tool.pdfToExcelKeywords', 'PDF to Excel, convert PDF to Excel, PDF to XLSX, extract PDF to Excel, PDF converter')} canonical="/pdf-to-excel" />
+    <SEO title={t('tool.pdfToExcelTitle', 'PDF to Excel Converter - Free Online Tool')} description={t('tool.pdfToExcelDesc', 'Convert PDF files to editable Excel spreadsheets online. Extract tables perfectly - no sign-up required, 100% free.')} keywords={t('tool.pdfToExcelKeywords', 'PDF to Excel, convert PDF to Excel, PDF to XLSX, extract PDF to Excel, PDF converter')} canonical="/pdf-to-excel" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.pdfToExcelTitle', 'PDF to Excel Converter Online Free')}</h1>

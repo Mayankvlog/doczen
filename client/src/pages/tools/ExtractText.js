@@ -61,7 +61,7 @@ export default function ExtractText() {
 
   return (
     <>
-    <SEO title={t('seo.extractText.title', 'Extract Text from PDF Online Free')} description={t('seo.extractText.desc', 'Extract text from PDF files online for free. Copy text from scanned PDFs and documents with Doczen\'s text extractor.')} keywords={t('seo.extractText.keywords', 'extract text from PDF, PDF text extractor, copy text from PDF, PDF to text, read PDF')} canonical="/extract-text" />
+    <SEO title={t('seo.extractText.title', 'Extract Text from PDF - Free Online Tool')} description={t('seo.extractText.desc', 'Extract text from PDF files online. Copy content from any PDF instantly - no sign-up required, 100% free.')} keywords={t('seo.extractText.keywords', 'extract text from PDF, PDF text extractor, copy text from PDF, PDF to text, read PDF')} canonical="/extract-text" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

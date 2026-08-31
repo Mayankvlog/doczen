@@ -67,7 +67,7 @@ export default function MergePDF() {
   return (
     <>
     {/* ? PHASE 1 FIX: Add toolName prop for SoftwareApplication schema generation */}
-    <SEO title={t('seo.mergeTitle', 'Merge PDF Online - Combine PDF Files Free')} description={t('seo.mergeDesc', 'Merge multiple PDF files into one document online for free. Combine PDFs instantly with Doczen\'s easy-to-use PDF merger tool.')} keywords={t('tool.mergeKeywords', 'merge PDF, combine PDF, join PDF files, PDF merger, merge PDF online free')} canonical="/merge-pdf" toolName="Merge PDF" />
+    <SEO title={t('seo.mergeTitle', 'Merge PDF Files Online Free - Combine PDFs')} description={t('seo.mergeDesc', 'Merge multiple PDF files into one document online. Combine PDFs instantly - no sign-up required. Fast, secure, and works in your browser.')} keywords={t('tool.mergeKeywords', 'merge PDF, combine PDF, join PDF files, PDF merger, merge PDF online free')} canonical="/merge-pdf" toolName="Merge PDF" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10 animate-fade-in-down">

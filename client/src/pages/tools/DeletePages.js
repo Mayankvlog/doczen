@@ -70,7 +70,7 @@ export default function DeletePages() {
 
   return (
     <>
-    <SEO title={t('seo.deletePages.title', 'Delete Pages from PDF Online Free')} description={t('seo.deletePages.desc', 'Remove unwanted pages from your PDF document online for free. Delete specific PDF pages instantly with Doczen.')} keywords={t('seo.deletePages.keywords', 'delete PDF pages, remove PDF pages, delete pages from PDF, PDF page remover')} canonical="/delete-pages" />
+    <SEO title={t('seo.deletePages.title', 'Delete Pages from PDF Online Free - Fast')} description={t('seo.deletePages.desc', 'Remove unwanted pages from your PDF document online. Delete specific pages instantly - no sign-up required, 100% free.')} keywords={t('seo.deletePages.keywords', 'delete PDF pages, remove PDF pages, delete pages from PDF, PDF page remover')} canonical="/delete-pages" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

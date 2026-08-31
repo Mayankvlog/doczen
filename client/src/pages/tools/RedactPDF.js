@@ -59,7 +59,7 @@ export default function RedactPDF() {
 
   return (
     <>
-    <SEO title={t('tool.redactSeoTitle', 'Redact PDF Online Free - Remove Sensitive Info')} description={t('tool.redactSeoDesc', 'Redact sensitive information from PDF files online for free. Permanently remove confidential text with Doczen.')} keywords={t('tool.redactSeoKeywords', 'redact PDF, PDF redaction, remove sensitive info from PDF, PDF blackout, confidential PDF')} canonical="/redact-pdf" />
+    <SEO title={t('tool.redactSeoTitle', 'Redact PDF Online Free - Remove Sensitive Data')} description={t('tool.redactSeoDesc', 'Redact sensitive information from PDF files online. Permanently remove confidential data - no sign-up required, 100% free.')} keywords={t('tool.redactSeoKeywords', 'redact PDF, PDF redaction, remove sensitive info from PDF, PDF blackout, confidential PDF')} canonical="/redact-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

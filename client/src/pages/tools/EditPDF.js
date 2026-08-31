@@ -123,7 +123,7 @@ export default function EditPDF() {
 
   return (
     <>
-    <SEO title={t('tool.editPdfTitle', 'Edit PDF Online Free - Edit PDF Files')} description={t('tool.editPdfDesc', 'Edit PDF files online for free. Add text, images, and annotations to your PDF documents with Doczen.')} keywords={t('tool.editPdfKeywords', 'edit PDF, PDF editor, edit PDF online, modify PDF, annotate PDF')} canonical="/edit-pdf" />
+    <SEO title={t('tool.editPdfTitle', 'Edit PDF Online Free - Text, Images, Pages')} description={t('tool.editPdfDesc', 'Edit PDF files online. Add text, images, and annotations to any PDF - no sign-up required, 100% free.')} keywords={t('tool.editPdfKeywords', 'edit PDF, PDF editor, edit PDF online, modify PDF, annotate PDF')} canonical="/edit-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.editPdfTitle', 'Edit PDF Online Free - Edit PDF Files')}</h1>
