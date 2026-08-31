@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -70,7 +72,7 @@ export default function ReorderPages() {
 
   return (
     <>
-    <SEO title={t('seo.reorderPages.title', 'Reorder PDF Pages Online Free - Drag Drop')} description={t('seo.reorderPages.desc', 'Rearrange pages in your PDF document online. Change page order with drag and drop - no sign-up required, 100% free.')} keywords={t('seo.reorderPages.keywords', 'reorder PDF pages, rearrange PDF, PDF page organizer, change PDF page order')} canonical="/reorder-pages" />
+    <SEO title={t('seo.reorderPages.title', 'Reorder PDF Pages Online Free - Drag Drop')} description={t('seo.reorderPages.desc', 'Rearrange pages in your PDF document online. Change page order with drag and drop - no sign-up required, 100% free.')} keywords={[ t('seo.reorderPages.keywords', 'reorder PDF pages, rearrange PDF, PDF page organizer, change PDF page order, reorder pages within a PDF, move a page within a PDF, duplicate a page in a PDF, reverse the order of PDF pages, best way to reorder PDF pages, free online PDF editor, rearrange PDF page order, organize PDF pages, sort PDF pages, move PDF pages around'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/reorder-pages" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -70,7 +72,7 @@ export default function DeletePages() {
 
   return (
     <>
-    <SEO title={t('seo.deletePages.title', 'Delete Pages from PDF Online Free - Fast')} description={t('seo.deletePages.desc', 'Remove unwanted pages from your PDF document online. Delete specific pages instantly - no sign-up required, 100% free.')} keywords={t('seo.deletePages.keywords', 'delete PDF pages, remove PDF pages, delete pages from PDF, PDF page remover')} canonical="/delete-pages" />
+    <SEO title={t('seo.deletePages.title', 'Delete Pages from PDF Online Free - Fast')} description={t('seo.deletePages.desc', 'Remove unwanted pages from your PDF document online. Delete specific pages instantly - no sign-up required, 100% free.')} keywords={[ t('seo.deletePages.keywords', 'delete PDF pages, remove PDF pages, delete pages from PDF, PDF page remover, delete unwanted pages from a PDF, remove pages from a PDF by number, remove blank pages from a PDF, best way to delete PDF pages, free online PDF editor, remove specific PDF pages, delete pages by number, clear pages from PDF, remove pages from PDF online'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/delete-pages" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

@@ -5,6 +5,8 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
@@ -67,7 +69,7 @@ export default function AddPageNumbers() {
 
   return (
     <>
-    <SEO title={t('seo.addPageNumbersTitle', 'Add Page Numbers to PDF - Free Online')} description={t('seo.addPageNumbersDesc', 'Add page numbers to your PDF documents online. Customize position, font size, and starting number. No sign-up required.')} keywords={t('tool.addPageNumbersKeywords', 'add page numbers to PDF, PDF page numbers, insert page numbers, PDF numbering')} canonical="/add-page-numbers" />
+    <SEO title={t('seo.addPageNumbersTitle', 'Add Page Numbers to PDF - Free Online')} description={t('seo.addPageNumbersDesc', 'Add page numbers to your PDF documents online. Customize position, font size, and starting number. No sign-up required.')} keywords={[ t('tool.addPageNumbersKeywords', 'add page numbers to PDF, PDF page numbers, insert page numbers, PDF numbering, add page numbers to a PDF, number PDF pages from the back, add roman numerals to a PDF, best way to add page numbers, free online PDF editor, insert page numbers into PDF, customize PDF page numbers, add footer page numbers to PDF'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/add-page-numbers" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

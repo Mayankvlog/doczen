@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -50,7 +52,7 @@ export default function PDFToJPG() {
 
   return (
     <>
-    <SEO title={t('seo.pdfToJpg.title', 'PDF to JPG Converter - Free Online Tool')} description={t('seo.pdfToJpg.desc', 'Convert PDF pages to high-quality JPG images online. Fast, accurate conversion - no sign-up required, 100% free.')} keywords={t('seo.pdfToJpg.keywords', 'PDF to JPG, convert PDF to image, PDF to picture, PDF to JPEG, extract images from PDF')} canonical="/pdf-to-jpg" />
+    <SEO title={t('seo.pdfToJpg.title', 'PDF to JPG Converter - Free Online Tool')} description={t('seo.pdfToJpg.desc', 'Convert PDF pages to high-quality JPG images online. Fast, accurate conversion - no sign-up required, 100% free.')} keywords={[ t('seo.pdfToJpg.keywords', 'PDF to JPG, convert PDF to image, PDF to picture, PDF to JPEG, extract images from PDF, convert PDF pages to JPG images, convert a PDF to PNG images, turn a PDF page into an image, best way to convert PDF to image, free online PDF editor, PDF to image converter, convert PDF to high resolution JPG, PDF to photo, extract images from PDF document'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/pdf-to-jpg" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('seo.pdfToJpg.title', 'PDF to JPG Converter Online Free')}</h1>

@@ -6,6 +6,8 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -55,7 +57,7 @@ export default function ComparePDF() {
 
   return (
     <>
-    <SEO title={t('tool.compareSeoTitle', 'Compare PDF Files Online Free - Diff Tool')} description={t('tool.compareSeoDesc', 'Compare two PDF files online. Find differences in content, size, and structure - no sign-up required, 100% free.')} keywords={t('tool.compareSeoKeywords', 'compare PDF, PDF comparison, diff PDF, PDF differences, compare two PDF files')} canonical="/compare-pdf" />
+    <SEO title={t('tool.compareSeoTitle', 'Compare PDF Files Online Free - Diff Tool')} description={t('tool.compareSeoDesc', 'Compare two PDF files online. Find differences in content, size, and structure - no sign-up required, 100% free.')} keywords={[ t('tool.compareSeoKeywords', 'compare PDF, PDF comparison, diff PDF, PDF differences, compare two PDF files, compare two PDF documents, best way to compare PDF, free online PDF editor, PDF diff tool, compare PDF side by side, find differences in PDF, PDF version comparison, compare PDF content, PDF analysis tool'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/compare-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

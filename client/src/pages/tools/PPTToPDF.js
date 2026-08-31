@@ -6,6 +6,8 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -47,7 +49,7 @@ export default function PPTToPDF() {
 
   return (
     <>
-    <SEO title={t('tool.pptToPdfTitle', 'PPT to PDF Converter - Free Online Tool')} description={t('tool.pptToPdfDesc', 'Convert PowerPoint presentations to PDF format online. PPT to PDF in seconds - no sign-up required, 100% free.')} keywords={t('tool.pptToPdfKeywords', 'PPT to PDF, convert PowerPoint to PDF, PPTX to PDF, presentation to PDF, slide to PDF')} canonical="/ppt-to-pdf" />
+    <SEO title={t('tool.pptToPdfTitle', 'PPT to PDF Converter - Free Online Tool')} description={t('tool.pptToPdfDesc', 'Convert PowerPoint presentations to PDF format online. PPT to PDF in seconds - no sign-up required, 100% free.')} keywords={[ t('tool.pptToPdfKeywords', 'PPT to PDF, convert PowerPoint to PDF, PPTX to PDF, presentation to PDF, slide to PDF, convert PowerPoint slides to PDF, convert a PowerPoint to a PDF, best way to convert PowerPoint to PDF, free online PDF editor, PowerPoint to PDF converter, PPT to PDF online, presentation to PDF format, slides to PDF free'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/ppt-to-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.pptToPdfTitle', 'PPT to PDF Converter Online Free')}</h1>

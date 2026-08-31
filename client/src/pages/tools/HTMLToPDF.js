@@ -6,6 +6,8 @@ import { useDownloadHandler, gtagEvent } from '../../services/api';
 const API_BASE = process.env.REACT_APP_API_URL || '';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -71,7 +73,7 @@ export default function HTMLToPDF() {
 
   return (
     <>
-    <SEO title={t('tool.htmlToPdfPageTitle', 'HTML to PDF Converter - Free Online Tool')} description={t('tool.htmlToPdfSeoDesc', 'Convert HTML and text content to PDF documents online. Create PDFs from web pages - no sign-up required, 100% free.')} keywords={t('tool.htmlToPdfSeoKeywords', 'HTML to PDF, text to PDF, convert HTML to PDF, create PDF from text, web page to PDF')} canonical="/html-to-pdf" />
+    <SEO title={t('tool.htmlToPdfPageTitle', 'HTML to PDF Converter - Free Online Tool')} description={t('tool.htmlToPdfSeoDesc', 'Convert HTML and text content to PDF documents online. Create PDFs from web pages - no sign-up required, 100% free.')} keywords={[ t('tool.htmlToPdfSeoKeywords', 'HTML to PDF, text to PDF, convert HTML to PDF, create PDF from text, web page to PDF, make a PDF from HTML content, convert web pages to a PDF, save a web page as a PDF, best way to convert HTML to PDF, free online PDF editor, HTML to PDF converter, create PDF from URL, web content to PDF, save webpage as PDF'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/html-to-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

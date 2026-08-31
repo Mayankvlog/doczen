@@ -6,6 +6,8 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -88,7 +90,7 @@ export default function Metadata() {
 
   return (
     <>
-    <SEO title={t('tool.metadataSeoTitle', 'Edit PDF Metadata Online - Properties Editor')} description={t('tool.metadataSeoDesc', 'View and edit PDF metadata online. Change title, author, subject, and keywords - no sign-up required, 100% free.')} keywords={t('tool.metadataSeoKeywords', 'PDF metadata, edit PDF properties, PDF info, PDF title author, PDF document info')} canonical="/pdf-metadata" />
+    <SEO title={t('tool.metadataSeoTitle', 'Edit PDF Metadata Online - Properties Editor')} description={t('tool.metadataSeoDesc', 'View and edit PDF metadata online. Change title, author, subject, and keywords - no sign-up required, 100% free.')} keywords={[ t('tool.metadataSeoKeywords', 'PDF metadata, edit PDF properties, PDF info, PDF title author, PDF document info, edit PDF metadata and document properties, best way to edit PDF properties, free online PDF editor, change PDF metadata, PDF document properties editor, edit PDF title and author, modify PDF metadata online, PDF info editor'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/pdf-metadata" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

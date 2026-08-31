@@ -7,6 +7,8 @@ import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/
 import { useToast } from '../../context/ToastContext';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -63,7 +65,7 @@ export default function CompressPDF() {
 
   return (
     <>
-    <SEO title={t('seo.compressTitle', 'Compress PDF Online - Reduce File Size Free')} description={t('seo.compressDesc', 'Compress PDF files online to reduce file size without losing quality. Shrink PDF from MB to KB instantly. No sign-up required.')} keywords={t('tool.compressKeywords', 'compress PDF, reduce PDF size, PDF compressor, shrink PDF, optimize PDF, compress PDF online free')} canonical="/compress-pdf" toolName={t('tool.compressPdf', 'Compress PDF')} />
+    <SEO title={t('seo.compressTitle', 'Compress PDF Online - Reduce File Size Free')} description={t('seo.compressDesc', 'Compress PDF files online to reduce file size without losing quality. Shrink PDF from MB to KB instantly. No sign-up required.')} keywords={[ t('tool.compressKeywords', 'compress PDF, reduce PDF size, PDF compressor, shrink PDF,optimize PDF, compress PDF online free, compress a large PDF file, reduce PDF file size online, optimize a PDF for emailing, compress a PDF for WhatsApp, best way to compress PDF, how to compress PDF, free online PDF editor, shrink PDF without losing quality, make PDF smaller, reduce PDF size for email attachment, compress PDF for upload'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/compress-pdf" toolName={t('tool.compressPdf', 'Compress PDF')} />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10 animate-fade-in-down">

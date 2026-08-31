@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -47,7 +49,7 @@ export default function PDFToTXT() {
 
   return (
     <>
-    <SEO title={t('seo.pdfToTxt.title', 'PDF to TXT Converter - Free Online Tool')} description={t('seo.pdfToTxt.desc', 'Extract text from PDF files online. Convert PDF to plain text instantly - no sign-up required, 100% free.')} keywords={t('seo.pdfToTxt.keywords', 'PDF to TXT, extract text from PDF, PDF text extraction, convert PDF to text, PDF to plain text')} canonical="/pdf-to-txt" />
+    <SEO title={t('seo.pdfToTxt.title', 'PDF to TXT Converter - Free Online Tool')} description={t('seo.pdfToTxt.desc', 'Extract text from PDF files online. Convert PDF to plain text instantly - no sign-up required, 100% free.')} keywords={[ t('seo.pdfToTxt.keywords', 'PDF to TXT, extract text from PDF, PDF text extraction, convert PDF to text, PDF to plain text, extract text from a PDF file, turn a PDF into plain text, convert a PDF back to original text, free online PDF editor, PDF to text converter, extract text from PDF online, copy text from PDF, PDF content extraction'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/pdf-to-txt" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('seo.pdfToTxt.title', 'PDF to TXT - Extract Text from PDF Free')}</h1>

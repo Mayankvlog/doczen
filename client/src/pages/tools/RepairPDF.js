@@ -6,6 +6,8 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -52,7 +54,7 @@ export default function RepairPDF() {
 
   return (
     <>
-    <SEO title={t('tool.repairPdfTitle', 'Repair PDF Online Free - Fix Corrupted Files')} description={t('tool.repairPdfDesc', 'Repair damaged or corrupted PDF files online. Fix errors and recover documents - no sign-up required, 100% free.')} keywords={t('tool.repairPdfKeywords', 'repair PDF, fix corrupted PDF, PDF repair tool, recover PDF, restore PDF')} canonical="/repair-pdf" />
+    <SEO title={t('tool.repairPdfTitle', 'Repair PDF Online Free - Fix Corrupted Files')} description={t('tool.repairPdfDesc', 'Repair damaged or corrupted PDF files online. Fix errors and recover documents - no sign-up required, 100% free.')} keywords={[ t('tool.repairPdfKeywords', 'repair PDF, fix corrupted PDF, PDF repair tool, recover PDF, restore PDF, repair a corrupted PDF file, recover text from a damaged PDF, fix the resolution of a PDF, best way to repair PDF, free online PDF editor, fix PDF errors, repair damaged PDF online, recover corrupted PDF document, restore PDF file'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/repair-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

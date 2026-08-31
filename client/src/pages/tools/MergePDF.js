@@ -6,6 +6,8 @@ import { handleToolSubmit, useDownloadHandler, gtagEvent, gtagToolCompletion, gt
 import { useToast } from '../../context/ToastContext';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
@@ -67,7 +69,7 @@ export default function MergePDF() {
   return (
     <>
     {/* ? PHASE 1 FIX: Add toolName prop for SoftwareApplication schema generation */}
-    <SEO title={t('seo.mergeTitle', 'Merge PDF Files Online Free - Combine PDFs')} description={t('seo.mergeDesc', 'Merge multiple PDF files into one document online. Combine PDFs instantly - no sign-up required. Fast, secure, and works in your browser.')} keywords={t('tool.mergeKeywords', 'merge PDF, combine PDF, join PDF files, PDF merger, merge PDF online free')} canonical="/merge-pdf" toolName="Merge PDF" />
+    <SEO title={t('seo.mergeTitle', 'Merge PDF Files Online Free - Combine PDFs')} description={t('seo.mergeDesc', 'Merge multiple PDF files into one document online. Combine PDFs instantly - no sign-up required. Fast, secure, and works in your browser.')} keywords={[ t('tool.mergeKeywords', 'merge PDF, combine PDF, join PDF files, PDF merger, merge PDF online free, merge PDF files online, combine PDF pages into one document, merge PDF files from Google Drive, combine two PDF files into one, merge multiple PDFs into one document, best way to merge PDFs, how to merge PDFs, free online PDF editor, PDF combiner, join PDF online, merge scanned documents into one PDF, combine PDF without losing quality'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/merge-pdf" toolName="Merge PDF" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10 animate-fade-in-down">

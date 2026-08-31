@@ -6,6 +6,8 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -60,7 +62,7 @@ export default function PDFToPDFA() {
 
   return (
     <>
-    <SEO title={t('tool.pdfToPdfaTitle', 'PDF to PDF/A Converter - Archive Format')} description={t('tool.pdfToPdfaDesc', 'Convert PDF files to PDF/A format for long-term archiving. ISO compliant output - no sign-up required, 100% free.')} keywords={t('tool.pdfToPdfaKeywords', 'PDF to PDF/A, PDF/A converter, archive PDF, PDF archiving, PDF standardization')} canonical="/pdf-to-pdfa" />
+    <SEO title={t('tool.pdfToPdfaTitle', 'PDF to PDF/A Converter - Archive Format')} description={t('tool.pdfToPdfaDesc', 'Convert PDF files to PDF/A format for long-term archiving. ISO compliant output - no sign-up required, 100% free.')} keywords={[ t('tool.pdfToPdfaKeywords', 'PDF to PDF/A, PDF/A converter, archive PDF, PDF archiving, PDF standardization, convert a PDF to PDF/A archive format, finalize a PDF for archiving, convert a PDF to a certified file, best way to archive PDF, free online PDF editor, PDF/A compliance, convert PDF to archival format, PDF long-term preservation, ISO PDF/A converter'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/pdf-to-pdfa" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

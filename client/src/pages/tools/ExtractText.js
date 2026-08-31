@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -61,7 +63,7 @@ export default function ExtractText() {
 
   return (
     <>
-    <SEO title={t('seo.extractText.title', 'Extract Text from PDF - Free Online Tool')} description={t('seo.extractText.desc', 'Extract text from PDF files online. Copy content from any PDF instantly - no sign-up required, 100% free.')} keywords={t('seo.extractText.keywords', 'extract text from PDF, PDF text extractor, copy text from PDF, PDF to text, read PDF')} canonical="/extract-text" />
+    <SEO title={t('seo.extractText.title', 'Extract Text from PDF - Free Online Tool')} description={t('seo.extractText.desc', 'Extract text from PDF files online. Copy content from any PDF instantly - no sign-up required, 100% free.')} keywords={[ t('seo.extractText.keywords', 'extract text from PDF, PDF text extractor, copy text from PDF, PDF to text, read PDF, extract text from a PDF file, extract all text from a PDF, OCR a scanned PDF for free, make a PDF searchable with OCR, free online PDF editor, extract text from scanned PDF, copy text from PDF document, PDF OCR online, convert scanned PDF to text'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/extract-text" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

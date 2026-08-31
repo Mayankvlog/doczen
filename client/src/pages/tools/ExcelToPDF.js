@@ -6,6 +6,8 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
+import { getLongTailKeywordSample } from '../../data/seoKeywords';
+import { getGeoKeywordSample } from '../../data/geoKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -48,7 +50,7 @@ export default function ExcelToPDF() {
   
   return (
     <>
-    <SEO title={t('tool.excelToPdfTitle', 'Excel to PDF Converter - Free Online Tool')} description={t('tool.excelToPdfDesc', 'Convert Excel spreadsheets to PDF format online. XLSX to PDF in seconds - no sign-up required, 100% free.')} keywords={t('tool.excelToPdfKeywords', 'Excel to PDF, convert Excel to PDF, XLSX to PDF, spreadsheet to PDF')} canonical="/excel-to-pdf" />
+    <SEO title={t('tool.excelToPdfTitle', 'Excel to PDF Converter - Free Online Tool')} description={t('tool.excelToPdfDesc', 'Convert Excel spreadsheets to PDF format online. XLSX to PDF in seconds - no sign-up required, 100% free.')} keywords={[ t('tool.excelToPdfKeywords', 'Excel to PDF, convert Excel to PDF, XLSX to PDF, spreadsheet to PDF, convert Excel spreadsheets to PDF, convert an Excel sheet to a PDF, best way to convert Excel to PDF, free online PDF editor, Excel to PDF converter online, XLSX to PDF converter, spreadsheet to PDF format, Excel document to PDF free'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/excel-to-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.excelToPdfTitle', 'Excel to PDF Converter Online Free')}</h1>
