@@ -5,8 +5,8 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
-import { getLongTailKeywordSample } from '../../data/seoKeywords';
-import { getGeoKeywordSample } from '../../data/geoKeywords';
+import { generateLongTailKeywords } from '../../data/seoKeywords';
+import { generateGeoKeywords } from '../../data/geoKeywords';
 import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
@@ -62,7 +62,7 @@ export default function RotatePDF() {
 
   return (
     <>
-    <SEO title={t('seo.rotateTitle', 'Rotate PDF Pages Online Free - Any Angle')} description={t('seo.rotateDesc', 'Rotate PDF pages online for free. Rotate individual pages or entire documents 90, 180, or 270 degrees. No sign-up required.')} keywords={[ t('tool.rotateKeywords', 'rotate PDF, rotate PDF pages, PDF rotation, flip PDF, turn PDF, rotate PDF pages permanently, flip a PDF page horizontally, flip a PDF page vertically, set the page orientation of a PDF, best way to rotate PDF, how to rotate PDF, free online PDF editor, rotate individual pages, rotate PDF 90 180 270 degrees, mirror a PDF document, change PDF orientation'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/rotate-pdf" />
+    <SEO title={t('seo.rotateTitle', 'Rotate PDF Pages Online Free - Any Angle')} description={t('seo.rotateDesc', 'Rotate PDF pages online for free. Rotate individual pages or entire documents 90, 180, or 270 degrees. No sign-up required.')} keywords={[ t('tool.rotateKeywords', 'rotate PDF, rotate PDF pages, PDF rotation, flip PDF, turn PDF, rotate PDF pages permanently, flip a PDF page horizontally, flip a PDF page vertically, set the page orientation of a PDF, best way to rotate PDF, how to rotate PDF, free online PDF editor, rotate individual pages, rotate PDF 90 180 270 degrees, mirror a PDF document, change PDF orientation'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/rotate-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

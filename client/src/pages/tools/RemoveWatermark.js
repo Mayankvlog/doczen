@@ -6,8 +6,8 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
-import { getLongTailKeywordSample } from '../../data/seoKeywords';
-import { getGeoKeywordSample } from '../../data/geoKeywords';
+import { generateLongTailKeywords } from '../../data/seoKeywords';
+import { generateGeoKeywords } from '../../data/geoKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -80,7 +80,7 @@ export default function RemoveWatermark() {
 
   return (
     <>
-    <SEO title={t('tool.removeWatermarkSeoTitle', 'Remove Watermark from PDF - Free Online')} description={t('tool.removeWatermarkSeoDesc', 'Remove watermarks from PDF files online. Clean documents by removing text and image watermarks - no sign-up required, 100% free.')} keywords={[ t('tool.removeWatermarkSeoKeywords', 'remove watermark from PDF, delete PDF watermark, PDF watermark remover, clean PDF, remove text from PDF, remove a watermark from a PDF, best way to remove watermark from PDF, free online PDF editor, delete watermark from PDF online, remove text watermark, remove image watermark from PDF, clean PDF watermark, erase PDF watermark'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/remove-watermark" />
+    <SEO title={t('tool.removeWatermarkSeoTitle', 'Remove Watermark from PDF - Free Online')} description={t('tool.removeWatermarkSeoDesc', 'Remove watermarks from PDF files online. Clean documents by removing text and image watermarks - no sign-up required, 100% free.')} keywords={[ t('tool.removeWatermarkSeoKeywords', 'remove watermark from PDF, delete PDF watermark, PDF watermark remover, clean PDF, remove text from PDF, remove a watermark from a PDF, best way to remove watermark from PDF, free online PDF editor, delete watermark from PDF online, remove text watermark, remove image watermark from PDF, clean PDF watermark, erase PDF watermark'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/remove-watermark" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

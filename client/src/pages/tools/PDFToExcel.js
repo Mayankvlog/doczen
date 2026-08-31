@@ -6,8 +6,8 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
-import { getLongTailKeywordSample } from '../../data/seoKeywords';
-import { getGeoKeywordSample } from '../../data/geoKeywords';
+import { generateLongTailKeywords } from '../../data/seoKeywords';
+import { generateGeoKeywords } from '../../data/geoKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -50,7 +50,7 @@ export default function PDFToExcel() {
   
   return (
     <>
-    <SEO title={t('tool.pdfToExcelTitle', 'PDF to Excel Converter - Free Online Tool')} description={t('tool.pdfToExcelDesc', 'Convert PDF files to editable Excel spreadsheets online. Extract tables perfectly - no sign-up required, 100% free.')} keywords={[ t('tool.pdfToExcelKeywords', 'PDF to Excel, convert PDF to Excel, PDF to XLSX, extract PDF to Excel, PDF converter, convert PDF to Excel spreadsheets, extract a table from a PDF, convert a PDF table into a spreadsheet, best way to convert PDF to Excel, free online PDF editor, PDF to XLSX converter, extract tables from PDF, PDF to spreadsheet, convert PDF tables to Excel'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/pdf-to-excel" />
+    <SEO title={t('tool.pdfToExcelTitle', 'PDF to Excel Converter - Free Online Tool')} description={t('tool.pdfToExcelDesc', 'Convert PDF files to editable Excel spreadsheets online. Extract tables perfectly - no sign-up required, 100% free.')} keywords={[ t('tool.pdfToExcelKeywords', 'PDF to Excel, convert PDF to Excel, PDF to XLSX, extract PDF to Excel, PDF converter, convert PDF to Excel spreadsheets, extract a table from a PDF, convert a PDF table into a spreadsheet, best way to convert PDF to Excel, free online PDF editor, PDF to XLSX converter, extract tables from PDF, PDF to spreadsheet, convert PDF tables to Excel'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/pdf-to-excel" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.pdfToExcelTitle', 'PDF to Excel Converter Online Free')}</h1>

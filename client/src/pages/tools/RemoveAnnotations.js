@@ -6,8 +6,8 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
-import { getLongTailKeywordSample } from '../../data/seoKeywords';
-import { getGeoKeywordSample } from '../../data/geoKeywords';
+import { generateLongTailKeywords } from '../../data/seoKeywords';
+import { generateGeoKeywords } from '../../data/geoKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -54,7 +54,7 @@ export default function RemoveAnnotations() {
 
   return (
     <>
-    <SEO title={t('tool.removeAnnotationsSeoTitle', 'Remove Annotations from PDF - Free Online')} description={t('tool.removeAnnotationsSeoDesc', 'Remove comments, highlights, and markup from PDF files online. Clean up any PDF instantly - no sign-up required, 100% free.')} keywords={[ t('tool.removeAnnotationsSeoKeywords', 'remove PDF annotations, delete PDF comments, clear PDF markup, PDF cleanup, remove PDF highlights, remove annotations from a PDF, extract comments from a PDF, export PDF annotations, best way to remove PDF comments, free online PDF editor, remove sticky notes from PDF, clear PDF annotations, delete PDF highlights and underlines, clean PDF markup'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/remove-annotations" />
+    <SEO title={t('tool.removeAnnotationsSeoTitle', 'Remove Annotations from PDF - Free Online')} description={t('tool.removeAnnotationsSeoDesc', 'Remove comments, highlights, and markup from PDF files online. Clean up any PDF instantly - no sign-up required, 100% free.')} keywords={[ t('tool.removeAnnotationsSeoKeywords', 'remove PDF annotations, delete PDF comments, clear PDF markup, PDF cleanup, remove PDF highlights, remove annotations from a PDF, extract comments from a PDF, export PDF annotations, best way to remove PDF comments, free online PDF editor, remove sticky notes from PDF, clear PDF annotations, delete PDF highlights and underlines, clean PDF markup'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/remove-annotations" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

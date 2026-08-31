@@ -6,8 +6,8 @@ import ResultCard from '../../components/ResultCard';
 import { handleToolSubmit, useDownloadHandler, gtagEvent } from '../../services/api';
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
-import { getLongTailKeywordSample } from '../../data/seoKeywords';
-import { getGeoKeywordSample } from '../../data/geoKeywords';
+import { generateLongTailKeywords } from '../../data/seoKeywords';
+import { generateGeoKeywords } from '../../data/geoKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -50,7 +50,7 @@ export default function PDFToPPT() {
 
   return (
     <>
-    <SEO title={t('tool.pdfToPptTitle', 'PDF to PPT Converter - Free Online Tool')} description={t('tool.pdfToPptDesc', 'Convert PDF files to PowerPoint presentations online. Preserve layouts perfectly - no sign-up required, 100% free.')} keywords={[ t('tool.pdfToPptKeywords', 'PDF to PPT, convert PDF to PowerPoint, PDF to presentation, PDF to slides, convert PDF to PowerPoint slides, convert a PDF to a PowerPoint, convert a PDF to a slide deck, best way to convert PDF to PowerPoint, free online PDF editor, PDF to PowerPoint converter, PDF to PPTX, convert PDF to slides online, PDF presentation converter'), ...getLongTailKeywordSample(15), ...getGeoKeywordSample(15) ].join(', ')} canonical="/pdf-to-ppt" />
+    <SEO title={t('tool.pdfToPptTitle', 'PDF to PPT Converter - Free Online Tool')} description={t('tool.pdfToPptDesc', 'Convert PDF files to PowerPoint presentations online. Preserve layouts perfectly - no sign-up required, 100% free.')} keywords={[ t('tool.pdfToPptKeywords', 'PDF to PPT, convert PDF to PowerPoint, PDF to presentation, PDF to slides, convert PDF to PowerPoint slides, convert a PDF to a PowerPoint, convert a PDF to a slide deck, best way to convert PDF to PowerPoint, free online PDF editor, PDF to PowerPoint converter, PDF to PPTX, convert PDF to slides online, PDF presentation converter'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/pdf-to-ppt" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.pdfToPpt', 'PDF to PowerPoint')}</h1>
