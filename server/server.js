@@ -196,6 +196,16 @@ const forgotPasswordLimiter = rateLimit({
   message: 'Too many password reset requests, please try again after an hour'
 });
 
+// Normalize doubled /api/api prefix (legacy client builds append /api twice
+// or REACT_APP_API_URL was built with a trailing /api). Runs before ALL
+// /api routes + rate limiters so /api/api/auth/register === /api/auth/register.
+app.use((req, res, next) => {
+  if (req.url === '/api/api' || req.url.startsWith('/api/api/')) {
+    req.url = req.url.replace(/^(\/api)+/, '/api');
+  }
+  next();
+});
+
 // Apply rate limiting to all requests
 app.use('/api/', limiter);
 
