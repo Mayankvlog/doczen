@@ -7,6 +7,7 @@ import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import { generateLongTailKeywords } from '../../data/seoKeywords';
 import { generateGeoKeywords } from '../../data/geoKeywords';
+import { generateGhostKeywords } from '../../data/ghostKeywords';
 import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
@@ -60,7 +61,7 @@ export default function AddWatermark() {
 
   return (
     <>
-    <SEO title={t('seo.addWatermarkTitle', 'Add Watermark to PDF Free - Online Tool')} description={t('seo.addWatermarkDesc', 'Add text watermarks to PDF files online. Protect documents with custom watermarks instantly. No sign-up required, 100% free.')} keywords={[ t('tool.addWatermarkKeywords', 'PDF watermark, add watermark to PDF, watermark PDF, text watermark, PDF protection, add a watermark to a PDF document, add a stamp to a PDF, add a logo to a PDF page, best way to watermark PDF, free online PDF editor, add text watermark online, watermark PDF pages, protect PDF with watermark, add image watermark to PDF'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/add-watermark" />
+    <SEO title={t('seo.addWatermarkTitle', 'Add Watermark to PDF Free - Online Tool')} description={t('seo.addWatermarkDesc', 'Add text watermarks to PDF files online. Protect documents with custom watermarks instantly. No sign-up required, 100% free.')} keywords={[ t('tool.addWatermarkKeywords', 'PDF watermark, add watermark to PDF, watermark PDF, text watermark, PDF protection, add a watermark to a PDF document, add a stamp to a PDF, add a logo to a PDF page, best way to watermark PDF, free online PDF editor, add text watermark online, watermark PDF pages, protect PDF with watermark, add image watermark to PDF'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120), ...generateGhostKeywords(120) ].join(', ')} canonical="/add-watermark" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

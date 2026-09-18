@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../../index';
 import { generateLongTailKeywords } from '../../data/seoKeywords';
 import { generateGeoKeywords } from '../../data/geoKeywords';
+import { generateGhostKeywords } from '../../data/ghostKeywords';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -50,7 +51,7 @@ export default function PDFToWord() {
   
   return (
     <>
-    <SEO title={t('seo.pdfToWord.title', 'PDF to Word Converter - Free Online Tool')} description={t('seo.pdfToWord.desc', 'Convert PDF files to editable Word documents online. Preserves formatting perfectly - no sign-up required, 100% free.')} keywords={[ t('seo.pdfToWord.keywords', 'PDF to Word, convert PDF to Word, PDF to DOCX, PDF to DOC, PDF converter, convert PDF to editable Word documents, convert a PDF to a Word document, best way to convert PDF to Word, free online PDF editor, PDF to Word converter online, preserve PDF formatting, PDF to DOCX converter, edit PDF as Word document'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/pdf-to-word" />
+    <SEO title={t('seo.pdfToWord.title', 'PDF to Word Converter - Free Online Tool')} description={t('seo.pdfToWord.desc', 'Convert PDF files to editable Word documents online. Preserves formatting perfectly - no sign-up required, 100% free.')} keywords={[ t('seo.pdfToWord.keywords', 'PDF to Word, convert PDF to Word, PDF to DOCX, PDF to DOC, PDF converter, convert PDF to editable Word documents, convert a PDF to a Word document, best way to convert PDF to Word, free online PDF editor, PDF to Word converter online, preserve PDF formatting, PDF to DOCX converter, edit PDF as Word document'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120), ...generateGhostKeywords(120) ].join(', ')} canonical="/pdf-to-word" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('seo.pdfToWord.title', 'PDF to Word Converter Online Free')}</h1>

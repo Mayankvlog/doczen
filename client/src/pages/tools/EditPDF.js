@@ -8,6 +8,7 @@ import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import { generateLongTailKeywords } from '../../data/seoKeywords';
 import { generateGeoKeywords } from '../../data/geoKeywords';
+import { generateGhostKeywords } from '../../data/ghostKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -125,7 +126,7 @@ export default function EditPDF() {
 
   return (
     <>
-    <SEO title={t('tool.editPdfTitle', 'Edit PDF Online Free - Text, Images, Pages')} description={t('tool.editPdfDesc', 'Edit PDF files online. Add text, images, and annotations to any PDF - no sign-up required, 100% free.')} keywords={[ t('tool.editPdfKeywords', 'edit PDF, PDF editor, edit PDF online, modify PDF, annotate PDF, edit text inside a PDF, change text color in a PDF, replace text in a PDF, add an image to a PDF, remove text from a PDF, best way to edit PDF, free online PDF editor, edit PDF text, add images to PDF, modify PDF content, edit PDF without Adobe, online PDF editor free'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/edit-pdf" />
+    <SEO title={t('tool.editPdfTitle', 'Edit PDF Online Free - Text, Images, Pages')} description={t('tool.editPdfDesc', 'Edit PDF files online. Add text, images, and annotations to any PDF - no sign-up required, 100% free.')} keywords={[ t('tool.editPdfKeywords', 'edit PDF, PDF editor, edit PDF online, modify PDF, annotate PDF, edit text inside a PDF, change text color in a PDF, replace text in a PDF, add an image to a PDF, remove text from a PDF, best way to edit PDF, free online PDF editor, edit PDF text, add images to PDF, modify PDF content, edit PDF without Adobe, online PDF editor free'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120), ...generateGhostKeywords(120) ].join(', ')} canonical="/edit-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.editPdfTitle', 'Edit PDF Online Free - Edit PDF Files')}</h1>

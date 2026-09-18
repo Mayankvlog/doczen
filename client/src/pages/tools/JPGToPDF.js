@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../../index';
 import { generateLongTailKeywords } from '../../data/seoKeywords';
 import { generateGeoKeywords } from '../../data/geoKeywords';
+import { generateGhostKeywords } from '../../data/ghostKeywords';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -49,7 +50,7 @@ export default function JPGToPDF() {
 
   return (
     <>
-    <SEO title={t('seo.jpgToPdf.title', 'JPG to PDF Converter - Free Online Tool')} description={t('seo.jpgToPdf.desc', 'Convert JPG images to PDF documents online. Create PDFs from multiple images - no sign-up required, 100% free.')} keywords={[ t('seo.jpgToPdf.keywords', 'JPG to PDF, image to PDF, convert JPG to PDF, pictures to PDF, make PDF from images, convert JPG images to a PDF, combine images into a single PDF, turn images into a PDF document, create PDF from images, free online PDF editor, image to PDF converter, merge photos into PDF, JPG to PDF online, PNG to PDF converter'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/jpg-to-pdf" />
+    <SEO title={t('seo.jpgToPdf.title', 'JPG to PDF Converter - Free Online Tool')} description={t('seo.jpgToPdf.desc', 'Convert JPG images to PDF documents online. Create PDFs from multiple images - no sign-up required, 100% free.')} keywords={[ t('seo.jpgToPdf.keywords', 'JPG to PDF, image to PDF, convert JPG to PDF, pictures to PDF, make PDF from images, convert JPG images to a PDF, combine images into a single PDF, turn images into a PDF document, create PDF from images, free online PDF editor, image to PDF converter, merge photos into PDF, JPG to PDF online, PNG to PDF converter'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120), ...generateGhostKeywords(120) ].join(', ')} canonical="/jpg-to-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.jpgToPdf', 'JPG to PDF')}</h1>

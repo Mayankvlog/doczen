@@ -7,6 +7,7 @@ import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import { generateLongTailKeywords } from '../../data/seoKeywords';
 import { generateGeoKeywords } from '../../data/geoKeywords';
+import { generateGhostKeywords } from '../../data/ghostKeywords';
 import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
@@ -69,7 +70,7 @@ export default function ProtectPDF() {
 
   return (
     <>
-    <SEO title={t('seo.protectTitle', 'Protect PDF - Add Password Free Online')} description={t('seo.protectDesc', 'Add password protection to your PDF files online. Secure documents with encryption in seconds. No sign-up required, 100% free.')} keywords={[ t('tool.protectKeywords', 'protect PDF, password protect PDF, PDF security, encrypt PDF, lock PDF with password, lock a PDF with a password, best way to protect PDF, how to protect PDF, free online PDF editor, secure PDF document, add password to PDF, encrypt PDF file, protect PDF with encryption, password protect PDF online'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/protect-pdf" />
+    <SEO title={t('seo.protectTitle', 'Protect PDF - Add Password Free Online')} description={t('seo.protectDesc', 'Add password protection to your PDF files online. Secure documents with encryption in seconds. No sign-up required, 100% free.')} keywords={[ t('tool.protectKeywords', 'protect PDF, password protect PDF, PDF security, encrypt PDF, lock PDF with password, lock a PDF with a password, best way to protect PDF, how to protect PDF, free online PDF editor, secure PDF document, add password to PDF, encrypt PDF file, protect PDF with encryption, password protect PDF online'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120), ...generateGhostKeywords(120) ].join(', ')} canonical="/protect-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

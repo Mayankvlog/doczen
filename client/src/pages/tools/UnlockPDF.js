@@ -7,6 +7,7 @@ import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import { generateLongTailKeywords } from '../../data/seoKeywords';
 import { generateGeoKeywords } from '../../data/geoKeywords';
+import { generateGhostKeywords } from '../../data/ghostKeywords';
 import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
@@ -60,7 +61,7 @@ export default function UnlockPDF() {
 
   return (
     <>
-    <SEO title={t('seo.unlockTitle', 'Unlock PDF Online Free - Remove Password')} description={t('seo.unlockDesc', 'Remove password protection from PDF files online. Unlock secured documents instantly - no sign-up required, 100% free.')} keywords={[ t('tool.unlockKeywords', 'unlock PDF, remove PDF password, decrypt PDF, PDF password remover, unlock protected PDF, unlock a password protected PDF, best way to unlock PDF, how to unlock PDF, free online PDF editor, remove password from PDF, unlock PDF without password, decrypt PDF file, unlock secured PDF document'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/unlock-pdf" />
+    <SEO title={t('seo.unlockTitle', 'Unlock PDF Online Free - Remove Password')} description={t('seo.unlockDesc', 'Remove password protection from PDF files online. Unlock secured documents instantly - no sign-up required, 100% free.')} keywords={[ t('tool.unlockKeywords', 'unlock PDF, remove PDF password, decrypt PDF, PDF password remover, unlock protected PDF, unlock a password protected PDF, best way to unlock PDF, how to unlock PDF, free online PDF editor, remove password from PDF, unlock PDF without password, decrypt PDF file, unlock secured PDF document'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120), ...generateGhostKeywords(120) ].join(', ')} canonical="/unlock-pdf" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

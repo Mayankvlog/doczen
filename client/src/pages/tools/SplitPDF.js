@@ -8,6 +8,7 @@ import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import { generateLongTailKeywords } from '../../data/seoKeywords';
 import { generateGeoKeywords } from '../../data/geoKeywords';
+import { generateGhostKeywords } from '../../data/ghostKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -54,7 +55,7 @@ export default function SplitPDF() {
 
   return (
     <>
-    <SEO title={t('seo.splitTitle', 'Split PDF Online Free - Separate Pages Fast')} description={t('seo.splitDesc', 'Split PDF files into multiple documents online. Extract pages or split by page range in seconds. No sign-up required, 100% free.')} keywords={[ t('tool.splitKeywords', 'split PDF, separate PDF pages, extract PDF pages, PDF splitter, divide PDF, split PDF online free, split a PDF into separate files, split a PDF by page range, split a PDF into single pages, extract selected pages from a PDF, best way to split PDF, how to split PDF, free online PDF editor, split PDF by page numbers, extract pages from PDF, divide PDF by range'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/split-pdf" toolName={t('tool.splitPdf', 'Split PDF')} />
+    <SEO title={t('seo.splitTitle', 'Split PDF Online Free - Separate Pages Fast')} description={t('seo.splitDesc', 'Split PDF files into multiple documents online. Extract pages or split by page range in seconds. No sign-up required, 100% free.')} keywords={[ t('tool.splitKeywords', 'split PDF, separate PDF pages, extract PDF pages, PDF splitter, divide PDF, split PDF online free, split a PDF into separate files, split a PDF by page range, split a PDF into single pages, extract selected pages from a PDF, best way to split PDF, how to split PDF, free online PDF editor, split PDF by page numbers, extract pages from PDF, divide PDF by range'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120), ...generateGhostKeywords(120) ].join(', ')} canonical="/split-pdf" toolName={t('tool.splitPdf', 'Split PDF')} />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

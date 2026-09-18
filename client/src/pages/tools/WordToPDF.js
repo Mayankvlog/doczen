@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../../index';
 import { generateLongTailKeywords } from '../../data/seoKeywords';
 import { generateGeoKeywords } from '../../data/geoKeywords';
+import { generateGhostKeywords } from '../../data/ghostKeywords';
 import FileUploader from '../../components/FileUploader';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
@@ -49,7 +50,7 @@ export default function WordToPDF() {
 
   return (
     <>
-    <SEO title={t('seo.wordToPdf.title', 'Word to PDF Converter - Free Online Tool')} description={t('seo.wordToPdf.desc', 'Convert Word documents to PDF format online. DOCX to PDF in seconds - no sign-up required, 100% free.')} keywords={[ t('seo.wordToPdf.keywords', 'Word to PDF, convert Word to PDF, DOCX to PDF, DOC to PDF, document to PDF, convert Word documents to PDF, convert a Word document to PDF, best way to convert Word to PDF, free online PDF editor, Word to PDF converter online, DOCX to PDF converter, document to PDF format, Word document to PDF free'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/word-to-pdf" />
+    <SEO title={t('seo.wordToPdf.title', 'Word to PDF Converter - Free Online Tool')} description={t('seo.wordToPdf.desc', 'Convert Word documents to PDF format online. DOCX to PDF in seconds - no sign-up required, 100% free.')} keywords={[ t('seo.wordToPdf.keywords', 'Word to PDF, convert Word to PDF, DOCX to PDF, DOC to PDF, document to PDF, convert Word documents to PDF, convert a Word document to PDF, best way to convert Word to PDF, free online PDF editor, Word to PDF converter online, DOCX to PDF converter, document to PDF format, Word document to PDF free'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120), ...generateGhostKeywords(120) ].join(', ')} canonical="/word-to-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.wordToPdf', 'Word to PDF')}</h1>

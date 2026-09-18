@@ -8,6 +8,7 @@ import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import { generateLongTailKeywords } from '../../data/seoKeywords';
 import { generateGeoKeywords } from '../../data/geoKeywords';
+import { generateGhostKeywords } from '../../data/ghostKeywords';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
 
@@ -58,7 +59,7 @@ export default function SignPDF() {
 
   return (
     <>
-    <SEO title={t('tool.signPdfTitle', 'Sign PDF Online Free - Add Digital Signature')} description={t('tool.signPdfDesc', 'Sign PDF documents online. Add your digital signature to any PDF - no sign-up required, 100% free.')} keywords={[ t('tool.signPdfKeywords', 'sign PDF, PDF signature, electronic signature, sign document online, digital signature PDF, get a PDF signed electronically, sign a PDF without printing, best way to sign PDF, free online PDF editor, add digital signature to PDF, e-sign PDF online, sign PDF document, electronic signature free, PDF signature tool'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120) ].join(', ')} canonical="/sign-pdf" />
+    <SEO title={t('tool.signPdfTitle', 'Sign PDF Online Free - Add Digital Signature')} description={t('tool.signPdfDesc', 'Sign PDF documents online. Add your digital signature to any PDF - no sign-up required, 100% free.')} keywords={[ t('tool.signPdfKeywords', 'sign PDF, PDF signature, electronic signature, sign document online, digital signature PDF, get a PDF signed electronically, sign a PDF without printing, best way to sign PDF, free online PDF editor, add digital signature to PDF, e-sign PDF online, sign PDF document, electronic signature free, PDF signature tool'), ...generateLongTailKeywords(120), ...generateGeoKeywords(120), ...generateGhostKeywords(120) ].join(', ')} canonical="/sign-pdf" />
     <div className="max-w-3xl mx-auto px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{t('tool.signPdfTitle', 'Sign PDF Online - Add Signature to PDF Free')}</h1>
