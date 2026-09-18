@@ -52,7 +52,7 @@ jobs:
         working-directory: client
         env:
           CI: false
-          REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL || 'http://localhost' }}
+          REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL || 'https://www.doczen.co.in' }}
 
       - name: Run server tests
         run: npm test -- --passWithNoTests
