@@ -41,7 +41,7 @@ export default function Banner728x90() {
     if (!ref.current || failed) return;
 
     queueAd(
-      'https://www.highperformanceformat.com/' + AD_KEY + '/invoke.js',
+      'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
       {
         key: AD_KEY,
         format: 'iframe',

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const AD_KEY = '8727e64117c88455f41910d02f27827d';
-const AD_DOMAIN = process.env.REACT_APP_ADSTERRA_DOMAIN || 'penguinsincequalify.com';
+const AD_KEY = 'b11a753fbb1e311a5b2734272ab5edda';
 
 function queueAd(src, config, onerror, container) {
   if (!window._adQueue) {
@@ -42,11 +41,11 @@ export default function AdRightSidebar() {
     if (!ref.current || failed) return;
 
     queueAd(
-      'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
+      'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
       {
         key: AD_KEY,
         format: 'iframe',
-        height: 300,
+        height: 600,
         width: 160,
         container: 'sbRight-' + AD_KEY,
         params: {},
@@ -72,10 +71,10 @@ export default function AdRightSidebar() {
         ref={ref}
         id={'sbRight-' + AD_KEY}
         className="flex justify-center items-center"
-        style={{ minHeight: '300px' }}
+        style={{ minHeight: '600px' }}
       >
         {failed && (
-          <div className="w-[160px] h-[300px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm">
+          <div className="w-[160px] h-[600px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm">
             Ad
           </div>
         )}
