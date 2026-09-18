@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useLanguage } from '../../index';
 import { generateLongTailKeywords } from '../../data/seoKeywords';
 import { generateGeoKeywords } from '../../data/geoKeywords';
@@ -11,6 +11,11 @@ import SEO from '../../components/SEO';
 import { Link } from 'react-router-dom';
 import AdsterraNative from '../../components/AdsterraNative';
 import RelatedTools from '../../components/RelatedTools';
+
+const API_BASE = (process.env.REACT_APP_API_URL || '')
+  .trim()
+  .replace(/\/+$/, '')
+  .replace(/\/api$/i, '');
 
 export default function ExtractText() {
   const [file, setFile] = useState(null);
@@ -43,7 +48,10 @@ export default function ExtractText() {
       setExtractedText(data.text || '');
       setResult({ success: true, fileName: data.fileName, size: data.size });
       if (data.downloadUrl) {
-        const resp = await fetch(`${process.env.REACT_APP_API_URL || ''}${data.downloadUrl}`);
+        const downloadUrl = /^https?:\/\//i.test(data.downloadUrl)
+          ? data.downloadUrl
+          : `${API_BASE}${data.downloadUrl}`;
+        const resp = await fetch(downloadUrl);
         if (!resp.ok) {
           console.warn('Text download fetch failed:', resp.status);
         } else {

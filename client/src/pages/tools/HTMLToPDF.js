@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ResultCard from '../../components/ResultCard';
 import { useDownloadHandler, gtagEvent } from '../../services/api';
-const API_BASE = process.env.REACT_APP_API_URL || '';
+const API_BASE = (process.env.REACT_APP_API_URL || '')
+  .trim()
+  .replace(/\/+$/, '')
+  .replace(/\/api$/i, '');
 import SEO from '../../components/SEO';
 import { useLanguage } from '../../index';
 import { generateLongTailKeywords } from '../../data/seoKeywords';
