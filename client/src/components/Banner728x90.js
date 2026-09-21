@@ -1,37 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { loadAd } from './adQueue';
 
 const AD_KEY = '20c23d55e0aa2d4c55f69cec04907f2b';
-
-function queueAd(src, config, onerror, container) {
-  if (!window._adQueue) {
-    window._adQueue = [];
-    window._processAdQueue = function() {
-      if (window._adQueue.length === 0) return;
-      var item = window._adQueue[0];
-      window.atOptions = item.config;
-      var s = document.createElement('script');
-      s.src = item.src;
-      s.async = true;
-      s.setAttribute('data-cfasync', 'false');
-      s.onload = function() {
-        window._adQueue.shift();
-        setTimeout(window._processAdQueue, 100);
-      };
-      s.onerror = function() {
-        window._adQueue.shift();
-        if (item.onerror) item.onerror();
-        setTimeout(window._processAdQueue, 100);
-      };
-      (item.container || document.body).appendChild(s);
-    };
-  }
-  var alreadyQueued = window._adQueue.some(function(i) { return i.src === src; });
-  if (alreadyQueued) return;
-  window._adQueue.push({ src: src, config: config, onerror: onerror, container: container });
-  if (window._adQueue.length === 1) {
-    window._processAdQueue();
-  }
-}
 
 export default function Banner728x90() {
   var ref = useRef(null);
@@ -40,25 +10,29 @@ export default function Banner728x90() {
   useEffect(function() {
     if (!ref.current || failed) return;
 
-    queueAd(
-      'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
-      {
+    var cleanup = loadAd({
+      src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
+      config: {
         key: AD_KEY,
         format: 'iframe',
         height: 90,
         width: 728,
+        container: 'atContainer-' + AD_KEY,
         params: {},
       },
-      function() {
+      onerror: function() {
         setFailed(true);
       },
-      ref.current
-    );
+      container: ref.current,
+    });
+
+    return cleanup;
   }, [failed]);
 
   return (
     <div
       ref={ref}
+      id={'atContainer-' + AD_KEY}
       className="flex justify-center bg-gray-100 py-2 overflow-hidden"
       style={{ minHeight: '90px', minWidth: '100%', position: 'relative' }}
     >

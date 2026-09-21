@@ -1,37 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { loadAd } from './adQueue';
 
 const AD_KEY = '8727e64117c88455f41910d02f27827d';
-
-function queueAd(src, config, onerror, container) {
-  if (!window._adQueue) {
-    window._adQueue = [];
-    window._processAdQueue = function() {
-      if (window._adQueue.length === 0) return;
-      var item = window._adQueue[0];
-      window.atOptions = item.config;
-      var s = document.createElement('script');
-      s.src = item.src;
-      s.async = true;
-      s.setAttribute('data-cfasync', 'false');
-      s.onload = function() {
-        window._adQueue.shift();
-        setTimeout(window._processAdQueue, 100);
-      };
-      s.onerror = function() {
-        window._adQueue.shift();
-        if (item.onerror) item.onerror();
-        setTimeout(window._processAdQueue, 100);
-      };
-      (item.container || document.body).appendChild(s);
-    };
-  }
-  var alreadyQueued = window._adQueue.some(function(i) { return i.src === src && i.container === container; });
-  if (alreadyQueued) return;
-  window._adQueue.push({ src: src, config: config, onerror: onerror, container: container });
-  if (window._adQueue.length === 1) {
-    window._processAdQueue();
-  }
-}
 
 export default function AdLeftSidebar() {
   var ref = useRef(null);
@@ -40,9 +10,9 @@ export default function AdLeftSidebar() {
   useEffect(function() {
     if (!ref.current || failed) return;
 
-    queueAd(
-      'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
-      {
+    var cleanup = loadAd({
+      src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
+      config: {
         key: AD_KEY,
         format: 'iframe',
         height: 300,
@@ -50,19 +20,13 @@ export default function AdLeftSidebar() {
         container: 'sbLeft-' + AD_KEY,
         params: {},
       },
-      function() { 
-        setFailed(true); 
+      onerror: function() {
+        setFailed(true);
       },
-      ref.current
-    );
+      container: ref.current,
+    });
 
-    return function() {
-      if (window._adQueue) {
-        window._adQueue = window._adQueue.filter(function(item) {
-          return item.container !== ref.current;
-        });
-      }
-    };
+    return cleanup;
   }, [failed]);
 
   return (
