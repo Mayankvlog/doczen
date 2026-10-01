@@ -79,24 +79,64 @@ export default function SEO({
         '@type': 'Organization',
         '@id': `${BASE_URL}/#organization`,
         name: 'Doczen',
+        alternateName: 'Doczen Online PDF Editor',
         url: BASE_URL,
         logo: {
           '@type': 'ImageObject',
           '@id': `${BASE_URL}/#logo`,
-          url: `${BASE_URL}/logo.png`,
-          width: 250,
-          height: 250,
+          url: `${BASE_URL}/favicon.svg`,
+          contentUrl: `${BASE_URL}/favicon.svg`,
+          width: 512,
+          height: 512,
+          caption: 'Doczen',
         },
-        description: 'Free Online PDF Editor - Convert, merge, split, compress and edit PDFs online',
+        image: { '@id': `${BASE_URL}/#logo` },
+        description: 'Doczen is a free online PDF editor and converter with 31 browser-based tools for merging, splitting, compressing, rotating, protecting, unlocking, signing, redacting, editing and converting PDF files. No registration or software installation required.',
+        slogan: 'Free online PDF editor - merge, split, compress, convert, edit and sign PDFs in your browser.',
+        email: 'support@doczen.com',
+        address: {
+          '@type': 'PostalAddress',
+          addressCountry: 'IN',
+        },
+        areaServed: 'Worldwide',
         sameAs: [
           'https://www.facebook.com/profile.php?id=61590871045606&sk=directory_links',
           'https://www.instagram.com/doczen11/',
           'https://www.linkedin.com/company/doczen1/?viewAsMember=true',
         ],
-        contactPoint: {
-          '@type': 'ContactPoint',
-          contactType: 'Customer Service',
-          url: BASE_URL,
+        contactPoint: [
+          {
+            '@type': 'ContactPoint',
+            '@id': `${BASE_URL}/#contactpoint`,
+            contactType: 'customer support',
+            email: 'support@doczen.com',
+            url: `${BASE_URL}/about`,
+            areaServed: 'Worldwide',
+            availableLanguage: [
+              'English', 'Hindi', 'Spanish', 'French', 'German', 'Italian',
+              'Portuguese', 'Russian', 'Japanese', 'Korean', 'Chinese', 'Arabic',
+            ],
+          },
+        ],
+      },
+      {
+        '@type': 'Service',
+        '@id': `${BASE_URL}/#service`,
+        name: 'Free Online PDF Editing and Conversion',
+        serviceType: 'Document processing and conversion',
+        description: 'Browser-based PDF editing and conversion. Upload a PDF and merge, split, compress, rotate, reorder, delete pages, edit text and images, add page numbers or watermarks, protect or unlock files with a password, redact sensitive content, sign documents, repair damaged files, or convert between PDF, Word, Excel, PowerPoint, JPG, TXT and PDF/A - free, with no registration and no installation.',
+        provider: { '@id': `${BASE_URL}/#organization` },
+        areaServed: 'Worldwide',
+        availableChannel: {
+          '@type': 'ServiceChannel',
+          serviceUrl: `${BASE_URL}/`,
+          name: 'Web browser',
+        },
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
         },
       },
       {
@@ -122,6 +162,7 @@ export default function SEO({
         name: pageTitle,
         description: description,
         isPartOf: { '@id': `${BASE_URL}/#website` },
+        about: { '@id': `${BASE_URL}/#service` },
         inLanguage: locale,
         publisher: { '@id': `${BASE_URL}/#organization` },
         image: {
@@ -152,14 +193,37 @@ export default function SEO({
 
     if (resolvedToolName) {
       graph.push({
+        '@type': 'Service',
+        '@id': `${url}#service`,
+        name: `${resolvedToolName} - Free Online Tool`,
+        serviceType: resolvedToolName,
+        description: description,
+        url: url,
+        provider: { '@id': `${BASE_URL}/#organization` },
+        areaServed: 'Worldwide',
+        availableChannel: {
+          '@type': 'ServiceChannel',
+          serviceUrl: url,
+          name: 'Web browser',
+        },
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
+        },
+      });
+
+      graph.push({
         '@type': 'SoftwareApplication',
         '@id': `${url}#tool`,
-        name: pageTitle,
+        name: resolvedToolName,
         url: url,
         description: description,
-        applicationCategory: 'Multimedia',
-        operatingSystem: 'All',
+        applicationCategory: 'MultimediaApplication',
+        operatingSystem: 'Any',
         browserRequirements: 'Requires JavaScript',
+        isAccessibleForFree: true,
         offers: {
           '@type': 'Offer',
           price: '0',

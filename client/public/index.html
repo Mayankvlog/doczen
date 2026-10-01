@@ -70,9 +70,9 @@
       html.js .no-js-fallback { display: none; }
       html.js .static-hero { display: block; }
       html:not(.js) .static-hero { display: none; }
-      .static-hero h1 { font-size: 2.5rem; line-height: 1.1; }
-      @media (min-width: 640px) { .static-hero h1 { font-size: 3.75rem; } }
-      @media (min-width: 1024px) { .static-hero h1 { font-size: 4.5rem; } }
+      .static-hero-title { font-size: 2.5rem; line-height: 1.1; }
+      @media (min-width: 640px) { .static-hero-title { font-size: 3.75rem; } }
+      @media (min-width: 1024px) { .static-hero-title { font-size: 4.5rem; } }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -93,7 +93,260 @@
         document.body.appendChild(s);
       });
     </script>
-    <!-- Structured Data is managed by SEO component -->
+    <!--
+      Structured Data (JSON-LD)
+      This graph is rendered statically on purpose. The React SEO component injects a
+      per-route graph at runtime, but AI crawlers (GPTBot, ClaudeBot, PerplexityBot) and most
+      schema-aware crawlers parse the raw HTML response and never execute JavaScript, so any
+      schema that only exists after hydration is invisible to them. Keeping a site-level graph
+      here means Organization / WebSite / Service / ItemList facts are readable without JS.
+    -->
+    <script type="application/ld+json" data-doczen-static>
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.doczen.co.in/#organization",
+          "name": "Doczen",
+          "alternateName": "Doczen Online PDF Editor",
+          "url": "https://www.doczen.co.in/",
+          "description": "Doczen is a free online PDF editor and converter with 31 browser-based tools for merging, splitting, compressing, rotating, protecting, unlocking, signing, redacting, editing and converting PDF files. No registration or software installation required.",
+          "slogan": "Free online PDF editor - merge, split, compress, convert, edit and sign PDFs in your browser.",
+          "logo": {
+            "@type": "ImageObject",
+            "@id": "https://www.doczen.co.in/#logo",
+            "url": "https://www.doczen.co.in/favicon.svg",
+            "contentUrl": "https://www.doczen.co.in/favicon.svg",
+            "width": 512,
+            "height": 512,
+            "caption": "Doczen"
+          },
+          "image": { "@id": "https://www.doczen.co.in/#logo" },
+          "email": "support@doczen.com",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "IN"
+          },
+          "areaServed": "Worldwide",
+          "contactPoint": [
+            {
+              "@type": "ContactPoint",
+              "@id": "https://www.doczen.co.in/#contactpoint",
+              "contactType": "customer support",
+              "email": "support@doczen.com",
+              "url": "https://www.doczen.co.in/about",
+              "areaServed": "Worldwide",
+              "availableLanguage": [
+                "English",
+                "Hindi",
+                "Spanish",
+                "French",
+                "German",
+                "Italian",
+                "Portuguese",
+                "Russian",
+                "Japanese",
+                "Korean",
+                "Chinese",
+                "Arabic"
+              ]
+            }
+          ],
+          "sameAs": [
+            "https://www.facebook.com/profile.php?id=61590871045606&sk=directory_links",
+            "https://www.instagram.com/doczen11/",
+            "https://www.linkedin.com/company/doczen1/?viewAsMember=true"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.doczen.co.in/#website",
+          "url": "https://www.doczen.co.in/",
+          "name": "Doczen - Free Online PDF Editor",
+          "description": "Free online PDF editor. Merge, split, compress, edit and convert PDF files in your browser. No registration required.",
+          "inLanguage": "en",
+          "publisher": { "@id": "https://www.doczen.co.in/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://www.doczen.co.in/?s={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Service",
+          "@id": "https://www.doczen.co.in/#service",
+          "name": "Free Online PDF Editing and Conversion",
+          "serviceType": "Document processing and conversion",
+          "description": "Browser-based PDF editing and conversion. Upload a PDF and merge, split, compress, rotate, reorder, delete pages, edit text and images, add page numbers or watermarks, protect or unlock files with a password, redact sensitive content, sign documents, repair damaged files, or convert between PDF, Word, Excel, PowerPoint, JPG, TXT and PDF/A - free, with no registration and no installation.",
+          "provider": { "@id": "https://www.doczen.co.in/#organization" },
+          "areaServed": "Worldwide",
+          "availableChannel": {
+            "@type": "ServiceChannel",
+            "serviceUrl": "https://www.doczen.co.in/",
+            "name": "Web browser"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock"
+          },
+          "hasOfferCatalog": { "@id": "https://www.doczen.co.in/#tools" }
+        },
+        {
+          "@type": "ItemList",
+          "@id": "https://www.doczen.co.in/#tools",
+          "name": "Doczen PDF Tools",
+          "description": "All 31 free online PDF tools available on Doczen.",
+          "numberOfItems": 31,
+          "itemListOrder": "https://schema.org/ItemListOrderAscending",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Merge PDF", "url": "https://www.doczen.co.in/merge-pdf" },
+            { "@type": "ListItem", "position": 2, "name": "Split PDF", "url": "https://www.doczen.co.in/split-pdf" },
+            { "@type": "ListItem", "position": 3, "name": "Compress PDF", "url": "https://www.doczen.co.in/compress-pdf" },
+            { "@type": "ListItem", "position": 4, "name": "Rotate PDF", "url": "https://www.doczen.co.in/rotate-pdf" },
+            { "@type": "ListItem", "position": 5, "name": "Protect PDF", "url": "https://www.doczen.co.in/protect-pdf" },
+            { "@type": "ListItem", "position": 6, "name": "Unlock PDF", "url": "https://www.doczen.co.in/unlock-pdf" },
+            { "@type": "ListItem", "position": 7, "name": "Add Page Numbers", "url": "https://www.doczen.co.in/add-page-numbers" },
+            { "@type": "ListItem", "position": 8, "name": "Add Watermark", "url": "https://www.doczen.co.in/add-watermark" },
+            { "@type": "ListItem", "position": 9, "name": "Extract Text", "url": "https://www.doczen.co.in/extract-text" },
+            { "@type": "ListItem", "position": 10, "name": "Reorder Pages", "url": "https://www.doczen.co.in/reorder-pages" },
+            { "@type": "ListItem", "position": 11, "name": "Delete Pages", "url": "https://www.doczen.co.in/delete-pages" },
+            { "@type": "ListItem", "position": 12, "name": "PDF to JPG", "url": "https://www.doczen.co.in/pdf-to-jpg" },
+            { "@type": "ListItem", "position": 13, "name": "JPG to PDF", "url": "https://www.doczen.co.in/jpg-to-pdf" },
+            { "@type": "ListItem", "position": 14, "name": "PDF to TXT", "url": "https://www.doczen.co.in/pdf-to-txt" },
+            { "@type": "ListItem", "position": 15, "name": "PDF to Word", "url": "https://www.doczen.co.in/pdf-to-word" },
+            { "@type": "ListItem", "position": 16, "name": "Word to PDF", "url": "https://www.doczen.co.in/word-to-pdf" },
+            { "@type": "ListItem", "position": 17, "name": "PDF to PPT", "url": "https://www.doczen.co.in/pdf-to-ppt" },
+            { "@type": "ListItem", "position": 18, "name": "PPT to PDF", "url": "https://www.doczen.co.in/ppt-to-pdf" },
+            { "@type": "ListItem", "position": 19, "name": "PDF to Excel", "url": "https://www.doczen.co.in/pdf-to-excel" },
+            { "@type": "ListItem", "position": 20, "name": "Excel to PDF", "url": "https://www.doczen.co.in/excel-to-pdf" },
+            { "@type": "ListItem", "position": 21, "name": "Edit PDF", "url": "https://www.doczen.co.in/edit-pdf" },
+            { "@type": "ListItem", "position": 22, "name": "Sign PDF", "url": "https://www.doczen.co.in/sign-pdf" },
+            { "@type": "ListItem", "position": 23, "name": "Repair PDF", "url": "https://www.doczen.co.in/repair-pdf" },
+            { "@type": "ListItem", "position": 24, "name": "PDF to PDF/A", "url": "https://www.doczen.co.in/pdf-to-pdfa" },
+            { "@type": "ListItem", "position": 25, "name": "PDF Metadata", "url": "https://www.doczen.co.in/pdf-metadata" },
+            { "@type": "ListItem", "position": 26, "name": "Flatten PDF", "url": "https://www.doczen.co.in/flatten-pdf" },
+            { "@type": "ListItem", "position": 27, "name": "HTML to PDF", "url": "https://www.doczen.co.in/html-to-pdf" },
+            { "@type": "ListItem", "position": 28, "name": "Redact PDF", "url": "https://www.doczen.co.in/redact-pdf" },
+            { "@type": "ListItem", "position": 29, "name": "Remove Annotations", "url": "https://www.doczen.co.in/remove-annotations" },
+            { "@type": "ListItem", "position": 30, "name": "Remove Watermark", "url": "https://www.doczen.co.in/remove-watermark" },
+            { "@type": "ListItem", "position": 31, "name": "Compare PDF", "url": "https://www.doczen.co.in/compare-pdf" }
+          ]
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://www.doczen.co.in/#webpage",
+          "url": "https://www.doczen.co.in/",
+          "name": "Free Online PDF Editor - Merge, Split, Compress & Convert PDFs | Doczen",
+          "description": "Doczen is a free online PDF editor. Merge, split, compress, edit and convert PDF files in your browser. Convert to Word, Excel, PPT and JPG. Protect, unlock and sign PDFs. No registration needed.",
+          "inLanguage": "en",
+          "isPartOf": { "@id": "https://www.doczen.co.in/#website" },
+          "about": { "@id": "https://www.doczen.co.in/#service" },
+          "mainEntity": { "@id": "https://www.doczen.co.in/#tools" },
+          "primaryImageOfPage": { "@id": "https://www.doczen.co.in/#primaryimage" },
+          "dateModified": "2026-06-12",
+          "breadcrumb": { "@id": "https://www.doczen.co.in/#breadcrumb" }
+        },
+        {
+          "@type": "ImageObject",
+          "@id": "https://www.doczen.co.in/#primaryimage",
+          "url": "https://www.doczen.co.in/favicon.jpg",
+          "contentUrl": "https://www.doczen.co.in/favicon.jpg",
+          "width": 512,
+          "height": 512,
+          "caption": "Doczen - Free Online PDF Editor"
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://www.doczen.co.in/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://www.doczen.co.in/"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://www.doczen.co.in/#faq",
+          "isPartOf": { "@id": "https://www.doczen.co.in/#webpage" },
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Is Doczen free to use?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! Doczen is completely free to use. All PDF tools are available with no hidden charges."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Are my files secure?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Absolutely. All files are encrypted during upload and automatically deleted from our servers after 24 hours. We never share your data."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What file sizes are supported?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can upload files up to 100 MB per document."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How long does processing take?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Most operations complete within seconds. Complex conversions may take a bit longer, but we optimize everything for speed."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is there a daily limit?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No limits at all! Process as many files as you need, completely free."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What happens to my data?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "All uploaded files are automatically deleted from our servers within 24 hours. You can also manually delete your history at any time."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+    <!--
+      The static graph above describes the homepage and the site as a whole. Once React boots,
+      the SEO component emits a route-accurate graph (correct canonical, breadcrumb, tool schema
+      and per-page FAQ), so the static copy is removed to avoid emitting two conflicting graphs.
+      Crawlers that do not run JavaScript never reach this line and keep the static graph.
+    -->
+    <script data-doczen-static-guard>
+      (function () {
+        try {
+          var blocks = document.querySelectorAll('script[type="application/ld+json"][data-doczen-static]');
+          for (var i = 0; i < blocks.length; i++) {
+            if (blocks[i].parentNode) blocks[i].parentNode.removeChild(blocks[i]);
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
@@ -108,7 +361,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <span style="width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block"></span>
             Fully online — no download required
           </div>
-          <h1 style="font-weight:800;letter-spacing:-0.025em;color:#fff;margin:0">Your PDFs, <span style="background:linear-gradient(90deg,#fde68a,#fdba74);-webkit-background-clip:text;background-clip:text;color:transparent">Perfected.</span></h1>
+          <!-- Transient loading state, replaced by React. Deliberately not an <h1>: the page's single
+               keyword-bearing <h1> lives in the crawlable fallback below, so raw-HTML parsers that never
+               run JavaScript see exactly one top-level heading instead of two competing ones. -->
+          <p class="static-hero-title" style="font-weight:800;letter-spacing:-0.025em;color:#fff;margin:0">Your PDFs, <span style="background:linear-gradient(90deg,#fde68a,#fdba74);-webkit-background-clip:text;background-clip:text;color:transparent">Perfected.</span></p>
           <p style="margin:24px auto 0;max-width:42rem;font-size:18px;line-height:1.5;color:#e0e7ff">Doczen is the all-in-one PDF workspace. Merge, split, convert, compress, edit, and sign documents — all in your browser, free and secure.</p>
         </div>
       </div>
@@ -129,6 +385,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <main style="max-width:48rem;margin:0 auto;padding:2rem 1rem;font-family:Inter,system-ui,sans-serif">
         <h1 style="font-size:1.875rem;font-weight:700;color:#111827;margin-bottom:1rem">Doczen - Free Online PDF Editor | Merge, Split, Compress &amp; Convert PDFs</h1>
         <p style="color:#4b5563;margin-bottom:1.5rem">Edit, convert, merge, split and compress PDF files in your browser. No registration required.</p>
+        <h2 style="font-size:1.25rem;font-weight:600;color:#111827;margin-bottom:0.75rem">How Doczen Works</h2>
+        <ol style="padding-left:1.5rem;color:#4b5563;line-height:1.7;margin-bottom:1.5rem">
+          <li style="margin-bottom:0.5rem"><strong>Choose a tool.</strong> Pick the operation you need from the 31 tools listed below, such as Merge PDF, Compress PDF or PDF to Word.</li>
+          <li style="margin-bottom:0.5rem"><strong>Upload your file.</strong> Drop in a PDF (or a Word, Excel, PowerPoint or JPG file for the conversion tools). Files up to 100&nbsp;MB are supported and no account is needed.</li>
+          <li><strong>Download the result.</strong> Processing usually finishes in seconds, then you download the finished file. Every upload is deleted from our servers within 24 hours.</li>
+        </ol>
+        <h2 style="font-size:1.25rem;font-weight:600;color:#111827;margin-bottom:0.75rem">Why Choose Doczen?</h2>
+        <ul style="list-style:disc;padding-left:1.5rem;color:#4b5563;line-height:1.9;margin-bottom:1.5rem">
+          <li><strong>100% Free</strong> - No hidden charges, no credit card required</li>
+          <li><strong>31 Tools</strong> - From merging to converting, we've got you covered</li>
+          <li><strong>Secure</strong> - Encrypted uploads and automatic file deletion</li>
+          <li><strong>Fast</strong> - Optimized processing for quick results</li>
+          <li><strong>No Registration</strong> - Start using tools immediately</li>
+        </ul>
         <h2 style="font-size:1.25rem;font-weight:600;color:#111827;margin-bottom:0.75rem">PDF Tools</h2>
         <ul style="list-style:disc;padding-left:1.5rem;color:#4b5563;line-height:2">
           <li><a href="/merge-pdf" style="color:#4f46e5">Merge PDF</a> - Combine multiple PDFs into one file</li>
@@ -163,9 +433,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <li><a href="/remove-watermark" style="color:#4f46e5">Remove Watermark</a> - Remove watermarks from PDF documents</li>
           <li><a href="/compare-pdf" style="color:#4f46e5">Compare PDF</a> - Compare two PDF files side by side</li>
         </ul>
+        <h2 style="font-size:1.25rem;font-weight:600;color:#111827;margin-bottom:0.75rem">Frequently Asked Questions</h2>
+        <h3 style="font-size:1rem;font-weight:600;color:#111827;margin-bottom:0.25rem">Is Doczen free to use?</h3>
+        <p style="color:#4b5563;margin-bottom:1rem">Yes! Doczen is completely free to use. All PDF tools are available with no hidden charges.</p>
+        <h3 style="font-size:1rem;font-weight:600;color:#111827;margin-bottom:0.25rem">Are my files secure?</h3>
+        <p style="color:#4b5563;margin-bottom:1rem">Absolutely. All files are encrypted during upload and automatically deleted from our servers after 24 hours. We never share your data.</p>
+        <h3 style="font-size:1rem;font-weight:600;color:#111827;margin-bottom:0.25rem">What file sizes are supported?</h3>
+        <p style="color:#4b5563;margin-bottom:1rem">You can upload files up to 100 MB per document.</p>
+        <h3 style="font-size:1rem;font-weight:600;color:#111827;margin-bottom:0.25rem">How long does processing take?</h3>
+        <p style="color:#4b5563;margin-bottom:1rem">Most operations complete within seconds. Complex conversions may take a bit longer, but we optimize everything for speed.</p>
+        <h3 style="font-size:1rem;font-weight:600;color:#111827;margin-bottom:0.25rem">Is there a daily limit?</h3>
+        <p style="color:#4b5563;margin-bottom:1rem">No limits at all! Process as many files as you need, completely free.</p>
+        <h3 style="font-size:1rem;font-weight:600;color:#111827;margin-bottom:0.25rem">What happens to my data?</h3>
+        <p style="color:#4b5563;margin-bottom:1rem">All uploaded files are automatically deleted from our servers within 24 hours. You can also manually delete your history at any time.</p>
       </main>
       <footer style="background:#1f2937;color:#9ca3af;padding:2rem 1rem;font-family:Inter,system-ui,sans-serif;text-align:center">
-        <p style="font-size:0.875rem;margin-bottom:0.5rem">&copy; 2025 Doczen. All rights reserved.</p>
+        <p style="font-size:0.875rem;margin-bottom:0.5rem">&copy; 2025 Doczen. All rights reserved. Last updated: 12 June 2026</p>
+        <p style="font-size:0.875rem;margin-bottom:0.5rem">Support: <a href="mailto:support@doczen.com" style="color:#818cf8;text-decoration:none">support@doczen.com</a></p>
         <p style="font-size:0.75rem">
           <a href="/about" style="color:#818cf8;text-decoration:none">About</a> &middot;
           <a href="/privacy-policy" style="color:#818cf8;text-decoration:none">Privacy Policy</a> &middot;
