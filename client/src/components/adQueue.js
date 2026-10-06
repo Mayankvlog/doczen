@@ -5,11 +5,9 @@
 // next. With banner + 2 sidebars + native = 3-4 scripts per page, the last ad
 // only started after every earlier script had finished loading.
 //
-// The ad network supports multiple placements safely through the shared
-// window.atAsyncOptions[] pool: every config is registered there before the
-// scripts run, and the scripts consume the configs they need. Injecting all
-// scripts in parallel therefore has no config race and lets every slot render
-// as fast as the slowest single script.
+// Register each configured placement in the shared window.atAsyncOptions[]
+// pool before injecting its script. Track requests by URL and container so a
+// shared script URL cannot prevent a different placement from loading.
 export function loadAd(options) {
   var src = options.src;
   var config = options.config;
@@ -19,8 +17,10 @@ export function loadAd(options) {
   if (!src || !container) return undefined;
 
   if (!window._adActive) window._adActive = {};
-  if (window._adActive[src]) return undefined;
-  window._adActive[src] = true;
+  var slotKey = src + '::' + (container.id || 'default');
+  if (window._adActive[slotKey]) return undefined;
+  var request = {};
+  window._adActive[slotKey] = request;
 
   // Register the slot in the network's multi-ad config pool. Native Adsterra
   // placements (config === null) carry their own config and must NOT be added.
@@ -37,12 +37,15 @@ export function loadAd(options) {
   s.async = true;
   s.setAttribute('data-cfasync', 'false');
   s.onerror = function() {
-    window._adActive[src] = false;
+    if (window._adActive[slotKey] !== request) return;
+    window._adActive[slotKey] = false;
     if (onerror) onerror();
   };
-  (container || document.body).appendChild(s);
+  container.appendChild(s);
 
   return function cleanup() {
-    window._adActive[src] = false;
+    if (window._adActive[slotKey] === request) {
+      window._adActive[slotKey] = false;
+    }
   };
 }
