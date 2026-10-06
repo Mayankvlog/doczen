@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { loadAd } from './adQueue';
 
 const AD_KEY = '466be459b6a86595592eb7b4c62c5b3c';
-const AD_DOMAIN = process.env.REACT_APP_ADSTERRA_DOMAIN || 'penguinsincequalify.com';
+const AD_DOMAIN = process.env.REACT_APP_ADSTERRA_DOMAIN || 'pl29568432.profitableratecpmnetwork.com';
 
 export default function AdsterraNative() {
   var ref = useRef(null);
@@ -30,7 +30,7 @@ export default function AdsterraNative() {
 
   return (
     <div className="flex justify-center my-6 overflow-hidden">
-      {!failed && <div ref={ref} id={'atContainer-' + AD_KEY} className="w-full max-w-[300px] h-[250px] overflow-hidden relative"></div>}
+      {!failed && <div ref={ref} id={'container-' + AD_KEY} className="w-full max-w-[300px] h-[250px] overflow-hidden relative"></div>}
       {failed && (
         <div className="w-full max-w-[300px] h-[250px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm rounded overflow-hidden">
           Advertisement
