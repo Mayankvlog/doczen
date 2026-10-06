@@ -41,7 +41,17 @@ export function loadAd(options) {
     window._adActive[slotKey] = false;
     if (onerror) onerror();
   };
-  container.appendChild(s);
+
+  // Let every placement register its config before any async provider script
+  // can read the shared atAsyncOptions pool.
+  Promise.resolve().then(function() {
+    if (window._adActive[slotKey] !== request) return;
+    if (!document.documentElement.contains(container)) {
+      window._adActive[slotKey] = false;
+      return;
+    }
+    container.appendChild(s);
+  });
 
   return function cleanup() {
     if (window._adActive[slotKey] === request) {
