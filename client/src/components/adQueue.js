@@ -27,10 +27,14 @@ export function loadAd(options) {
     s.src = src;
     s.async = true;
     s.setAttribute('data-cfasync', 'false');
+    s.crossOrigin = 'anonymous';
     s.onerror = function() {
       if (window._adActive[slotKey] !== request) return;
       window._adActive[slotKey] = false;
       if (onerror) onerror(new Error('Ad script failed to load'));
+    };
+    s.onload = function() {
+      console.log('[adQueue] Ad script loaded successfully:', src);
     };
 
     // Register the slot in the network's shared config pool in the same microtask

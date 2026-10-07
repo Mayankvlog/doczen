@@ -276,7 +276,7 @@
       // `Cookie "_ga" has been rejected for invalid domain`).
       var gtagConfig = {};
       if (/(^|\.)doczen\.co\.in$/.test(location.hostname)) {
-        gtagConfig.cookie_domain = 'doczen.co.in';
+        gtagConfig.cookie_domain = 'auto';
         gtagConfig.cookie_flags = 'SameSite=Lax;Secure';
       }
       gtag('config', 'G-J0V79VJ0JH', gtagConfig);

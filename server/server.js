@@ -119,13 +119,18 @@ app.use(helmet({
       defaultSrc: ["'self'", 'http:', 'https:', 'data:', 'blob:'],
       scriptSrc: [
         "'self'", "'unsafe-inline'", "'unsafe-eval'",
-        'http:', 'https:', 'blob:', 'data:', '*'
+        'http:', 'https:', 'blob:', 'data:', '*', "'nonce-*'", "'sha256-*'", "'sha384-*'", "'sha512-*'"
       ],
       styleSrc: ["'self'", "'unsafe-inline'", 'http:', 'https:', 'data:', '*'],
       imgSrc: ["'self'", 'http:', 'https:', 'data:', 'blob:', '*'],
       fontSrc: ["'self'", 'http:', 'https:', 'data:', '*'],
       connectSrc: ["'self'", 'http:', 'https:', 'wss:', 'blob:', 'data:', '*'],
-      frameSrc: ["'self'", 'http:', 'https:', 'blob:', 'data:', '*'],
+      frameSrc: ["'self'", 'http:', 'https:', 'blob:', 'data:', '*',
+        'penguinsincequalify.com', 'zoologyfibre.com', 'workdeadlinededicate.com',
+        'realizationnewestfangs.com', 'spendsdetachment.com', 'kettledroopingcontinuation.com',
+        'furiousexpansion.com', 'consumeririssalary.com', 'spondsdetachment.com',
+        'fizzyacerbitymellow.com', 'highrevenueformat.com', 'profitableratecpmnetwork.com'
+      ],
       workerSrc: ["'self'", 'blob:'],
       mediaSrc: ["'self'", 'http:', 'https:', 'blob:', 'data:'],
       objectSrc: ["'none'"],
