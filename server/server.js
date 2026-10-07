@@ -32,6 +32,10 @@ if (!process.env.JWT_SECRET) {
 }
 
 // Parse ad network domains from env (comma-separated) — update ADSTERRA_DOMAINS in .env when domains change, no code changes needed
+// NOTE: this host list is duplicated in two hand-maintained allowlists that must stay in sync:
+//   1. nginx.conf  -> /adx/ location (same-origin CORS relay for ad XHR/fetch)
+//   2. client/public/index.html -> RELAY_HOSTS (CORS relay shim)
+// A domain added here but not there will still be blocked by Firefox CORS checks.
 const ADSTERRA_DOMAINS = (process.env.ADSTERRA_DOMAINS || 'penguinsincequalify.com,zoologyfibre.com,workdeadlinededicate.com,realizationnewestfangs.com,spendsdetachment.com,kettledroopingcontinuation.com')
   .split(',').map(s => s.trim()).filter(Boolean);
 // Ensure penguinsincequalify.com is always included even if missing from env var

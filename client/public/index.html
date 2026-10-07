@@ -2,24 +2,204 @@
 <html lang="en">
   <head>
     <script>document.documentElement.className='js';</script>
-    <!-- Google Tag Manager (deferred after first paint to keep GTM/gtag out of the LCP critical path) -->
     <script>
-      (function() {
-        function loadGTM() {
-          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','GTM-WNQJ96W5');
+      // ---- Doczen: InstallTrigger cleanup + ad-request CORS relay -----------------
+      // 1) Firefox logs "InstallTrigger is deprecated" the moment ad scripts
+      //    feature-detect it; delete it before they run.
+      // 2) Ad scripts XHR/fetch their delivery hosts (ADSTERRA_DOMAINS in
+      //    server/server.js) cross-origin, which Firefox blocks ("CORS Missing
+      //    Allow Origin" / "Cross-Origin Request Blocked"). Rewrite GET XHR/fetch
+      //    to the same-origin nginx relay /adx/, which proxies to the original host
+      //    server-side (see the /adx/ location in nginx.conf). If the relay fails,
+      //    silently retry the original cross-origin URL, so behaviour is never
+      //    worse than without this shim.
+      // Keep RELAY_HOSTS in sync with the /adx/ allowlist in nginx.conf and
+      // ADSTERRA_DOMAINS in server/server.js.
+      (function () {
+        try { delete window.InstallTrigger; } catch (e) {}
+        if (!/(^|\.)doczen\.co\.in$/.test(location.hostname)) return;
+
+        var RELAY_HOSTS = [
+          'penguinsincequalify.com',
+          'zoologyfibre.com',
+          'workdeadlinededicate.com',
+          'realizationnewestfangs.com',
+          'spendsdetachment.com',
+          'kettledroopingcontinuation.com'
+        ];
+        var RELAY_SET = {};
+        for (var i = 0; i < RELAY_HOSTS.length; i++) RELAY_SET[RELAY_HOSTS[i]] = 1;
+
+        function relayPath(url) {
+          try {
+            var u = new URL(url, location.href);
+            if (u.protocol !== 'https:' || !RELAY_SET[u.hostname]) return null;
+            return '/adx/' + u.hostname + u.pathname + u.search;
+          } catch (e) { return null; }
         }
-        if (window.requestIdleCallback) {
-          window.addEventListener('load', function() { requestIdleCallback(loadGTM, { timeout: 2000 }); });
-        } else {
-          window.addEventListener('load', loadGTM);
+
+        function looksLikeHtml(res) {
+          try {
+            var ct = (res.headers && res.headers.get) ? (res.headers.get('content-type') || '') : '';
+            return /text\/html/i.test(ct);
+          } catch (e) { return false; }
+        }
+
+        // ---- fetch ----------------------------------------------------------------
+        var nativeFetch = window.fetch;
+        if (nativeFetch) {
+          window.fetch = function (input, init) {
+            try {
+              var method = (init && init.method) ||
+                (typeof input === 'object' && input !== null && input.method) || 'GET';
+              var relayable = typeof input === 'string' || input instanceof URL;
+              var relay = (String(method).toUpperCase() === 'GET' && relayable) ? relayPath(input) : null;
+              if (relay) {
+                var self = this;
+                return nativeFetch.call(self, relay, init).then(function (res) {
+                  if (res.ok && !looksLikeHtml(res)) return res;
+                  return nativeFetch.call(self, input, init);
+                }, function (err) {
+                  return nativeFetch.call(self, input, init);
+                });
+              }
+            } catch (e) {}
+            return nativeFetch.apply(this, arguments);
+          };
+        }
+
+        // ---- XMLHttpRequest --------------------------------------------------------
+        var NativeXHR = window.XMLHttpRequest;
+        if (NativeXHR) {
+          var P = NativeXHR.prototype;
+          var nativeOpen = P.open;
+          var nativeSend = P.send;
+          var nativeAdd = P.addEventListener;
+          var nativeRemove = P.removeEventListener;
+          var HANDLER_TYPES = ['readystatechange', 'load', 'error', 'abort', 'timeout'];
+          var HANDLER_PROPS = HANDLER_TYPES.map(function (t) { return 'on' + t; });
+
+          function ShimXHR() {
+            var xhr = new NativeXHR();
+            var handlers = {};
+            var listeners = {};
+            var mode = 'direct'; // direct | relay | fallback
+            var orig = null;
+            var suppressed = [];
+
+            HANDLER_PROPS.forEach(function (prop) {
+              Object.defineProperty(xhr, prop, {
+                get: function () { return handlers[prop] || null; },
+                set: function (fn) { handlers[prop] = fn; },
+                configurable: true,
+                enumerable: true
+              });
+            });
+
+            function callListener(l, evt) {
+              if (typeof l === 'function') l.call(xhr, evt);
+              else if (l && typeof l.handleEvent === 'function') l.handleEvent.call(l, evt);
+            }
+
+            function emit(type, evt) {
+              var h = handlers['on' + type];
+              if (typeof h === 'function') { try { h.call(xhr, evt); } catch (e) {} }
+              var ls = listeners[type];
+              if (ls && ls.length) {
+                ls = ls.slice();
+                for (var j = 0; j < ls.length; j++) { try { callListener(ls[j], evt); } catch (e) {} }
+              }
+            }
+
+            function flush() {
+              var q = suppressed;
+              suppressed = [];
+              for (var j = 0; j < q.length; j++) emit(q[j][0], q[j][1]);
+            }
+
+            function relayLooksGood() {
+              try {
+                var ct = xhr.getResponseHeader('Content-Type') || '';
+                return xhr.status >= 200 && xhr.status < 300 && !/text\/html/i.test(ct);
+              } catch (e) { return false; }
+            }
+
+            function startFallback() {
+              if (!orig || orig.fallback) return;
+              orig.fallback = true;
+              mode = 'fallback';
+              suppressed = [];
+              nativeOpen.call(xhr, orig.method, orig.url, orig.async, orig.user, orig.pass);
+              nativeSend.call(xhr, orig.body);
+            }
+
+            function gate(type, evt) {
+              if (mode !== 'relay') { emit(type, evt); return; }
+              if (type === 'abort') { mode = 'direct'; suppressed = []; emit(type, evt); return; }
+              if (type === 'error' || type === 'timeout') { startFallback(); return; }
+              if (type === 'readystatechange') {
+                if (xhr.readyState < 3) { suppressed.push([type, evt]); return; }
+                if (relayLooksGood()) { mode = 'direct'; flush(); emit(type, evt); }
+                else startFallback();
+                return;
+              }
+              if (type === 'load') {
+                if (relayLooksGood()) { mode = 'direct'; flush(); emit(type, evt); }
+                else startFallback();
+              }
+            }
+
+            nativeAdd.call(xhr, 'readystatechange', function (e) { gate('readystatechange', e); });
+            nativeAdd.call(xhr, 'load', function (e) { gate('load', e); });
+            nativeAdd.call(xhr, 'error', function (e) { gate('error', e); });
+            nativeAdd.call(xhr, 'abort', function (e) { gate('abort', e); });
+            nativeAdd.call(xhr, 'timeout', function (e) { gate('timeout', e); });
+
+            xhr.open = function (method, url, async, user, pass) {
+              var relay = null;
+              try {
+                if (async !== false && String(method).toUpperCase() === 'GET') relay = relayPath(url);
+              } catch (e) {}
+              orig = { method: method, url: url, async: async, user: user, pass: pass, body: undefined, fallback: false };
+              mode = relay ? 'relay' : 'direct';
+              suppressed = [];
+              return nativeOpen.call(xhr, method, relay || url, async, user, pass);
+            };
+
+            xhr.send = function (body) {
+              if (orig) orig.body = body;
+              return nativeSend.call(xhr, body);
+            };
+
+            xhr.addEventListener = function (type, fn) {
+              if (HANDLER_TYPES.indexOf(type) !== -1) {
+                if (fn != null) {
+                  (listeners[type] = listeners[type] || []).push(fn);
+                }
+                return;
+              }
+              return nativeAdd.call(xhr, type, fn, arguments[2]);
+            };
+
+            xhr.removeEventListener = function (type, fn) {
+              if (listeners[type]) {
+                listeners[type] = listeners[type].filter(function (l) { return l !== fn; });
+                return;
+              }
+              return nativeRemove.call(xhr, type, fn, arguments[2]);
+            };
+
+            return xhr;
+          }
+
+          ShimXHR.prototype = P;
+          for (var k in NativeXHR) {
+            if (Object.prototype.hasOwnProperty.call(NativeXHR, k)) ShimXHR[k] = NativeXHR[k];
+          }
+          window.XMLHttpRequest = ShimXHR;
         }
       })();
     </script>
-    <!-- End Google Tag Manager -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover" />
     <title>Free Online PDF Editor - Merge, Split &amp; Convert | Doczen</title>
@@ -76,7 +256,7 @@
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" href="https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0I5nvwU.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
     <!-- Google tag (gtag.js) - config queued immediately, script loaded after first paint -->
@@ -85,7 +265,15 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-J0V79VJ0JH');
+      // Pin the GA cookie domain on production so gtag.js does not probe parent
+      // suffixes (e.g. "co.in", a public suffix Firefox rejects with
+      // `Cookie "_ga" has been rejected for invalid domain`).
+      var gtagConfig = {};
+      if (/(^|\.)doczen\.co\.in$/.test(location.hostname)) {
+        gtagConfig.cookie_domain = 'doczen.co.in';
+        gtagConfig.cookie_flags = 'SameSite=Lax;Secure';
+      }
+      gtag('config', 'G-J0V79VJ0JH', gtagConfig);
       window.addEventListener('load', function() {
         var s = document.createElement('script');
         s.async = true;
@@ -349,10 +537,6 @@
     </script>
   </head>
   <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WNQJ96W5"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
     <noscript>You need to enable JavaScript to run Doczen.</noscript>
     <div id="root">
       <div class="static-hero" style="background:linear-gradient(135deg,#4f46e5,#9333ea,#ec4899);padding:96px 16px 128px;text-align:center;font-family:'Inter',system-ui,sans-serif">
