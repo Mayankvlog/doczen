@@ -7,12 +7,13 @@ export default function AdLeftSidebar() {
   var ref = useRef(null);
   var [failed, setFailed] = useState(false);
   var [loading, setLoading] = useState(true);
+  var loadedRef = useRef(false);
 
   useEffect(function() {
-    if (!ref.current || failed) return;
+    if (!ref.current || failed || loadedRef.current) return;
 
+    loadedRef.current = true;
     console.log('[AdLeftSidebar] Loading ad with key:', AD_KEY);
-    setLoading(true);
 
     var cleanup = loadAd({
       src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
@@ -48,7 +49,7 @@ export default function AdLeftSidebar() {
     return function() {
       if (cleanup) cleanup();
     };
-  }, [failed, loading]);
+  }, [failed]);
 
   return (
     <div className="hidden lg:block fixed left-0 top-1/2 -translate-y-1/2 z-40 w-[160px]">

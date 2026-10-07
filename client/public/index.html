@@ -297,7 +297,9 @@
         if (typeof message === 'string' && (
           message.includes('OpaqueResponseBlocking') ||
           message.includes('A resource is blocked') ||
-          message.includes('has been rejected for invalid domain')
+          message.includes('has been rejected for invalid domain') ||
+          message.includes('CORS Missing Allow Origin') ||
+          message.includes('Cross-Origin Request Blocked')
         )) {
           return;
         }
@@ -309,7 +311,8 @@
         if (typeof message === 'string' && (
           message.includes('InstallTrigger is deprecated') ||
           message.includes('Fingerprinting Protection') ||
-          message.includes('Preloaded') && message.includes('not used')
+          message.includes('Preloaded') && message.includes('not used') ||
+          message.includes('Quirks Mode')
         )) {
           return;
         }
