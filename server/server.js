@@ -36,7 +36,7 @@ if (!process.env.JWT_SECRET) {
 //   1. nginx.conf  -> /adx/ location (same-origin CORS relay for ad XHR/fetch)
 //   2. client/public/index.html -> RELAY_HOSTS (CORS relay shim)
 // A domain added here but not there will still be blocked by Firefox CORS checks.
-const ADSTERRA_DOMAINS = (process.env.ADSTERRA_DOMAINS || 'penguinsincequalify.com,zoologyfibre.com,workdeadlinededicate.com,realizationnewestfangs.com,spendsdetachment.com,kettledroopingcontinuation.com')
+const ADSTERRA_DOMAINS = (process.env.ADSTERRA_DOMAINS || 'penguinsincequalify.com,zoologyfibre.com,workdeadlinededicate.com,realizationnewestfangs.com,spendsdetachment.com,kettledroopingcontinuation.com,furiousexpansion.com,consumeririssalary.com')
   .split(',').map(s => s.trim()).filter(Boolean);
 // Ensure penguinsincequalify.com is always included even if missing from env var
 if (!ADSTERRA_DOMAINS.includes('penguinsincequalify.com')) {
