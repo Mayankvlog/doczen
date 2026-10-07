@@ -177,14 +177,16 @@ function AppContent() {
   const { dir } = useLanguage();
   const { pathname } = useLocation();
   const isToolPage = toolPaths.has(pathname);
+  const isHomePage = pathname === '/';
+  const showSidebarAds = isToolPage || isHomePage;
   return (
     <div className="min-h-screen flex flex-col bg-gray-50" dir={dir}>
       <ScrollToTop />
       <Navbar />
       <Banner728x90 />
-      {isToolPage && <AdLeftSidebar />}
-      {isToolPage && <AdRightSidebar />}
-      <main className={'flex-1 page-enter-active' + (isToolPage ? ' lg:mx-[160px]' : '')}>
+      {showSidebarAds && <AdLeftSidebar />}
+      {showSidebarAds && <AdRightSidebar />}
+      <main className={'flex-1 page-enter-active' + (showSidebarAds ? ' lg:mx-[160px]' : '')}>
         {/* ✅ PHASE 1 FIX: Suspense + ErrorBoundary for code-split components */}
         <ErrorBoundary>
         <Suspense fallback={<LoadingSpinner />}>
