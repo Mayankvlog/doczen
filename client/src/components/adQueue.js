@@ -16,54 +16,67 @@ export function loadAd(options) {
 
   if (!src || !container) return undefined;
 
-  if (!window._adActive) window._adActive = {};
-  var slotKey = src + '::' + (container.id || 'default');
-  if (window._adActive[slotKey]) return undefined;
-  var request = {};
-  window._adActive[slotKey] = request;
+  try {
+    if (!window._adActive) window._adActive = {};
+    var slotKey = src + '::' + (container.id || 'default');
+    if (window._adActive[slotKey]) return undefined;
+    var request = {};
+    window._adActive[slotKey] = request;
 
-  var s = document.createElement('script');
-  s.src = src;
-  s.async = true;
-  s.setAttribute('data-cfasync', 'false');
-  s.onerror = function() {
-    if (window._adActive[slotKey] !== request) return;
-    window._adActive[slotKey] = false;
-    if (onerror) onerror();
-  };
-
-  // Register the slot in the network's shared config pool in the same microtask
-  // that injects the provider script. Doing both here means:
-  //   1. the container is guaranteed to be in the DOM before we register, and
-  //   2. iframe configs always carry async:true + container, so the provider
-  //      targets THIS slot instead of appending every drained option next to
-  //      whichever script tag happened to execute first (the old collapse bug).
-  Promise.resolve().then(function() {
-    if (window._adActive[slotKey] !== request) return;
-    if (!document.documentElement.contains(container)) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.async = true;
+    s.setAttribute('data-cfasync', 'false');
+    s.onerror = function() {
+      if (window._adActive[slotKey] !== request) return;
       window._adActive[slotKey] = false;
-      return;
-    }
+      if (onerror) onerror(new Error('Ad script failed to load'));
+    };
 
-    // Native Adsterra placements (config === null) carry their own config and
-    // must NOT be added to the shared pool.
-    if (config && config.key) {
-      if (!window.atAsyncOptions) window.atAsyncOptions = [];
-      var entry = config.async === undefined
-        ? Object.assign({}, config, { async: true })
-        : config;
-      var exists = window.atAsyncOptions.some(function(o) {
-        return !!o && o.key === entry.key && o.container === entry.container;
-      });
-      if (!exists) window.atAsyncOptions.push(entry);
-    }
+    // Register the slot in the network's shared config pool in the same microtask
+    // that injects the provider script. Doing both here means:
+    //   1. the container is guaranteed to be in the DOM before we register, and
+    //   2. iframe configs always carry async:true + container, so the provider
+    //      targets THIS slot instead of appending every drained option next to
+    //      whichever script tag happened to execute first (the old collapse bug).
+    Promise.resolve().then(function() {
+      if (window._adActive[slotKey] !== request) return;
+      if (!document.documentElement.contains(container)) {
+        window._adActive[slotKey] = false;
+        if (onerror) onerror(new Error('Container not in DOM'));
+        return;
+      }
 
-    container.appendChild(s);
-  });
+      // Native Adsterra placements (config === null) carry their own config and
+      // must NOT be added to the shared pool.
+      if (config && config.key) {
+        if (!window.atAsyncOptions) window.atAsyncOptions = [];
+        var entry = config.async === undefined
+          ? Object.assign({}, config, { async: true })
+          : config;
+        var exists = window.atAsyncOptions.some(function(o) {
+          return !!o && o.key === entry.key && o.container === entry.container;
+        });
+        if (!exists) window.atAsyncOptions.push(entry);
+      }
 
-  return function cleanup() {
-    if (window._adActive[slotKey] === request) {
-      window._adActive[slotKey] = false;
-    }
-  };
+      try {
+        container.appendChild(s);
+      } catch (e) {
+        console.error('[adQueue] Failed to append script:', e);
+        window._adActive[slotKey] = false;
+        if (onerror) onerror(e);
+      }
+    });
+
+    return function cleanup() {
+      if (window._adActive[slotKey] === request) {
+        window._adActive[slotKey] = false;
+      }
+    };
+  } catch (e) {
+    console.error('[adQueue] Load ad error:', e);
+    if (onerror) onerror(e);
+    return undefined;
+  }
 }

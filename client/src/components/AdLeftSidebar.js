@@ -6,9 +6,13 @@ const AD_KEY = 'b11a753fbb1e311a5b2734272ab5edda';
 export default function AdLeftSidebar() {
   var ref = useRef(null);
   var [failed, setFailed] = useState(false);
+  var [loading, setLoading] = useState(true);
 
   useEffect(function() {
     if (!ref.current || failed) return;
+
+    console.log('[AdLeftSidebar] Loading ad with key:', AD_KEY);
+    setLoading(true);
 
     var cleanup = loadAd({
       src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
@@ -21,14 +25,30 @@ export default function AdLeftSidebar() {
         params: {},
         async: true,
       },
-      onerror: function() {
+      onerror: function(error) {
+        console.error('[AdLeftSidebar] Ad failed to load:', error);
         setFailed(true);
+        setLoading(false);
       },
       container: ref.current,
     });
 
-    return cleanup;
-  }, [failed]);
+    setTimeout(function() {
+      if (loading) {
+        console.log('[AdLeftSidebar] Ad loading timeout (5s), checking container...');
+        var container = document.getElementById('sbLeft-' + AD_KEY);
+        if (container && container.children.length === 0) {
+          console.warn('[AdLeftSidebar] No ad content loaded after 5s');
+          setFailed(true);
+        }
+        setLoading(false);
+      }
+    }, 5000);
+
+    return function() {
+      if (cleanup) cleanup();
+    };
+  }, [failed, loading]);
 
   return (
     <div className="hidden lg:block fixed left-0 top-1/2 -translate-y-1/2 z-40 w-[160px]">
@@ -38,9 +58,17 @@ export default function AdLeftSidebar() {
         className="flex justify-center items-center"
         style={{ minHeight: '600px' }}
       >
+        {loading && (
+          <div className="w-[160px] h-[600px] bg-gray-50 flex items-center justify-center text-gray-400 text-xs animate-pulse">
+            Loading ad...
+          </div>
+        )}
         {failed && (
-          <div className="w-[160px] h-[600px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm">
-            Ad
+          <div className="w-[160px] h-[600px] bg-gray-100 flex items-center justify-center text-gray-500 text-xs border border-gray-200">
+            <div className="text-center p-2">
+              <div className="font-semibold text-gray-600 mb-1">Advertisement</div>
+              <div className="text-gray-400">Ad temporarily unavailable</div>
+            </div>
           </div>
         )}
       </div>
