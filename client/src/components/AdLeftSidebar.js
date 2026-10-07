@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { loadAd } from './adQueue';
 
-const AD_KEY = '8727e64117c88455f41910d02f27827d';
+const AD_KEY = 'b11a753fbb1e311a5b2734272ab5edda';
 
 export default function AdLeftSidebar() {
   var ref = useRef(null);
@@ -15,10 +15,11 @@ export default function AdLeftSidebar() {
       config: {
         key: AD_KEY,
         format: 'iframe',
-        height: 300,
+        height: 600,
         width: 160,
         container: 'sbLeft-' + AD_KEY,
         params: {},
+        async: true,
       },
       onerror: function() {
         setFailed(true);
@@ -35,10 +36,10 @@ export default function AdLeftSidebar() {
         ref={ref}
         id={'sbLeft-' + AD_KEY}
         className="flex justify-center items-center"
-        style={{ minHeight: '300px' }}
+        style={{ minHeight: '600px' }}
       >
         {failed && (
-          <div className="w-[160px] h-[300px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm">
+          <div className="w-[160px] h-[600px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm">
             Ad
           </div>
         )}

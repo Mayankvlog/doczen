@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { loadAd } from './adQueue';
 
-const AD_KEY = '8727e64117c88455f41910d02f27827d';
+const AD_KEY = '20c23d55e0aa2d4c55f69cec04907f2b';
 
 export default function Banner728x90() {
   var ref = useRef(null);
@@ -15,10 +15,11 @@ export default function Banner728x90() {
       config: {
         key: AD_KEY,
         format: 'iframe',
-        height: 300,
-        width: 160,
+        height: 90,
+        width: 728,
         container: 'atContainer-' + AD_KEY,
         params: {},
+        async: true,
       },
       onerror: function() {
         setFailed(true);
@@ -34,10 +35,10 @@ export default function Banner728x90() {
       ref={ref}
       id={'atContainer-' + AD_KEY}
       className="flex justify-center bg-gray-100 py-2 overflow-hidden"
-      style={{ minHeight: '300px', minWidth: '100%', position: 'relative' }}
+      style={{ minHeight: '90px', minWidth: '100%', position: 'relative' }}
     >
       {failed && (
-        <div className="w-[160px] h-[300px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm">
+        <div className="w-[728px] h-[90px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm">
           Advertisement
         </div>
       )}

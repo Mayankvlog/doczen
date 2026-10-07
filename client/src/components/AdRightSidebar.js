@@ -19,6 +19,7 @@ export default function AdRightSidebar() {
         width: 160,
         container: 'sbRight-' + AD_KEY,
         params: {},
+        async: true,
       },
       onerror: function() {
         setFailed(true);

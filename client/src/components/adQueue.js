@@ -22,16 +22,6 @@ export function loadAd(options) {
   var request = {};
   window._adActive[slotKey] = request;
 
-  // Register the slot in the network's multi-ad config pool. Native Adsterra
-  // placements (config === null) carry their own config and must NOT be added.
-  if (config && config.key) {
-    if (!window.atAsyncOptions) window.atAsyncOptions = [];
-    var exists = window.atAsyncOptions.some(function(o) {
-      return !!o && o.key === config.key && o.container === config.container;
-    });
-    if (!exists) window.atAsyncOptions.push(config);
-  }
-
   var s = document.createElement('script');
   s.src = src;
   s.async = true;
@@ -42,14 +32,32 @@ export function loadAd(options) {
     if (onerror) onerror();
   };
 
-  // Let every placement register its config before any async provider script
-  // can read the shared atAsyncOptions pool.
+  // Register the slot in the network's shared config pool in the same microtask
+  // that injects the provider script. Doing both here means:
+  //   1. the container is guaranteed to be in the DOM before we register, and
+  //   2. iframe configs always carry async:true + container, so the provider
+  //      targets THIS slot instead of appending every drained option next to
+  //      whichever script tag happened to execute first (the old collapse bug).
   Promise.resolve().then(function() {
     if (window._adActive[slotKey] !== request) return;
     if (!document.documentElement.contains(container)) {
       window._adActive[slotKey] = false;
       return;
     }
+
+    // Native Adsterra placements (config === null) carry their own config and
+    // must NOT be added to the shared pool.
+    if (config && config.key) {
+      if (!window.atAsyncOptions) window.atAsyncOptions = [];
+      var entry = config.async === undefined
+        ? Object.assign({}, config, { async: true })
+        : config;
+      var exists = window.atAsyncOptions.some(function(o) {
+        return !!o && o.key === entry.key && o.container === entry.container;
+      });
+      if (!exists) window.atAsyncOptions.push(entry);
+    }
+
     container.appendChild(s);
   });
 
