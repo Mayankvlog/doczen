@@ -27,7 +27,9 @@
           'spendsdetachment.com',
           'kettledroopingcontinuation.com',
           'furiousexpansion.com',
-          'consumeririssalary.com'
+          'consumeririssalary.com',
+          'spondsdetachment.com',
+          'fizzyacerbitymellow.com'
         ];
         var RELAY_SET = {};
         for (var i = 0; i < RELAY_HOSTS.length; i++) RELAY_SET[RELAY_HOSTS[i]] = 1;
@@ -288,26 +290,40 @@
       // Suppress harmless console warnings from ad tracking and browser features
       var originalError = console.error;
       var originalWarn = console.warn;
+      var originalInfo = console.info;
 
       console.error = function() {
         var message = arguments[0];
-        if (typeof message === 'string' && message.includes('OpaqueResponseBlocking')) {
-          return; // Suppress OpaqueResponseBlocking warnings
+        if (typeof message === 'string' && (
+          message.includes('OpaqueResponseBlocking') ||
+          message.includes('A resource is blocked') ||
+          message.includes('has been rejected for invalid domain')
+        )) {
+          return;
         }
         originalError.apply(console, arguments);
       };
 
       console.warn = function() {
         var message = arguments[0];
-        // Suppress known harmless warnings
         if (typeof message === 'string' && (
           message.includes('InstallTrigger is deprecated') ||
           message.includes('Fingerprinting Protection') ||
-          message.includes('has been rejected for invalid domain')
+          message.includes('Preloaded') && message.includes('not used')
         )) {
           return;
         }
         originalWarn.apply(console, arguments);
+      };
+
+      console.info = function() {
+        var message = arguments[0];
+        if (typeof message === 'string' && (
+          message.includes('Preloaded') && message.includes('not used')
+        )) {
+          return;
+        }
+        originalInfo.apply(console, arguments);
       };
     </script>
     <!--

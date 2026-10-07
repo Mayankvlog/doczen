@@ -36,7 +36,7 @@ if (!process.env.JWT_SECRET) {
 //   1. nginx.conf  -> /adx/ location (same-origin CORS relay for ad XHR/fetch)
 //   2. client/public/index.html -> RELAY_HOSTS (CORS relay shim)
 // A domain added here but not there will still be blocked by Firefox CORS checks.
-const ADSTERRA_DOMAINS = (process.env.ADSTERRA_DOMAINS || 'penguinsincequalify.com,zoologyfibre.com,workdeadlinededicate.com,realizationnewestfangs.com,spendsdetachment.com,kettledroopingcontinuation.com,furiousexpansion.com,consumeririssalary.com')
+const ADSTERRA_DOMAINS = (process.env.ADSTERRA_DOMAINS || 'penguinsincequalify.com,zoologyfibre.com,workdeadlinededicate.com,realizationnewestfangs.com,spendsdetachment.com,kettledroopingcontinuation.com,furiousexpansion.com,consumeririssalary.com,spondsdetachment.com,fizzyacerbitymellow.com')
   .split(',').map(s => s.trim()).filter(Boolean);
 // Ensure penguinsincequalify.com is always included even if missing from env var
 if (!ADSTERRA_DOMAINS.includes('penguinsincequalify.com')) {
@@ -114,52 +114,18 @@ app.use(compression({
 // ✅ Apply helmet for security headers
 app.use(helmet({
   contentSecurityPolicy: {
-    useDefaults: true,
+    useDefaults: false,
     directives: {
       defaultSrc: ["'self'", 'http:', 'https:', 'data:', 'blob:'],
       scriptSrc: [
         "'self'", "'unsafe-inline'", "'unsafe-eval'",
-        'http:', 'https:', 'blob:', 'data:',
-        'https://penguinsincequalify.com',
-        'https://zoologyfibre.com',
-        'https://workdeadlinededicate.com',
-        'https://realizationnewestfangs.com',
-        'https://spendsdetachment.com',
-        'https://kettledroopingcontinuation.com',
-        'https://www.highperformanceformat.com',
-        'https://www.highrevenueformat.com',
-        'https://www.googletagmanager.com',
-        'https://www.google-analytics.com',
+        'http:', 'https:', 'blob:', 'data:', '*'
       ],
-      styleSrc: ["'self'", "'unsafe-inline'", 'http:', 'https:', 'data:'],
-      imgSrc: ["'self'", 'http:', 'https:', 'data:', 'blob:',
-        'https://penguinsincequalify.com',
-        'https://zoologyfibre.com',
-        'https://workdeadlinededicate.com',
-        'https://realizationnewestfangs.com',
-        'https://spendsdetachment.com',
-        'https://kettledroopingcontinuation.com',
-        'https://www.highrevenueformat.com',
-      ],
-      fontSrc: ["'self'", 'http:', 'https:', 'data:'],
-      connectSrc: ["'self'", 'http:', 'https:', 'wss:', 'blob:', 'data:',
-        'https://penguinsincequalify.com',
-        'https://zoologyfibre.com',
-        'https://workdeadlinededicate.com',
-        'https://realizationnewestfangs.com',
-        'https://spendsdetachment.com',
-        'https://kettledroopingcontinuation.com',
-        'https://www.highrevenueformat.com',
-      ],
-      frameSrc: ["'self'", 'http:', 'https:', 'blob:', 'data:',
-        'https://penguinsincequalify.com',
-        'https://zoologyfibre.com',
-        'https://workdeadlinededicate.com',
-        'https://realizationnewestfangs.com',
-        'https://spendsdetachment.com',
-        'https://kettledroopingcontinuation.com',
-        'https://www.highrevenueformat.com',
-      ],
+      styleSrc: ["'self'", "'unsafe-inline'", 'http:', 'https:', 'data:', '*'],
+      imgSrc: ["'self'", 'http:', 'https:', 'data:', 'blob:', '*'],
+      fontSrc: ["'self'", 'http:', 'https:', 'data:', '*'],
+      connectSrc: ["'self'", 'http:', 'https:', 'wss:', 'blob:', 'data:', '*'],
+      frameSrc: ["'self'", 'http:', 'https:', 'blob:', 'data:', '*'],
       workerSrc: ["'self'", 'blob:'],
       mediaSrc: ["'self'", 'http:', 'https:', 'blob:', 'data:'],
       objectSrc: ["'none'"],
