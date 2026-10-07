@@ -228,6 +228,8 @@
     <meta http-equiv="x-ua-compatible" content="IE=edge" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="mobile-web-app-capable" content="yes" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+    <meta name="color-scheme" content="light" />
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="%PUBLIC_URL%/favicon.svg?v=101" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/favicon.svg?v=101" />
@@ -280,6 +282,31 @@
         s.src = 'https://www.googletagmanager.com/gtag/js?id=G-J0V79VJ0JH';
         document.body.appendChild(s);
       });
+
+      // Suppress harmless console warnings from ad tracking and browser features
+      var originalError = console.error;
+      var originalWarn = console.warn;
+
+      console.error = function() {
+        var message = arguments[0];
+        if (typeof message === 'string' && message.includes('OpaqueResponseBlocking')) {
+          return; // Suppress OpaqueResponseBlocking warnings
+        }
+        originalError.apply(console, arguments);
+      };
+
+      console.warn = function() {
+        var message = arguments[0];
+        // Suppress known harmless warnings
+        if (typeof message === 'string' && (
+          message.includes('InstallTrigger is deprecated') ||
+          message.includes('Fingerprinting Protection') ||
+          message.includes('has been rejected for invalid domain')
+        )) {
+          return;
+        }
+        originalWarn.apply(console, arguments);
+      };
     </script>
     <!--
       Structured Data (JSON-LD)
