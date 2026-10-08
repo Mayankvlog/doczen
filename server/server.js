@@ -119,7 +119,7 @@ app.use(helmet({
       defaultSrc: ["'self'", 'http:', 'https:', 'data:', 'blob:'],
       scriptSrc: [
         "'self'", "'unsafe-inline'", "'unsafe-eval'",
-        'http:', 'https:', 'blob:', 'data:', '*', "'nonce-*'", "'sha256-*'", "'sha384-*'", "'sha512-*'"
+        'http:', 'https:', 'blob:', 'data:', '*'
       ],
       styleSrc: ["'self'", "'unsafe-inline'", 'http:', 'https:', 'data:', '*'],
       imgSrc: ["'self'", 'http:', 'https:', 'data:', 'blob:', '*'],

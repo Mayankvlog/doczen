@@ -28,7 +28,6 @@ export function loadAd(options) {
     s.src = src;
     s.async = true;
     s.setAttribute('data-cfasync', 'false');
-    s.crossOrigin = 'anonymous';
     s.onerror = function() {
       if (window._adActive[slotKey] !== request) return;
       window._adActive[slotKey] = false;

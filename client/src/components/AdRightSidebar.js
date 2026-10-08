@@ -7,12 +7,10 @@ export default function AdRightSidebar() {
   var ref = useRef(null);
   var [failed, setFailed] = useState(false);
   var [loading, setLoading] = useState(true);
-  var loadedRef = useRef(false);
 
   useEffect(function() {
-    if (!ref.current || failed || loadedRef.current) return;
+    if (!ref.current || failed) return;
 
-    loadedRef.current = true;
     console.log('[AdRightSidebar] Loading ad with key:', AD_KEY);
 
     var cleanup = loadAd({

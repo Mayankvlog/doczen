@@ -10,9 +10,9 @@
       //    server/server.js) cross-origin, which Firefox blocks ("CORS Missing
       //    Allow Origin" / "Cross-Origin Request Blocked"). Rewrite GET XHR/fetch
       //    to the same-origin nginx relay /adx/, which proxies to the original host
-      //    server-side (see the /adx/ location in nginx.conf). If the relay fails,
-      //    silently retry the original cross-origin URL, so behaviour is never
-      //    worse than without this shim.
+      //    server-side (see the /adx/ location in nginx.conf). Never retry a
+      //    failed relay cross-origin: that recreates the CORS error and can leave
+      //    the ad provider's request in an uncaught network-error state.
       // Keep RELAY_HOSTS in sync with the /adx/ allowlist in nginx.conf and
       // ADSTERRA_DOMAINS in server/server.js.
       (function () {
@@ -42,33 +42,24 @@
           } catch (e) { return null; }
         }
 
-        function looksLikeHtml(res) {
-          try {
-            var ct = (res.headers && res.headers.get) ? (res.headers.get('content-type') || '') : '';
-            return /text\/html/i.test(ct);
-          } catch (e) { return false; }
-        }
-
         // ---- fetch ----------------------------------------------------------------
         var nativeFetch = window.fetch;
         if (nativeFetch) {
           window.fetch = function (input, init) {
-            try {
-              var method = (init && init.method) ||
-                (typeof input === 'object' && input !== null && input.method) || 'GET';
-              var relayable = typeof input === 'string' || input instanceof URL;
-              var relay = (String(method).toUpperCase() === 'GET' && relayable) ? relayPath(input) : null;
-              if (relay) {
-                var self = this;
-                return nativeFetch.call(self, relay, init).then(function (res) {
-                  if (res.ok && !looksLikeHtml(res)) return res;
-                  return nativeFetch.call(self, input, init);
-                }, function (err) {
-                  return nativeFetch.call(self, input, init);
-                });
-              }
-            } catch (e) {}
-            return nativeFetch.apply(this, arguments);
+            var method = (init && init.method) ||
+              (typeof input === 'object' && input !== null && input.method) || 'GET';
+            var requestInput = typeof Request !== 'undefined' && input instanceof Request;
+            var relayable = typeof input === 'string' || input instanceof URL || requestInput;
+            var relay = (String(method).toUpperCase() === 'GET' && relayable)
+              ? relayPath(requestInput ? input.url : input)
+              : null;
+            if (!relay) return nativeFetch.apply(this, arguments);
+
+            var relayInput = requestInput
+              ? new Request(new URL(relay, location.href).href, input)
+              : relay;
+            var relayInit = Object.assign({}, init || {}, { credentials: 'omit' });
+            return nativeFetch.call(this, relayInput, relayInit);
           };
         }
 
@@ -87,8 +78,7 @@
             var xhr = new NativeXHR();
             var handlers = {};
             var listeners = {};
-            var mode = 'direct'; // direct | relay | fallback
-            var orig = null;
+            var mode = 'direct'; // direct | relay
             var suppressed = [];
 
             HANDLER_PROPS.forEach(function (prop) {
@@ -121,35 +111,26 @@
               for (var j = 0; j < q.length; j++) emit(q[j][0], q[j][1]);
             }
 
-            function relayLooksGood() {
-              try {
-                var ct = xhr.getResponseHeader('Content-Type') || '';
-                return xhr.status >= 200 && xhr.status < 300 && !/text\/html/i.test(ct);
-              } catch (e) { return false; }
-            }
-
-            function startFallback() {
-              if (!orig || orig.fallback) return;
-              orig.fallback = true;
-              mode = 'fallback';
-              suppressed = [];
-              nativeOpen.call(xhr, orig.method, orig.url, orig.async, orig.user, orig.pass);
-              nativeSend.call(xhr, orig.body);
-            }
-
             function gate(type, evt) {
               if (mode !== 'relay') { emit(type, evt); return; }
               if (type === 'abort') { mode = 'direct'; suppressed = []; emit(type, evt); return; }
-              if (type === 'error' || type === 'timeout') { startFallback(); return; }
+              if (type === 'error' || type === 'timeout') {
+                mode = 'direct';
+                suppressed = [];
+                emit(type, evt);
+                return;
+              }
               if (type === 'readystatechange') {
                 if (xhr.readyState < 3) { suppressed.push([type, evt]); return; }
-                if (relayLooksGood()) { mode = 'direct'; flush(); emit(type, evt); }
-                else startFallback();
+                mode = 'direct';
+                flush();
+                emit(type, evt);
                 return;
               }
               if (type === 'load') {
-                if (relayLooksGood()) { mode = 'direct'; flush(); emit(type, evt); }
-                else startFallback();
+                mode = 'direct';
+                flush();
+                emit(type, evt);
               }
             }
 
@@ -160,18 +141,15 @@
             nativeAdd.call(xhr, 'timeout', function (e) { gate('timeout', e); });
 
             xhr.open = function (method, url, async, user, pass) {
-              var relay = null;
-              try {
-                if (async !== false && String(method).toUpperCase() === 'GET') relay = relayPath(url);
-              } catch (e) {}
-              orig = { method: method, url: url, async: async, user: user, pass: pass, body: undefined, fallback: false };
+              var relay = async !== false && String(method).toUpperCase() === 'GET'
+                ? relayPath(url)
+                : null;
               mode = relay ? 'relay' : 'direct';
               suppressed = [];
               return nativeOpen.call(xhr, method, relay || url, async, user, pass);
             };
 
             xhr.send = function (body) {
-              if (orig) orig.body = body;
               return nativeSend.call(xhr, body);
             };
 
@@ -287,7 +265,7 @@
         document.body.appendChild(s);
       });
 
-      // Suppress harmless console warnings from ad tracking and browser features
+      // Suppress non-actionable warnings from ad tracking and browser features
       var originalError = console.error;
       var originalWarn = console.warn;
       var originalInfo = console.info;
@@ -297,9 +275,7 @@
         if (typeof message === 'string' && (
           message.includes('OpaqueResponseBlocking') ||
           message.includes('A resource is blocked') ||
-          message.includes('has been rejected for invalid domain') ||
-          message.includes('CORS Missing Allow Origin') ||
-          message.includes('Cross-Origin Request Blocked')
+          message.includes('has been rejected for invalid domain')
         )) {
           return;
         }
@@ -311,8 +287,7 @@
         if (typeof message === 'string' && (
           message.includes('InstallTrigger is deprecated') ||
           message.includes('Fingerprinting Protection') ||
-          message.includes('Preloaded') && message.includes('not used') ||
-          message.includes('Quirks Mode')
+          message.includes('Preloaded') && message.includes('not used')
         )) {
           return;
         }
