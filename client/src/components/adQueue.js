@@ -1,18 +1,74 @@
-// Parallel ad-loader for High-Rev (highrevenueformat.com) and Adsterra placements.
-//
-// Why this is faster: the previous loader injected ad scripts one-at-a-time and
-// waited for each script's full load (plus a 100ms delay) before starting the
-// next. With banner + 2 sidebars + native = 3-4 scripts per page, the last ad
-// only started after every earlier script had finished loading.
-//
-// Register each configured placement in the shared window.atAsyncOptions[]
-// pool before injecting its script. Track requests by URL and container so a
-// shared script URL cannot prevent a different placement from loading.
+var pendingAds = [];
+var activeAd = null;
+
+function finishAd(request, error) {
+  if (request.finished) return;
+  request.finished = true;
+  clearTimeout(request.timeout);
+
+  if (
+    request.config &&
+    request.config.key &&
+    window.atOptions &&
+    window.atOptions.key === request.config.key
+  ) {
+    delete window.atOptions;
+  }
+
+  if (error) request.script.remove();
+
+  if (window._adActive[request.slotKey] === request.token) {
+    window._adActive[request.slotKey] = false;
+    if (!request.cancelled) {
+      if (error) request.onerror(error);
+      else request.onload();
+    }
+  }
+
+  if (activeAd === request) activeAd = null;
+  runNextAd();
+}
+
+function runNextAd() {
+  if (activeAd || pendingAds.length === 0) return;
+
+  var request = pendingAds.shift();
+  if (request.cancelled || window._adActive[request.slotKey] !== request.token) {
+    runNextAd();
+    return;
+  }
+
+  if (!document.documentElement.contains(request.container)) {
+    finishAd(request, new Error('Container not in DOM'));
+    return;
+  }
+
+  activeAd = request;
+  if (request.config && request.config.key) {
+    window.atOptions = Object.assign({}, request.config);
+  }
+
+  request.script.onload = function() {
+    console.log('[adQueue] Ad script loaded successfully:', request.src);
+    finishAd(request);
+  };
+  request.script.onerror = function() {
+    finishAd(request, new Error('Ad script failed to load'));
+  };
+  request.timeout = setTimeout(function() {
+    finishAd(request, new Error('Ad script load timed out'));
+  }, 15000);
+
+  try {
+    request.container.appendChild(request.script);
+  } catch (error) {
+    finishAd(request, error);
+  }
+}
+
 export function loadAd(options) {
   var src = options.src;
   var config = options.config;
-  var onerror = options.onerror;
-  var onload = options.onload;
   var container = options.container;
 
   if (!src || !container) return undefined;
@@ -21,68 +77,47 @@ export function loadAd(options) {
     if (!window._adActive) window._adActive = {};
     var slotKey = src + '::' + (container.id || 'default');
     if (window._adActive[slotKey]) return undefined;
-    var request = {};
-    window._adActive[slotKey] = request;
 
-    var s = document.createElement('script');
-    s.src = src;
-    s.async = true;
-    s.setAttribute('data-cfasync', 'false');
-    s.onerror = function() {
-      if (window._adActive[slotKey] !== request) return;
-      window._adActive[slotKey] = false;
-      if (onerror) onerror(new Error('Ad script failed to load'));
+    var token = {};
+    var request = {
+      src: src,
+      config: config,
+      container: container,
+      slotKey: slotKey,
+      token: token,
+      onerror: function(error) {
+        console.error('[adQueue] Ad script failed:', src, error);
+        if (options.onerror) options.onerror(error);
+      },
+      onload: function() {
+        if (options.onload) options.onload();
+      },
+      script: document.createElement('script'),
+      cancelled: false,
+      finished: false,
+      timeout: null,
     };
-    s.onload = function() {
-      if (window._adActive[slotKey] !== request) return;
-      console.log('[adQueue] Ad script loaded successfully:', src);
-      if (onload) onload();
-    };
 
-    // Register the slot in the network's shared config pool in the same microtask
-    // that injects the provider script. Doing both here means:
-    //   1. the container is guaranteed to be in the DOM before we register, and
-    //   2. iframe configs always carry async:true + container, so the provider
-    //      targets THIS slot instead of appending every drained option next to
-    //      whichever script tag happened to execute first (the old collapse bug).
-    Promise.resolve().then(function() {
-      if (window._adActive[slotKey] !== request) return;
-      if (!document.documentElement.contains(container)) {
-        window._adActive[slotKey] = false;
-        if (onerror) onerror(new Error('Container not in DOM'));
-        return;
-      }
-
-      // Native Adsterra placements (config === null) carry their own config and
-      // must NOT be added to the shared pool.
-      if (config && config.key) {
-        if (!window.atAsyncOptions) window.atAsyncOptions = [];
-        var entry = config.async === undefined
-          ? Object.assign({}, config, { async: true })
-          : config;
-        var exists = window.atAsyncOptions.some(function(o) {
-          return !!o && o.key === entry.key && o.container === entry.container;
-        });
-        if (!exists) window.atAsyncOptions.push(entry);
-      }
-
-      try {
-        container.appendChild(s);
-      } catch (e) {
-        console.error('[adQueue] Failed to append script:', e);
-        window._adActive[slotKey] = false;
-        if (onerror) onerror(e);
-      }
-    });
+    request.script.src = src;
+    request.script.async = true;
+    request.script.setAttribute('data-cfasync', 'false');
+    window._adActive[slotKey] = token;
+    pendingAds.push(request);
+    Promise.resolve().then(runNextAd);
 
     return function cleanup() {
-      if (window._adActive[slotKey] === request) {
-        window._adActive[slotKey] = false;
+      if (window._adActive[slotKey] !== token) return;
+      window._adActive[slotKey] = false;
+      request.cancelled = true;
+
+      var queuedIndex = pendingAds.indexOf(request);
+      if (queuedIndex !== -1) {
+        pendingAds.splice(queuedIndex, 1);
       }
     };
-  } catch (e) {
-    console.error('[adQueue] Load ad error:', e);
-    if (onerror) onerror(e);
+  } catch (error) {
+    console.error('[adQueue] Load ad error:', error);
+    if (options.onerror) options.onerror(error);
     return undefined;
   }
 }

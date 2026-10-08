@@ -13,6 +13,18 @@ export default function AdRightSidebar() {
 
     console.log('[AdRightSidebar] Loading ad with key:', AD_KEY);
 
+    var timeout;
+    function checkForCreative() {
+      clearTimeout(timeout);
+      timeout = setTimeout(function() {
+        if (!hasRenderableAd(ref.current)) {
+          console.warn('[AdRightSidebar] No visible ad creative loaded after 15s');
+          setFailed(true);
+        }
+        setLoading(false);
+      }, 15000);
+    }
+
     var cleanup = loadAd({
       src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
       config: {
@@ -26,6 +38,7 @@ export default function AdRightSidebar() {
       },
       onload: function() {
         setLoading(false);
+        checkForCreative();
       },
       onerror: function(error) {
         console.error('[AdRightSidebar] Ad failed to load:', error);
@@ -34,14 +47,6 @@ export default function AdRightSidebar() {
       },
       container: ref.current,
     });
-
-    var timeout = setTimeout(function() {
-      if (!hasRenderableAd(ref.current)) {
-        console.warn('[AdRightSidebar] No visible ad creative loaded after 8s');
-        setFailed(true);
-      }
-      setLoading(false);
-    }, 8000);
 
     return function() {
       if (cleanup) cleanup();

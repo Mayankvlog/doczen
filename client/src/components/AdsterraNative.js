@@ -16,21 +16,26 @@ export default function AdsterraNative() {
   useEffect(function() {
     if (!ref.current || failed || !mounted) return;
 
+    var timeout;
+    function checkForCreative() {
+      clearTimeout(timeout);
+      timeout = setTimeout(function() {
+        if (!hasRenderableAd(ref.current)) {
+          console.warn('[AdsterraNative] No visible ad creative loaded after 15s');
+          setFailed(true);
+        }
+      }, 15000);
+    }
+
     var cleanup = loadAd({
       src: 'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
       config: null,
+      onload: checkForCreative,
       onerror: function() {
         setFailed(true);
       },
       container: ref.current,
     });
-
-    var timeout = setTimeout(function() {
-      if (!hasRenderableAd(ref.current)) {
-        console.warn('[AdsterraNative] No visible ad creative loaded after 8s');
-        setFailed(true);
-      }
-    }, 8000);
 
     return function() {
       if (cleanup) cleanup();
