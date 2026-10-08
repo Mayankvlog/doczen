@@ -243,7 +243,7 @@ app.use((req, res, next) => {
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=()');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=(self "https://penguinsincequalify.com" "https://zoologyfibre.com" "https://workdeadlinededicate.com" "https://realizationnewestfangs.com" "https://spendsdetachment.com" "https://kettledroopingcontinuation.com" "https://furiousexpansion.com" "https://consumeririssalary.com" "https://spondsdetachment.com" "https://fizzyacerbitymellow.com" "https://highrevenueformat.com" "https://profitableratecpmnetwork.com")');
   
   // HSTS - Enforce HTTPS
   if (process.env.NODE_ENV === 'production') {
