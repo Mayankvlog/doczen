@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { loadAd } from './adQueue';
+import { hasRenderableAd, loadAd } from './adQueue';
 
 const AD_KEY = '20c23d55e0aa2d4c55f69cec04907f2b';
 
@@ -27,7 +27,17 @@ export default function Banner728x90() {
       container: ref.current,
     });
 
-    return cleanup;
+    var timeout = setTimeout(function() {
+      if (!hasRenderableAd(ref.current)) {
+        console.warn('[Banner728x90] No visible ad creative loaded after 8s');
+        setFailed(true);
+      }
+    }, 8000);
+
+    return function() {
+      if (cleanup) cleanup();
+      clearTimeout(timeout);
+    };
   }, [failed]);
 
   return (

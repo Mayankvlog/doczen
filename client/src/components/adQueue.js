@@ -12,6 +12,7 @@ export function loadAd(options) {
   var src = options.src;
   var config = options.config;
   var onerror = options.onerror;
+  var onload = options.onload;
   var container = options.container;
 
   if (!src || !container) return undefined;
@@ -34,7 +35,9 @@ export function loadAd(options) {
       if (onerror) onerror(new Error('Ad script failed to load'));
     };
     s.onload = function() {
+      if (window._adActive[slotKey] !== request) return;
       console.log('[adQueue] Ad script loaded successfully:', src);
+      if (onload) onload();
     };
 
     // Register the slot in the network's shared config pool in the same microtask
@@ -83,4 +86,27 @@ export function loadAd(options) {
     if (onerror) onerror(e);
     return undefined;
   }
+}
+
+export function hasRenderableAd(container) {
+  if (!container) return false;
+
+  var candidates = container.querySelectorAll('iframe, img, video, canvas');
+  for (var i = 0; i < candidates.length; i += 1) {
+    var element = candidates[i];
+    var bounds = element.getBoundingClientRect();
+    var style = window.getComputedStyle(element);
+
+    if (
+      bounds.width >= 20 &&
+      bounds.height >= 20 &&
+      style.display !== 'none' &&
+      style.visibility !== 'hidden' &&
+      style.opacity !== '0'
+    ) {
+      return true;
+    }
+  }
+
+  return false;
 }

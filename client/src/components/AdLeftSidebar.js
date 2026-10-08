@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { loadAd } from './adQueue';
+import { hasRenderableAd, loadAd } from './adQueue';
 
 const AD_KEY = 'b11a753fbb1e311a5b2734272ab5edda';
 
@@ -26,6 +26,9 @@ export default function AdLeftSidebar() {
         params: {},
         async: true,
       },
+      onload: function() {
+        setLoading(false);
+      },
       onerror: function(error) {
         console.error('[AdLeftSidebar] Ad failed to load:', error);
         setFailed(true);
@@ -34,20 +37,17 @@ export default function AdLeftSidebar() {
       container: ref.current,
     });
 
-    setTimeout(function() {
-      if (loading) {
-        console.log('[AdLeftSidebar] Ad loading timeout (5s), checking container...');
-        var container = document.getElementById('sbLeft-' + AD_KEY);
-        if (container && container.children.length === 0) {
-          console.warn('[AdLeftSidebar] No ad content loaded after 5s');
-          setFailed(true);
-        }
-        setLoading(false);
+    var timeout = setTimeout(function() {
+      if (!hasRenderableAd(ref.current)) {
+        console.warn('[AdLeftSidebar] No visible ad creative loaded after 8s');
+        setFailed(true);
       }
-    }, 5000);
+      setLoading(false);
+    }, 8000);
 
     return function() {
       if (cleanup) cleanup();
+      clearTimeout(timeout);
     };
   }, [failed]);
 
