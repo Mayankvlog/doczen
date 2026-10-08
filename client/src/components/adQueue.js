@@ -5,6 +5,7 @@ function finishAd(request, error) {
   if (request.finished) return;
   request.finished = true;
   clearTimeout(request.timeout);
+  clearTimeout(request.retryTimer);
 
   if (
     request.config &&
@@ -15,7 +16,7 @@ function finishAd(request, error) {
     delete window.atOptions;
   }
 
-  if (error) request.script.remove();
+  if ((error || request.cancelled) && request.script) request.script.remove();
 
   if (window._adActive[request.slotKey] === request.token) {
     window._adActive[request.slotKey] = false;
@@ -27,6 +28,75 @@ function finishAd(request, error) {
 
   if (activeAd === request) activeAd = null;
   runNextAd();
+}
+
+function clearAdConfig(request) {
+  if (
+    request.config &&
+    request.config.key &&
+    window.atOptions &&
+    window.atOptions.key === request.config.key
+  ) {
+    delete window.atOptions;
+  }
+}
+
+function retryAd(request, error, attempt) {
+  if (request.finished || request.attempt !== attempt) return;
+  clearTimeout(request.timeout);
+  request.script.remove();
+  clearAdConfig(request);
+
+  if (request.attempts < 2 && !request.cancelled) {
+    console.warn(
+      '[adQueue] Ad script attempt failed; retrying once:',
+      request.src,
+      error
+    );
+    request.retryTimer = setTimeout(function() {
+      if (request.finished || request.cancelled || activeAd !== request) {
+        finishAd(request);
+        return;
+      }
+      startAdAttempt(request);
+    }, 500);
+    return;
+  }
+
+  finishAd(request, error);
+}
+
+function startAdAttempt(request) {
+  request.attempts += 1;
+  request.attempt += 1;
+  var attempt = request.attempt;
+
+  if (request.config && request.config.key) {
+    window.atOptions = Object.assign({}, request.config);
+  }
+
+  var script = document.createElement('script');
+  request.script = script;
+  script.src = request.src;
+  script.async = true;
+  script.setAttribute('data-cfasync', 'false');
+  script.onload = function() {
+    if (request.finished || request.attempt !== attempt) return;
+    console.log('[adQueue] Ad script loaded successfully:', request.src);
+    finishAd(request);
+  };
+  script.onerror = function() {
+    retryAd(request, new Error('Ad script failed to load'), attempt);
+  };
+  request.timeout = setTimeout(function() {
+    retryAd(request, new Error('Ad script load timed out'), attempt);
+  }, 15000);
+
+  try {
+    request.container.appendChild(script);
+  } catch (error) {
+    retryAd(request, error, attempt);
+  }
 }
 
 function runNextAd() {
@@ -44,26 +114,7 @@ function runNextAd() {
   }
 
   activeAd = request;
-  if (request.config && request.config.key) {
-    window.atOptions = Object.assign({}, request.config);
-  }
-
-  request.script.onload = function() {
-    console.log('[adQueue] Ad script loaded successfully:', request.src);
-    finishAd(request);
-  };
-  request.script.onerror = function() {
-    finishAd(request, new Error('Ad script failed to load'));
-  };
-  request.timeout = setTimeout(function() {
-    finishAd(request, new Error('Ad script load timed out'));
-  }, 15000);
-
-  try {
-    request.container.appendChild(request.script);
-  } catch (error) {
-    finishAd(request, error);
-  }
+  startAdAttempt(request);
 }
 
 export function loadAd(options) {
@@ -92,15 +143,15 @@ export function loadAd(options) {
       onload: function() {
         if (options.onload) options.onload();
       },
-      script: document.createElement('script'),
+      script: null,
+      attempts: 0,
+      attempt: 0,
       cancelled: false,
       finished: false,
       timeout: null,
+      retryTimer: null,
     };
 
-    request.script.src = src;
-    request.script.async = true;
-    request.script.setAttribute('data-cfasync', 'false');
     window._adActive[slotKey] = token;
     pendingAds.push(request);
     Promise.resolve().then(runNextAd);
@@ -113,6 +164,12 @@ export function loadAd(options) {
       var queuedIndex = pendingAds.indexOf(request);
       if (queuedIndex !== -1) {
         pendingAds.splice(queuedIndex, 1);
+        request.finished = true;
+        clearTimeout(request.retryTimer);
+        clearAdConfig(request);
+        runNextAd();
+      } else if (activeAd === request) {
+        finishAd(request);
       }
     };
   } catch (error) {
