@@ -1,6 +1,17 @@
 /** @type {import('tailwindcss').Config} */
+const fs = require('fs');
+const postcss = require('postcss');
+
+const tailwindPreflight = fs.readFileSync(
+  require.resolve('tailwindcss/lib/css/preflight.css'),
+  'utf8'
+);
+
 module.exports = {
   content: ["./src/**/*.{js,jsx}"],
+  corePlugins: {
+    preflight: false,
+  },
   theme: {
     extend: {
       colors: {
@@ -62,5 +73,14 @@ module.exports = {
       }
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addBase }) {
+      const preflight = postcss.parse(tailwindPreflight);
+      preflight.walkDecls('-webkit-text-size-adjust', (declaration) => {
+        declaration.remove();
+      });
+
+      addBase(preflight.nodes);
+    },
+  ],
 }
