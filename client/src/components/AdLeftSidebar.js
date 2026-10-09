@@ -13,15 +13,6 @@ export default function AdLeftSidebar() {
 
     console.log('[AdLeftSidebar] Loading ad with key:', AD_KEY);
 
-    // Clear container before loading new ad (safely)
-    try {
-      while (ref.current && ref.current.firstChild) {
-        ref.current.removeChild(ref.current.firstChild);
-      }
-    } catch (e) {
-      // Ignore if container was already cleared by React
-    }
-
     var cleanup = loadAd({
       src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
       dataCfasync: false,
@@ -53,25 +44,28 @@ export default function AdLeftSidebar() {
 
   return (
     <div className="hidden lg:block fixed left-0 top-1/2 -translate-y-1/2 z-40 w-[160px]">
-      <div
-        ref={ref}
-        id={'sbLeft-' + AD_KEY}
-        className="flex justify-center items-center"
-        style={{ minHeight: '600px' }}
-      >
-        {loading && (
-          <div className="w-[160px] h-[600px] bg-gray-50 flex items-center justify-center text-gray-400 text-xs animate-pulse">
-            Loading ad...
-          </div>
-        )}
-        {failed && (
-          <div className="w-[160px] h-[600px] bg-gray-100 flex items-center justify-center text-gray-500 text-xs border border-gray-200">
-            <div className="text-center p-2">
-              <div className="font-semibold text-gray-600 mb-1">Advertisement</div>
-              <div className="text-gray-400">Ad temporarily unavailable</div>
+      <div className="relative w-full" style={{ minHeight: '600px' }}>
+        <div
+          ref={ref}
+          id={'sbLeft-' + AD_KEY}
+          className="flex justify-center items-center w-full"
+          style={{ minHeight: '600px' }}
+        />
+        <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+          {loading && (
+            <div className="w-[160px] h-[600px] bg-gray-50 flex items-center justify-center text-gray-400 text-xs animate-pulse">
+              Loading ad...
             </div>
-          </div>
-        )}
+          )}
+          {failed && (
+            <div className="w-[160px] h-[600px] bg-gray-100 flex items-center justify-center text-gray-500 text-xs border border-gray-200">
+              <div className="text-center p-2">
+                <div className="font-semibold text-gray-600 mb-1">Advertisement</div>
+                <div className="text-gray-400">Ad temporarily unavailable</div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

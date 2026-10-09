@@ -12,15 +12,6 @@ export default function Banner728x90() {
 
     console.log('[Banner728x90] Loading ad with key:', AD_KEY);
 
-    // Clear container before loading new ad (safely)
-    try {
-      while (ref.current && ref.current.firstChild) {
-        ref.current.removeChild(ref.current.firstChild);
-      }
-    } catch (e) {
-      // Ignore if container was already cleared by React
-    }
-
     var cleanup = loadAd({
       src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
       dataCfasync: false,
@@ -50,13 +41,16 @@ export default function Banner728x90() {
 
   return (
     <div
-      ref={ref}
-      id={'atContainer-' + AD_KEY}
-      className="flex justify-center bg-gray-100 py-2 overflow-hidden"
-      style={{ minHeight: '90px', minWidth: '100%', position: 'relative' }}
+      className="relative flex justify-center bg-gray-100 py-2 overflow-hidden"
+      style={{ minHeight: '90px', minWidth: '100%' }}
     >
+      <div
+        ref={ref}
+        id={'atContainer-' + AD_KEY}
+        className="absolute inset-0"
+      />
       {failed && (
-        <div className="w-[728px] h-[90px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm border border-gray-200">
+        <div className="absolute inset-0 w-[728px] h-[90px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm border border-gray-200">
           <div className="text-center">
             <div className="font-semibold text-gray-700 mb-1">Advertisement</div>
             <div className="text-gray-400 text-xs">Ad temporarily unavailable</div>

@@ -7,14 +7,11 @@ const AD_DOMAIN = process.env.REACT_APP_ADSTERRA_DOMAIN || 'pl29568432.profitabl
 export default function AdsterraNative() {
   var ref = useRef(null);
   var [failed, setFailed] = useState(false);
-  var [mounted, setMounted] = useState(false);
 
   useEffect(function() {
-    setMounted(true);
-  }, []);
+    if (!ref.current || failed) return;
 
-  useEffect(function() {
-    if (!ref.current || failed || !mounted) return;
+    var cleanup;
 
     // Small delay to ensure container is in DOM
     var timeout = setTimeout(function() {
@@ -22,16 +19,7 @@ export default function AdsterraNative() {
 
       console.log('[AdsterraNative] Loading ad with key:', AD_KEY);
 
-      // Clear container before loading new ad (safely)
-      try {
-        while (ref.current && ref.current.firstChild) {
-          ref.current.removeChild(ref.current.firstChild);
-        }
-      } catch (e) {
-        // Ignore if container was already cleared by React
-      }
-
-      var cleanup = loadAd({
+      cleanup = loadAd({
         src: 'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
         dataCfasync: false,
         config: {
@@ -52,22 +40,19 @@ export default function AdsterraNative() {
         },
         container: ref.current,
       });
-
-      return function() {
-        if (cleanup) cleanup();
-      };
     }, 100);
 
     return function() {
       clearTimeout(timeout);
+      if (cleanup) cleanup();
     };
-  }, [failed, mounted]);
+  }, [failed]);
 
   return (
-    <div className="flex justify-center my-6 overflow-hidden">
-      {!failed && <div ref={ref} id={'container-' + AD_KEY} className="w-full max-w-[300px] h-[250px] overflow-hidden relative"></div>}
+    <div className="relative flex justify-center my-6 overflow-hidden">
+      <div ref={ref} id={'container-' + AD_KEY} className="w-full max-w-[300px] h-[250px] overflow-hidden relative" />
       {failed && (
-        <div className="w-full max-w-[300px] h-[250px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm rounded overflow-hidden">
+        <div className="absolute inset-0 mx-auto w-full max-w-[300px] h-[250px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm rounded overflow-hidden">
           Advertisement
         </div>
       )}
