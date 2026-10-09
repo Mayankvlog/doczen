@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { hasRenderableAd, loadAd } from './adQueue';
+import { loadAd } from './adQueue';
 
 const AD_KEY = 'b11a753fbb1e311a5b2734272ab5edda';
 
@@ -12,18 +12,6 @@ export default function AdLeftSidebar() {
     if (!ref.current || failed) return;
 
     console.log('[AdLeftSidebar] Loading ad with key:', AD_KEY);
-
-    var timeout;
-    function checkForCreative() {
-      clearTimeout(timeout);
-      timeout = setTimeout(function() {
-        if (!hasRenderableAd(ref.current)) {
-          console.warn('[AdLeftSidebar] No visible ad creative loaded after 15s');
-          setFailed(true);
-        }
-        setLoading(false);
-      }, 15000);
-    }
 
     var cleanup = loadAd({
       src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
@@ -39,7 +27,6 @@ export default function AdLeftSidebar() {
       },
       onload: function() {
         setLoading(false);
-        checkForCreative();
       },
       onerror: function(error) {
         console.error('[AdLeftSidebar] Ad failed to load:', error);
@@ -51,7 +38,6 @@ export default function AdLeftSidebar() {
 
     return function() {
       if (cleanup) cleanup();
-      clearTimeout(timeout);
     };
   }, [failed]);
 

@@ -183,26 +183,3 @@ export function loadAd(options) {
     return undefined;
   }
 }
-
-export function hasRenderableAd(container) {
-  if (!container) return false;
-
-  var candidates = container.querySelectorAll('iframe, img, video, canvas');
-  for (var i = 0; i < candidates.length; i += 1) {
-    var element = candidates[i];
-    var bounds = element.getBoundingClientRect();
-    var style = window.getComputedStyle(element);
-
-    if (
-      bounds.width >= 20 &&
-      bounds.height >= 20 &&
-      style.display !== 'none' &&
-      style.visibility !== 'hidden' &&
-      style.opacity !== '0'
-    ) {
-      return true;
-    }
-  }
-
-  return false;
-}

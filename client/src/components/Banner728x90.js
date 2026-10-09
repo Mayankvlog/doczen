@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { hasRenderableAd, loadAd } from './adQueue';
+import { loadAd } from './adQueue';
 
 const AD_KEY = '20c23d55e0aa2d4c55f69cec04907f2b';
 
@@ -9,17 +9,6 @@ export default function Banner728x90() {
 
   useEffect(function() {
     if (!ref.current || failed) return;
-
-    var timeout;
-    function checkForCreative() {
-      clearTimeout(timeout);
-      timeout = setTimeout(function() {
-        if (!hasRenderableAd(ref.current)) {
-          console.warn('[Banner728x90] No visible ad creative loaded after 15s');
-          setFailed(true);
-        }
-      }, 15000);
-    }
 
     var cleanup = loadAd({
       src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
@@ -33,7 +22,6 @@ export default function Banner728x90() {
         params: {},
         async: true,
       },
-      onload: checkForCreative,
       onerror: function() {
         setFailed(true);
       },
@@ -42,7 +30,6 @@ export default function Banner728x90() {
 
     return function() {
       if (cleanup) cleanup();
-      clearTimeout(timeout);
     };
   }, [failed]);
 
