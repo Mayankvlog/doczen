@@ -13,9 +13,13 @@ export default function AdLeftSidebar() {
 
     console.log('[AdLeftSidebar] Loading ad with key:', AD_KEY);
 
-    // Clear container before loading new ad
-    while (ref.current.firstChild) {
-      ref.current.removeChild(ref.current.firstChild);
+    // Clear container before loading new ad (safely)
+    try {
+      while (ref.current && ref.current.firstChild) {
+        ref.current.removeChild(ref.current.firstChild);
+      }
+    } catch (e) {
+      // Ignore if container was already cleared by React
     }
 
     var cleanup = loadAd({
