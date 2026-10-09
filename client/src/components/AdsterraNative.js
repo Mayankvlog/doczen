@@ -16,11 +16,30 @@ export default function AdsterraNative() {
   useEffect(function() {
     if (!ref.current || failed || !mounted) return;
 
+    console.log('[AdsterraNative] Loading ad with key:', AD_KEY);
+
+    // Clear container before loading new ad
+    while (ref.current.firstChild) {
+      ref.current.removeChild(ref.current.firstChild);
+    }
+
     var cleanup = loadAd({
       src: 'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
       dataCfasync: false,
-      config: null,
-      onerror: function() {
+      config: {
+        key: AD_KEY,
+        format: 'iframe',
+        height: 250,
+        width: 300,
+        container: 'container-' + AD_KEY,
+        params: {},
+        async: true,
+      },
+      onload: function() {
+        console.log('[AdsterraNative] Ad loaded successfully');
+      },
+      onerror: function(error) {
+        console.error('[AdsterraNative] Ad failed to load:', error);
         setFailed(true);
       },
       container: ref.current,

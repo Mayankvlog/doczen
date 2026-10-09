@@ -13,6 +13,11 @@ export default function AdRightSidebar() {
 
     console.log('[AdRightSidebar] Loading ad with key:', AD_KEY);
 
+    // Clear container before loading new ad
+    while (ref.current.firstChild) {
+      ref.current.removeChild(ref.current.firstChild);
+    }
+
     var cleanup = loadAd({
       src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
       dataCfasync: false,
@@ -26,6 +31,7 @@ export default function AdRightSidebar() {
         async: true,
       },
       onload: function() {
+        console.log('[AdRightSidebar] Ad loaded successfully');
         setLoading(false);
       },
       onerror: function(error) {

@@ -286,7 +286,8 @@
         if (typeof message === 'string' && (
           message.includes('InstallTrigger is deprecated') ||
           message.includes('Fingerprinting Protection') ||
-          message.includes('Preloaded') && message.includes('not used')
+          message.includes('Preloaded') && message.includes('not used') ||
+          message.includes('Synchronous XMLHttpRequest') && message.includes('deprecated')
         )) {
           return;
         }

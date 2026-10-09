@@ -7,6 +7,12 @@ function finishAd(request, error) {
   clearTimeout(request.timeout);
   clearTimeout(request.retryTimer);
 
+  // Clear render check timer if it exists
+  if (request.renderCheckTimer) {
+    clearInterval(request.renderCheckTimer);
+    request.renderCheckTimer = null;
+  }
+
   if (
     request.config &&
     request.config.key &&
@@ -44,6 +50,10 @@ function clearAdConfig(request) {
 function retryAd(request, error, attempt) {
   if (request.finished || request.attempt !== attempt) return;
   clearTimeout(request.timeout);
+  if (request.renderCheckTimer) {
+    clearInterval(request.renderCheckTimer);
+    request.renderCheckTimer = null;
+  }
   request.script.remove();
   clearAdConfig(request);
 
@@ -71,8 +81,10 @@ function startAdAttempt(request) {
   request.attempt += 1;
   var attempt = request.attempt;
 
+  // Set atOptions BEFORE script loading - critical for ad rendering
   if (request.config && request.config.key) {
     window.atOptions = Object.assign({}, request.config);
+    console.log('[adQueue] Setting atOptions:', request.config);
   }
 
   var script = document.createElement('script');
@@ -84,21 +96,72 @@ function startAdAttempt(request) {
   } else {
     script.setAttribute('data-cfasync', 'false');
   }
+
+  // Add ad rendering detection
+  var renderCheckCount = 0;
+
   script.onload = function() {
     if (request.finished || request.attempt !== attempt) return;
     console.log('[adQueue] Ad script loaded successfully:', request.src);
-    finishAd(request);
+
+    // Check if ad rendered content into the container
+    request.renderCheckTimer = setInterval(function() {
+      renderCheckCount++;
+      if (request.finished) {
+        clearInterval(request.renderCheckTimer);
+        return;
+      }
+
+      var container = request.container;
+      if (!container || !document.documentElement.contains(container)) {
+        clearInterval(request.renderCheckTimer);
+        finishAd(request, new Error('Container removed from DOM'));
+        return;
+      }
+
+      // Check if container has any content (iframe, div, img, etc.)
+      var hasContent = false;
+      var children = container.children;
+      for (var i = 0; i < children.length; i++) {
+        var child = children[i];
+        if (child.tagName === 'IFRAME' || child.tagName === 'IMG' ||
+            child.tagName === 'DIV' || child.tagName === 'A') {
+          // Check if it has actual content (not just empty)
+          if (child.src || child.innerHTML.trim() ||
+              child.style.backgroundImage || child.offsetWidth > 0) {
+            hasContent = true;
+            break;
+          }
+        }
+      }
+
+      if (hasContent) {
+        console.log('[adQueue] Ad rendered successfully in container');
+        clearInterval(request.renderCheckTimer);
+        finishAd(request);
+      } else if (renderCheckCount >= 10) {
+        // After 5 seconds (10 checks * 500ms), if no content, treat as failed
+        console.warn('[adQueue] Ad did not render content after timeout');
+        clearInterval(request.renderCheckTimer);
+        finishAd(request, new Error('Ad script loaded but did not render'));
+      }
+    }, 500);
   };
+
   script.onerror = function() {
+    if (request.renderCheckTimer) clearInterval(request.renderCheckTimer);
     retryAd(request, new Error('Ad script failed to load'), attempt);
   };
+
   request.timeout = setTimeout(function() {
+    if (request.renderCheckTimer) clearInterval(request.renderCheckTimer);
     retryAd(request, new Error('Ad script load timed out'), attempt);
   }, 15000);
 
   try {
     request.container.appendChild(script);
   } catch (error) {
+    if (request.renderCheckTimer) clearInterval(request.renderCheckTimer);
     retryAd(request, error, attempt);
   }
 }
@@ -155,6 +218,7 @@ export function loadAd(options) {
       finished: false,
       timeout: null,
       retryTimer: null,
+      renderCheckTimer: null,
     };
 
     window._adActive[slotKey] = token;
@@ -171,6 +235,10 @@ export function loadAd(options) {
         pendingAds.splice(queuedIndex, 1);
         request.finished = true;
         clearTimeout(request.retryTimer);
+        if (request.renderCheckTimer) {
+          clearInterval(request.renderCheckTimer);
+          request.renderCheckTimer = null;
+        }
         clearAdConfig(request);
         runNextAd();
       } else if (activeAd === request) {
