@@ -23,6 +23,7 @@ export default function Banner728x90() {
 
     var cleanup = loadAd({
       src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
+      dataCfasync: false,
       config: {
         key: AD_KEY,
         format: 'iframe',

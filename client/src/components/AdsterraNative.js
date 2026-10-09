@@ -29,6 +29,7 @@ export default function AdsterraNative() {
 
     var cleanup = loadAd({
       src: 'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
+      dataCfasync: false,
       config: null,
       onload: checkForCreative,
       onerror: function() {

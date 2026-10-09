@@ -79,7 +79,11 @@ function startAdAttempt(request) {
   request.script = script;
   script.src = request.src;
   script.async = true;
-  script.setAttribute('data-cfasync', 'false');
+  if (request.dataCfasync !== undefined) {
+    script.setAttribute('data-cfasync', String(request.dataCfasync));
+  } else {
+    script.setAttribute('data-cfasync', 'false');
+  }
   script.onload = function() {
     if (request.finished || request.attempt !== attempt) return;
     console.log('[adQueue] Ad script loaded successfully:', request.src);
@@ -133,6 +137,7 @@ export function loadAd(options) {
     var request = {
       src: src,
       config: config,
+      dataCfasync: options.dataCfasync !== undefined ? options.dataCfasync : false,
       container: container,
       slotKey: slotKey,
       token: token,
