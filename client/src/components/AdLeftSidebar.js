@@ -29,6 +29,10 @@ export default function AdLeftSidebar() {
         console.log('[AdLeftSidebar] Ad loaded successfully');
         setLoading(false);
       },
+      onempty: function() {
+        setFailed(true);
+        setLoading(false);
+      },
       onerror: function(error) {
         console.error('[AdLeftSidebar] Ad failed to load:', error);
         setFailed(true);

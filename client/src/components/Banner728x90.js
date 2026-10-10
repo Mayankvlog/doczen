@@ -25,6 +25,9 @@ export default function Banner728x90() {
       onload: function() {
         console.log('[Banner728x90] Ad loaded successfully');
       },
+      onempty: function() {
+        setFailed(true);
+      },
       onerror: function(error) {
         console.error('[Banner728x90] Ad failed to load:', error);
         setFailed(true);

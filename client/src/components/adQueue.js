@@ -1,7 +1,7 @@
 var pendingAds = [];
 var activeAd = null;
 
-function finishAd(request, error) {
+function finishAd(request, error, noFill) {
   if (request.finished) return;
   request.finished = true;
   clearTimeout(request.timeout);
@@ -23,7 +23,8 @@ function finishAd(request, error) {
   if (window._adActive[request.slotKey] === request.token) {
     window._adActive[request.slotKey] = false;
     if (!request.cancelled) {
-      if (error) request.onerror(error);
+      if (noFill) request.onempty();
+      else if (error) request.onerror(error);
       else request.onload();
     }
   }
@@ -128,7 +129,7 @@ function startAdAttempt(request) {
         finishAd(request);
         return;
       }
-      finishAd(request, new Error('Ad script loaded, but no ad iframe was rendered'));
+      finishAd(request, null, true);
     }, 10000);
   };
 
@@ -192,6 +193,10 @@ export function loadAd(options) {
       },
       onload: function() {
         if (options.onload) options.onload();
+      },
+      onempty: function() {
+        console.warn('[adQueue] Ad script loaded but the provider returned no display iframe:', src);
+        if (options.onempty) options.onempty();
       },
       script: null,
       attempts: 0,

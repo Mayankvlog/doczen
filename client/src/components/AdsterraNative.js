@@ -34,6 +34,9 @@ export default function AdsterraNative() {
         onload: function() {
           console.log('[AdsterraNative] Ad loaded successfully');
         },
+        onempty: function() {
+          setFailed(true);
+        },
         onerror: function(error) {
           console.error('[AdsterraNative] Ad failed to load:', error);
           setFailed(true);
