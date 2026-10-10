@@ -14,7 +14,7 @@ export default function Banner728x90() {
 
     var cleanup = loadAd({
       src: 'https://growledaccedeswamp.com/' + AD_KEY + '/invoke.js',
-      data-cfasync: "false",
+      'data-cfasync': "false",
       config: {
         key: AD_KEY,
         format: 'iframe',
