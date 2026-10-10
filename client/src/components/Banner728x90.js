@@ -13,16 +13,14 @@ export default function Banner728x90() {
     console.log('[Banner728x90] Loading ad with key:', AD_KEY);
 
     var cleanup = loadAd({
-      src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
-      dataCfasync: false,
+      src: 'https://growledaccedeswamp.com/' + AD_KEY + '/invoke.js',
+      data-cfasync: "false",
       config: {
         key: AD_KEY,
         format: 'iframe',
         height: 90,
         width: 728,
-        container: 'atContainer-' + AD_KEY,
         params: {},
-        async: true,
       },
       onload: function() {
         console.log('[Banner728x90] Ad loaded successfully');
