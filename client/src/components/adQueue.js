@@ -182,7 +182,7 @@ export function loadAd(options) {
     var request = {
       src: src,
       config: config,
-      dataCfasync: data-cfasync !== undefined ? dataCfasync : false,
+      dataCfasync: dataCfasync !== undefined ? dataCfasync : false,
       container: container,
       slotKey: slotKey,
       token: token,
