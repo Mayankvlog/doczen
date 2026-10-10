@@ -136,6 +136,7 @@ export function loadAd(options) {
   var src = options.src;
   var config = options.config;
   var container = options.container;
+  var dataCfasync = options['data-cfasync'];
 
   if (!src || !container) return undefined;
 
@@ -148,7 +149,7 @@ export function loadAd(options) {
     var request = {
       src: src,
       config: config,
-      dataCfasync: options.dataCfasync !== undefined ? options.dataCfasync : false,
+      dataCfasync: data-cfasync !== undefined ? dataCfasync : false,
       container: container,
       slotKey: slotKey,
       token: token,

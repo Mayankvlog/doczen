@@ -29,15 +29,28 @@
           'furiousexpansion.com',
           'consumeririssalary.com',
           'spondsdetachment.com',
-          'fizzyacerbitymellow.com'
+          'fizzyacerbitymellow.com',
+          'highrevenueformat.com',
+          'profitableratecpmnetwork.com'
         ];
         var RELAY_SET = {};
         for (var i = 0; i < RELAY_HOSTS.length; i++) RELAY_SET[RELAY_HOSTS[i]] = 1;
 
+        function isRelayHost(hostname) {
+          if (!hostname) return false;
+          for (var i = 0; i < RELAY_HOSTS.length; i++) {
+            var allowed = RELAY_HOSTS[i];
+            if (hostname === allowed || hostname.slice(-allowed.length - 1) === '.' + allowed) {
+              return true;
+            }
+          }
+          return false;
+        }
+
         function relayPath(url) {
           try {
             var u = new URL(url, location.href);
-            if (u.protocol !== 'https:' || !RELAY_SET[u.hostname]) return null;
+            if (u.protocol !== 'https:' || !isRelayHost(u.hostname)) return null;
             return '/adx/' + u.hostname + u.pathname + u.search;
           } catch (e) { return null; }
         }
