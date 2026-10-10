@@ -6,6 +6,8 @@ function finishAd(request, error) {
   request.finished = true;
   clearTimeout(request.timeout);
   clearTimeout(request.retryTimer);
+  clearTimeout(request.renderTimer);
+  if (request.renderObserver) request.renderObserver.disconnect();
 
   if (
     request.config &&
@@ -89,14 +91,45 @@ function startAdAttempt(request) {
 
   script.onload = function() {
     if (request.finished || request.attempt !== attempt) return;
-    console.log('[adQueue] Ad script loaded successfully:', request.src);
+    clearTimeout(request.timeout);
+    console.log('[adQueue] Ad script downloaded; waiting for its iframe:', request.src);
 
-    // Give ad network time to render, but consider success after script loads
-    // Ad networks handle rendering themselves - we trust them if script loads
-    setTimeout(function() {
+    var hasRenderedIframe = function() {
+      var frames = request.container.querySelectorAll('iframe');
+      for (var i = 0; i < frames.length; i++) {
+        var frame = frames[i];
+        var rect = frame.getBoundingClientRect();
+        var width = rect.width || parseFloat(frame.getAttribute('width')) || parseFloat(frame.style.width);
+        var height = rect.height || parseFloat(frame.getAttribute('height')) || parseFloat(frame.style.height);
+        if (width > 1 && height > 1) return true;
+      }
+      return false;
+    };
+
+    var finishIfRendered = function() {
       if (request.finished || request.attempt !== attempt) return;
-      finishAd(request);
-    }, 1000);
+      if (hasRenderedIframe()) {
+        console.log('[adQueue] Ad iframe rendered:', request.src);
+        finishAd(request);
+      }
+    };
+
+    finishIfRendered();
+    if (request.finished) return;
+
+    if (typeof MutationObserver !== 'undefined') {
+      request.renderObserver = new MutationObserver(finishIfRendered);
+      request.renderObserver.observe(request.container, { childList: true, subtree: true, attributes: true });
+    }
+
+    request.renderTimer = setTimeout(function() {
+      if (request.finished || request.attempt !== attempt) return;
+      if (hasRenderedIframe()) {
+        finishAd(request);
+        return;
+      }
+      finishAd(request, new Error('Ad script loaded, but no ad iframe was rendered'));
+    }, 10000);
   };
 
   script.onerror = function() {
@@ -136,7 +169,7 @@ export function loadAd(options) {
   var src = options.src;
   var config = options.config;
   var container = options.container;
-  var dataCfasync = options['data-cfasync'];
+  var dataCfasync = options.dataCfasync !== undefined ? options.dataCfasync : options['data-cfasync'];
 
   if (!src || !container) return undefined;
 
@@ -167,6 +200,8 @@ export function loadAd(options) {
       finished: false,
       timeout: null,
       retryTimer: null,
+      renderTimer: null,
+      renderObserver: null,
     };
 
     window._adActive[slotKey] = token;
