@@ -15,7 +15,7 @@ export default function AdRightSidebar() {
 
     var cleanup = loadAd({
       src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
-      dataCfasync: false,
+      'data-cfasync': "false",
       config: {
         key: AD_KEY,
         format: 'iframe',

@@ -21,7 +21,7 @@ export default function AdsterraNative() {
 
       cleanup = loadAd({
         src: 'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
-        dataCfasync: false,
+        'data-cfasync': "false",
         config: {
           key: AD_KEY,
           format: 'iframe',
