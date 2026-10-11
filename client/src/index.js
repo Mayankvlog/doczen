@@ -16,6 +16,16 @@ const SUPPRESSED_PATTERNS = [
   'has been rejected for invalid domain',
   'QUERY LENGTH LIMIT EXCEEDED',
   'MAX ALLOWED QUERY',
+  'font-named-instance',
+  'Error in parsing value',
+  '-webkit-text-size-adjust',
+  '-moz-column-gap',
+  'touch-enabled',
+  'Expected media feature name',
+  'Unknown property',
+  'Unknown descriptor',
+  'Declaration dropped',
+  'Skipped to next declaration',
 ];
 
 window.addEventListener('error', (event) => {

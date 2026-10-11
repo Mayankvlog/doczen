@@ -300,7 +300,16 @@
           message.includes('Quirks Mode') ||
           message.includes('Expected media feature name') ||
           message.includes('Unknown property') ||
-          message.includes('Unknown descriptor')
+          message.includes('Unknown descriptor') ||
+          message.includes('font-named-instance') ||
+          message.includes('Error in parsing value') ||
+          message.includes('-webkit-text-size-adjust') ||
+          message.includes('-moz-column-gap') ||
+          message.includes('touch-enabled') ||
+          message.includes('Declaration dropped') ||
+          message.includes('Skipped to next declaration') ||
+          message.includes('@font-face') ||
+          message.includes('in @font-face rule')
         )) {
           return;
         }
