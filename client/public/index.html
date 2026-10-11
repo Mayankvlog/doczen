@@ -31,7 +31,8 @@
           'spondsdetachment.com',
           'fizzyacerbitymellow.com',
           'highrevenueformat.com',
-          'profitableratecpmnetwork.com'
+          'profitableratecpmnetwork.com',
+          'growledaccedeswamp.com'
         ];
         var RELAY_SET = {};
         for (var i = 0; i < RELAY_HOSTS.length; i++) RELAY_SET[RELAY_HOSTS[i]] = 1;
@@ -237,6 +238,8 @@
     <link rel="dns-prefetch" href="https://kettledroopingcontinuation.com" />
     <link rel="preconnect" href="https://penguinsincequalify.com" crossorigin />
     <link rel="dns-prefetch" href="https://penguinsincequalify.com" />
+    <link rel="preconnect" href="https://growledaccedeswamp.com" crossorigin />
+    <link rel="dns-prefetch" href="https://growledaccedeswamp.com" />
     <style>
       html { height: 100%; }
       body { height: 100%; }
@@ -293,7 +296,11 @@
           message.includes('InstallTrigger is deprecated') ||
           message.includes('Fingerprinting Protection') ||
           message.includes('Preloaded') && message.includes('not used') ||
-          message.includes('Synchronous XMLHttpRequest') && message.includes('deprecated')
+          message.includes('Synchronous XMLHttpRequest') && message.includes('deprecated') ||
+          message.includes('Quirks Mode') ||
+          message.includes('Expected media feature name') ||
+          message.includes('Unknown property') ||
+          message.includes('Unknown descriptor')
         )) {
           return;
         }

@@ -36,7 +36,7 @@ if (!process.env.JWT_SECRET) {
 //   1. nginx.conf  -> /adx/ location (same-origin CORS relay for ad XHR/fetch)
 //   2. client/public/index.html -> RELAY_HOSTS (CORS relay shim)
 // A domain added here but not there will still be blocked by Firefox CORS checks.
-const ADSTERRA_DOMAINS = (process.env.ADSTERRA_DOMAINS || 'penguinsincequalify.com,zoologyfibre.com,workdeadlinededicate.com,realizationnewestfangs.com,spendsdetachment.com,kettledroopingcontinuation.com,furiousexpansion.com,consumeririssalary.com,spondsdetachment.com,fizzyacerbitymellow.com,highrevenueformat.com,profitableratecpmnetwork.com,www.highrevenueformat.com,pl29568432.profitableratecpmnetwork.com')
+const ADSTERRA_DOMAINS = (process.env.ADSTERRA_DOMAINS || 'penguinsincequalify.com,zoologyfibre.com,workdeadlinededicate.com,realizationnewestfangs.com,spendsdetachment.com,kettledroopingcontinuation.com,furiousexpansion.com,consumeririssalary.com,spondsdetachment.com,fizzyacerbitymellow.com,highrevenueformat.com,profitableratecpmnetwork.com,www.highrevenueformat.com,pl29568432.profitableratecpmnetwork.com,growledaccedeswamp.com')
   .split(',').map(s => s.trim()).filter(Boolean);
 // Ensure the default ad hosts are always included even if missing from env var
 if (!ADSTERRA_DOMAINS.includes('penguinsincequalify.com')) {
@@ -47,6 +47,9 @@ if (!ADSTERRA_DOMAINS.includes('highrevenueformat.com')) {
 }
 if (!ADSTERRA_DOMAINS.includes('profitableratecpmnetwork.com')) {
   ADSTERRA_DOMAINS.push('profitableratecpmnetwork.com');
+}
+if (!ADSTERRA_DOMAINS.includes('growledaccedeswamp.com')) {
+  ADSTERRA_DOMAINS.push('growledaccedeswamp.com');
 }
 const ADSTERRA_URLS = ADSTERRA_DOMAINS.map(d => `https://${d}`);
 
@@ -135,7 +138,8 @@ app.use(helmet({
         'penguinsincequalify.com', 'zoologyfibre.com', 'workdeadlinededicate.com',
         'realizationnewestfangs.com', 'spendsdetachment.com', 'kettledroopingcontinuation.com',
         'furiousexpansion.com', 'consumeririssalary.com', 'spondsdetachment.com',
-        'fizzyacerbitymellow.com', 'highrevenueformat.com', 'profitableratecpmnetwork.com'
+        'fizzyacerbitymellow.com', 'highrevenueformat.com', 'profitableratecpmnetwork.com',
+        'growledaccedeswamp.com'
       ],
       workerSrc: ["'self'", 'blob:'],
       mediaSrc: ["'self'", 'http:', 'https:', 'blob:', 'data:'],
@@ -249,7 +253,7 @@ app.use((req, res, next) => {
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=(self "https://penguinsincequalify.com" "https://zoologyfibre.com" "https://workdeadlinededicate.com" "https://realizationnewestfangs.com" "https://spendsdetachment.com" "https://kettledroopingcontinuation.com" "https://furiousexpansion.com" "https://consumeririssalary.com" "https://spondsdetachment.com" "https://fizzyacerbitymellow.com" "https://highrevenueformat.com" "https://profitableratecpmnetwork.com")');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), sync-xhr=(self "https://penguinsincequalify.com" "https://zoologyfibre.com" "https://workdeadlinededicate.com" "https://realizationnewestfangs.com" "https://spendsdetachment.com" "https://kettledroopingcontinuation.com" "https://furiousexpansion.com" "https://consumeririssalary.com" "https://spondsdetachment.com" "https://fizzyacerbitymellow.com" "https://highrevenueformat.com" "https://profitableratecpmnetwork.com" "https://growledaccedeswamp.com")');
   
   // HSTS - Enforce HTTPS
   if (process.env.NODE_ENV === 'production') {
