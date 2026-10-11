@@ -1,5 +1,6 @@
 var pendingAds = [];
 var activeAd = null;
+var globalConfigLock = null;
 
 function finishAd(request, error, noFill) {
   if (request.finished) return;
@@ -15,10 +16,10 @@ function finishAd(request, error, noFill) {
   if (
     request.config &&
     request.config.key &&
-    window.atOptions &&
-    window.atOptions.key === request.config.key
+    globalConfigLock === request.config.key
   ) {
     delete window.atOptions;
+    globalConfigLock = null;
   }
 
   if ((error || request.cancelled) && request.script) request.script.remove();
@@ -40,17 +41,17 @@ function clearAdConfig(request) {
   if (
     request.config &&
     request.config.key &&
-    window.atOptions &&
-    window.atOptions.key === request.config.key
+    globalConfigLock === request.config.key
   ) {
     delete window.atOptions;
+    globalConfigLock = null;
   }
 }
 
 function retryAd(request, error, attempt) {
   if (request.finished || request.attempt !== attempt) return;
   clearTimeout(request.timeout);
-  request.script.remove();
+  if (request.script) request.script.remove();
   clearAdConfig(request);
 
   if (request.attempts < 2 && !request.cancelled) {
@@ -78,7 +79,9 @@ function startAdAttempt(request) {
   var attempt = request.attempt;
 
   // Set atOptions BEFORE script loading - critical for ad rendering
+  // Use global lock to prevent race conditions between multiple ads
   if (request.config && request.config.key) {
+    globalConfigLock = request.config.key;
     window.atOptions = Object.assign({}, request.config);
     console.log('[adQueue] Setting atOptions:', request.config);
   }
@@ -159,8 +162,9 @@ function startAdAttempt(request) {
         finishAd(request);
         return;
       }
+      console.warn('[adQueue] Render timeout reached; treating as no-fill');
       finishAd(request, null, true);
-    }, 10000);
+    }, 15000);
   };
 
   script.onerror = function() {
@@ -168,8 +172,10 @@ function startAdAttempt(request) {
   };
 
   request.timeout = setTimeout(function() {
+    if (request.finished || request.attempt !== attempt) return;
+    console.warn('[adQueue] Script load timeout reached:', request.src);
     retryAd(request, new Error('Ad script load timed out'), attempt);
-  }, 15000);
+  }, 20000);
 
   try {
     request.container.appendChild(script);
@@ -206,7 +212,7 @@ export function loadAd(options) {
 
   try {
     if (!window._adActive) window._adActive = {};
-    var slotKey = src + '::' + (container.id || 'default');
+    var slotKey = src + '::' + (container.id || 'default') + '::' + Date.now() + '::' + Math.random().toString(36).substr(2, 9);
     if (window._adActive[slotKey]) return undefined;
 
     var token = {};

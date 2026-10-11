@@ -7,6 +7,9 @@ const AD_DOMAIN = process.env.REACT_APP_ADSTERRA_DOMAIN || 'pl29568432.profitabl
 export default function AdsterraNative() {
   var ref = useRef(null);
   var [failed, setFailed] = useState(false);
+  var [containerId] = useState(function() {
+    return 'container-' + AD_KEY + '-' + Math.random().toString(36).substr(2, 9);
+  });
 
   useEffect(function() {
     if (!ref.current || failed) return;
@@ -27,7 +30,7 @@ export default function AdsterraNative() {
           format: 'iframe',
           height: 250,
           width: 300,
-          container: 'container-' + AD_KEY,
+          container: containerId,
           params: {},
           async: true,
         },
@@ -49,11 +52,11 @@ export default function AdsterraNative() {
       clearTimeout(timeout);
       if (cleanup) cleanup();
     };
-  }, [failed]);
+  }, [failed, containerId]);
 
   return (
     <div className="relative flex justify-center my-6 overflow-hidden">
-      <div ref={ref} id={'container-' + AD_KEY} className="w-full max-w-[300px] h-[250px] overflow-hidden relative" />
+      <div ref={ref} id={containerId} className="w-full max-w-[300px] h-[250px] overflow-hidden relative" />
       {failed && (
         <div className="absolute inset-0 mx-auto w-full max-w-[300px] h-[250px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm rounded overflow-hidden">
           Advertisement

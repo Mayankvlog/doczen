@@ -7,6 +7,9 @@ export default function AdRightSidebar() {
   var ref = useRef(null);
   var [failed, setFailed] = useState(false);
   var [loading, setLoading] = useState(true);
+  var [containerId] = useState(function() {
+    return 'sbRight-' + AD_KEY + '-' + Math.random().toString(36).substr(2, 9);
+  });
 
   useEffect(function() {
     if (!ref.current || failed) return;
@@ -21,7 +24,7 @@ export default function AdRightSidebar() {
         format: 'iframe',
         height: 300,
         width: 160,
-        container: 'sbRight-' + AD_KEY,
+        container: containerId,
         params: {},
         async: true,
       },
@@ -44,14 +47,14 @@ export default function AdRightSidebar() {
     return function() {
       if (cleanup) cleanup();
     };
-  }, [failed]);
+  }, [failed, containerId]);
 
   return (
     <div className="hidden lg:block fixed right-0 top-1/2 -translate-y-1/2 z-40 w-[160px]">
       <div className="relative w-full" style={{ minHeight: '300px' }}>
         <div
           ref={ref}
-          id={'sbRight-' + AD_KEY}
+          id={containerId}
           className="flex justify-center items-center w-full"
           style={{ minHeight: '300px' }}
         />
