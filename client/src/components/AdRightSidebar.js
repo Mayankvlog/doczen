@@ -14,8 +14,6 @@ export default function AdRightSidebar() {
   useEffect(function() {
     if (!ref.current || failed) return;
 
-    console.log('[AdRightSidebar] Loading ad with key:', AD_KEY);
-
     var cleanup = loadAd({
       src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
       'data-cfasync': "false",
@@ -29,7 +27,6 @@ export default function AdRightSidebar() {
         async: true,
       },
       onload: function() {
-        console.log('[AdRightSidebar] Ad loaded successfully');
         setLoading(false);
       },
       onempty: function() {
@@ -37,7 +34,6 @@ export default function AdRightSidebar() {
         setLoading(false);
       },
       onerror: function(error) {
-        console.error('[AdRightSidebar] Ad failed to load:', error);
         setFailed(true);
         setLoading(false);
       },

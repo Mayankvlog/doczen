@@ -309,11 +309,32 @@
           message.includes('Declaration dropped') ||
           message.includes('Skipped to next declaration') ||
           message.includes('@font-face') ||
-          message.includes('in @font-face rule')
+          message.includes('in @font-face rule') ||
+          message.includes('[adQueue]') ||
+          message.includes('[Banner728x90]') ||
+          message.includes('[AdLeftSidebar]') ||
+          message.includes('[AdRightSidebar]') ||
+          message.includes('[AdsterraNative]')
         )) {
           return;
         }
         originalWarn.apply(console, arguments);
+      };
+
+      // Suppress ad-related log messages
+      var originalLog = console.log;
+      console.log = function() {
+        var message = arguments[0];
+        if (typeof message === 'string' && (
+          message.includes('[adQueue]') ||
+          message.includes('[Banner728x90]') ||
+          message.includes('[AdLeftSidebar]') ||
+          message.includes('[AdRightSidebar]') ||
+          message.includes('[AdsterraNative]')
+        )) {
+          return;
+        }
+        originalLog.apply(console, arguments);
       };
 
       console.info = function() {

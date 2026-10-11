@@ -20,8 +20,6 @@ export default function AdsterraNative() {
     var timeout = setTimeout(function() {
       if (!ref.current || failed) return;
 
-      console.log('[AdsterraNative] Loading ad with key:', AD_KEY);
-
       cleanup = loadAd({
         src: 'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
         'data-cfasync': "false",
@@ -35,13 +33,12 @@ export default function AdsterraNative() {
           async: true,
         },
         onload: function() {
-          console.log('[AdsterraNative] Ad loaded successfully');
+          // Ad loaded successfully
         },
         onempty: function() {
           setFailed(true);
         },
         onerror: function(error) {
-          console.error('[AdsterraNative] Ad failed to load:', error);
           setFailed(true);
         },
         container: ref.current,

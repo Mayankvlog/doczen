@@ -26,6 +26,7 @@ const SUPPRESSED_PATTERNS = [
   'Unknown descriptor',
   'Declaration dropped',
   'Skipped to next declaration',
+  '[adQueue]',
 ];
 
 window.addEventListener('error', (event) => {
@@ -60,6 +61,16 @@ console.error = function(...args) {
     return;
   }
   return originalError.apply(console, args);
+};
+
+// Suppress ad-related log messages
+const originalLog = console.log;
+console.log = function(...args) {
+  const msg = String(args[0] || '');
+  if (msg.includes('[adQueue]') || msg.includes('[Banner728x90]') || msg.includes('[AdLeftSidebar]') || msg.includes('[AdRightSidebar]') || msg.includes('[AdsterraNative]')) {
+    return;
+  }
+  return originalLog.apply(console, args);
 };
 
 const i18nResources = {};

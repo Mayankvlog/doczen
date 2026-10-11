@@ -10,8 +10,6 @@ export default function Banner728x90() {
   useEffect(function() {
     if (!ref.current || failed) return;
 
-    console.log('[Banner728x90] Loading ad with key:', AD_KEY);
-
     var cleanup = loadAd({
       src: 'https://growledaccedeswamp.com/' + AD_KEY + '/invoke.js',
       'data-cfasync': "false",
@@ -24,13 +22,13 @@ export default function Banner728x90() {
         params: {},
       },
       onload: function() {
-        console.log('[Banner728x90] Ad loaded successfully');
+        // Ad loaded successfully
       },
       onempty: function() {
         setFailed(true);
       },
       onerror: function(error) {
-        console.error('[Banner728x90] Ad failed to load:', error);
+        // Ad failed to load
         setFailed(true);
       },
       container: ref.current,

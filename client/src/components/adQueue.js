@@ -55,11 +55,6 @@ function retryAd(request, error, attempt) {
   clearAdConfig(request);
 
   if (request.attempts < 2 && !request.cancelled) {
-    console.warn(
-      '[adQueue] Ad script attempt failed; retrying once:',
-      request.src,
-      error
-    );
     request.retryTimer = setTimeout(function() {
       if (request.finished || request.cancelled || activeAd !== request) {
         finishAd(request);
@@ -83,7 +78,6 @@ function startAdAttempt(request) {
   if (request.config && request.config.key) {
     globalConfigLock = request.config.key;
     window.atOptions = Object.assign({}, request.config);
-    console.log('[adQueue] Setting atOptions:', request.config);
   }
 
   var script = document.createElement('script');
@@ -99,7 +93,6 @@ function startAdAttempt(request) {
   script.onload = function() {
     if (request.finished || request.attempt !== attempt) return;
     clearTimeout(request.timeout);
-    console.log('[adQueue] Ad script downloaded; waiting for a renderable creative:', request.src);
 
     var hasRenderedCreative = function() {
       var frames = request.container.querySelectorAll('iframe');
@@ -140,7 +133,6 @@ function startAdAttempt(request) {
     var finishIfRendered = function() {
       if (request.finished || request.attempt !== attempt) return;
       if (hasRenderedCreative()) {
-        console.log('[adQueue] Ad creative rendered:', request.src);
         finishAd(request);
       }
     };
@@ -162,7 +154,6 @@ function startAdAttempt(request) {
         finishAd(request);
         return;
       }
-      console.warn('[adQueue] Render timeout reached; treating as no-fill');
       finishAd(request, null, true);
     }, 15000);
   };
@@ -173,7 +164,6 @@ function startAdAttempt(request) {
 
   request.timeout = setTimeout(function() {
     if (request.finished || request.attempt !== attempt) return;
-    console.warn('[adQueue] Script load timeout reached:', request.src);
     retryAd(request, new Error('Ad script load timed out'), attempt);
   }, 20000);
 
@@ -224,14 +214,12 @@ export function loadAd(options) {
       slotKey: slotKey,
       token: token,
       onerror: function(error) {
-        console.error('[adQueue] Ad script failed:', src, error);
         if (options.onerror) options.onerror(error);
       },
       onload: function() {
         if (options.onload) options.onload();
       },
       onempty: function() {
-        console.warn('[adQueue] Ad script loaded, but no renderable creative appeared in its slot:', src);
         if (options.onempty) options.onempty();
       },
       script: null,
@@ -267,7 +255,6 @@ export function loadAd(options) {
       }
     };
   } catch (error) {
-    console.error('[adQueue] Load ad error:', error);
     if (options.onerror) options.onerror(error);
     return undefined;
   }
