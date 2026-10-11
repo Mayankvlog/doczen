@@ -96,7 +96,7 @@ function startAdAttempt(request) {
   script.onload = function() {
     if (request.finished || request.attempt !== attempt) return;
     clearTimeout(request.timeout);
-    console.log('[adQueue] Ad script downloaded; waiting for its iframe:', request.src);
+    console.log('[adQueue] Ad script downloaded; waiting for a renderable creative:', request.src);
 
     var hasRenderedCreative = function() {
       var frames = request.container.querySelectorAll('iframe');
@@ -225,7 +225,7 @@ export function loadAd(options) {
         if (options.onload) options.onload();
       },
       onempty: function() {
-        console.warn('[adQueue] Ad script loaded but the provider returned no display iframe:', src);
+        console.warn('[adQueue] Ad script loaded, but no renderable creative appeared in its slot:', src);
         if (options.onempty) options.onempty();
       },
       script: null,
