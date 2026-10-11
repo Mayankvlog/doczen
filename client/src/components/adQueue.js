@@ -8,6 +8,9 @@ function finishAd(request, error, noFill) {
   clearTimeout(request.retryTimer);
   clearTimeout(request.renderTimer);
   if (request.renderObserver) request.renderObserver.disconnect();
+  if (request.renderLoadHandler) {
+    request.container.removeEventListener('load', request.renderLoadHandler, true);
+  }
 
   if (
     request.config &&
@@ -95,7 +98,7 @@ function startAdAttempt(request) {
     clearTimeout(request.timeout);
     console.log('[adQueue] Ad script downloaded; waiting for its iframe:', request.src);
 
-    var hasRenderedIframe = function() {
+    var hasRenderedCreative = function() {
       var frames = request.container.querySelectorAll('iframe');
       for (var i = 0; i < frames.length; i++) {
         var frame = frames[i];
@@ -104,19 +107,38 @@ function startAdAttempt(request) {
         var height = rect.height || parseFloat(frame.getAttribute('height')) || parseFloat(frame.style.height);
         if (width > 1 && height > 1) return true;
       }
+
+      var images = request.container.querySelectorAll('img');
+      for (var j = 0; j < images.length; j++) {
+        var image = images[j];
+        var imageRect = image.getBoundingClientRect();
+        if (
+          image.complete &&
+          image.naturalWidth > 1 &&
+          image.naturalHeight > 1 &&
+          imageRect.width > 1 &&
+          imageRect.height > 1
+        ) {
+          return true;
+        }
+      }
+
       return false;
     };
 
     var finishIfRendered = function() {
       if (request.finished || request.attempt !== attempt) return;
-      if (hasRenderedIframe()) {
-        console.log('[adQueue] Ad iframe rendered:', request.src);
+      if (hasRenderedCreative()) {
+        console.log('[adQueue] Ad creative rendered:', request.src);
         finishAd(request);
       }
     };
 
     finishIfRendered();
     if (request.finished) return;
+
+    request.renderLoadHandler = finishIfRendered;
+    request.container.addEventListener('load', request.renderLoadHandler, true);
 
     if (typeof MutationObserver !== 'undefined') {
       request.renderObserver = new MutationObserver(finishIfRendered);
@@ -125,7 +147,7 @@ function startAdAttempt(request) {
 
     request.renderTimer = setTimeout(function() {
       if (request.finished || request.attempt !== attempt) return;
-      if (hasRenderedIframe()) {
+      if (hasRenderedCreative()) {
         finishAd(request);
         return;
       }
@@ -207,6 +229,7 @@ export function loadAd(options) {
       retryTimer: null,
       renderTimer: null,
       renderObserver: null,
+      renderLoadHandler: null,
     };
 
     window._adActive[slotKey] = token;
