@@ -20,6 +20,7 @@ export default function Banner728x90() {
         format: 'iframe',
         height: 90,
         width: 728,
+        container: 'atContainer-' + AD_KEY,
         params: {},
       },
       onload: function() {
@@ -48,7 +49,7 @@ export default function Banner728x90() {
       <div
         ref={ref}
         id={'atContainer-' + AD_KEY}
-        className="absolute inset-0"
+        className="absolute inset-0 flex items-center justify-center"
       />
       {failed && (
         <div className="absolute inset-0 w-[728px] h-[90px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm border border-gray-200">

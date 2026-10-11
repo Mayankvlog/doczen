@@ -176,14 +176,34 @@ const toolPaths = new Set([
 function AppContent() {
   const { dir } = useLanguage();
   const { pathname } = useLocation();
+  const [adViewport, setAdViewport] = useState({ banner: false, sidebars: false });
   const isToolPage = toolPaths.has(pathname);
   const isHomePage = pathname === '/';
-  const showSidebarAds = isToolPage || isHomePage;
+  const showSidebarAds = (isToolPage || isHomePage) && adViewport.sidebars;
+
+  useEffect(function() {
+    function updateAdViewport() {
+      const banner = window.matchMedia('(min-width: 728px)').matches;
+      const sidebars = window.matchMedia('(min-width: 1024px)').matches;
+      setAdViewport(function(current) {
+        return current.banner === banner && current.sidebars === sidebars
+          ? current
+          : { banner: banner, sidebars: sidebars };
+      });
+    }
+
+    updateAdViewport();
+    window.addEventListener('resize', updateAdViewport);
+    return function() {
+      window.removeEventListener('resize', updateAdViewport);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50" dir={dir}>
       <ScrollToTop />
       <Navbar />
-      <Banner728x90 />
+      {adViewport.banner && <Banner728x90 />}
       {showSidebarAds && <AdLeftSidebar />}
       {showSidebarAds && <AdRightSidebar />}
       <main className={'flex-1 page-enter-active' + (showSidebarAds ? ' lg:mx-[160px]' : '')}>

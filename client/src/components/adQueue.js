@@ -123,6 +123,14 @@ function startAdAttempt(request) {
         }
       }
 
+      if (request.container.textContent.trim()) {
+        var links = request.container.querySelectorAll('a');
+        for (var k = 0; k < links.length; k++) {
+          var linkRect = links[k].getBoundingClientRect();
+          if (linkRect.width > 1 && linkRect.height > 1) return true;
+        }
+      }
+
       return false;
     };
 
