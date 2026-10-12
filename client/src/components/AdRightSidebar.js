@@ -2,14 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { loadAd } from './adQueue';
 
 const AD_KEY = '8727e64117c88455f41910d02f27827d';
+const CONTAINER_ID = 'atContainer-' + AD_KEY;
 
 export default function AdRightSidebar() {
   var ref = useRef(null);
   var [failed, setFailed] = useState(false);
   var [loading, setLoading] = useState(true);
-  var [containerId] = useState(function() {
-    return 'sbRight-' + AD_KEY + '-' + Math.random().toString(36).substr(2, 9);
-  });
 
   useEffect(function() {
     if (!ref.current || failed) return;
@@ -22,7 +20,7 @@ export default function AdRightSidebar() {
         format: 'iframe',
         height: 300,
         width: 160,
-        container: containerId,
+        container: CONTAINER_ID,
         params: {},
         async: true,
       },
@@ -43,14 +41,14 @@ export default function AdRightSidebar() {
     return function() {
       if (cleanup) cleanup();
     };
-  }, [failed, containerId]);
+  }, [failed]);
 
   return (
     <div className="hidden lg:block fixed right-0 top-1/2 -translate-y-1/2 z-40 w-[160px]">
       <div className="relative w-full" style={{ minHeight: '300px' }}>
         <div
           ref={ref}
-          id={containerId}
+          id={CONTAINER_ID}
           className="flex justify-center items-center w-full"
           style={{ minHeight: '300px' }}
         />

@@ -3,13 +3,11 @@ import { loadAd } from './adQueue';
 
 const AD_KEY = '466be459b6a86595592eb7b4c62c5b3c';
 const AD_DOMAIN = process.env.REACT_APP_ADSTERRA_DOMAIN || 'pl29568432.profitableratecpmnetwork.com';
+const CONTAINER_ID = 'container-' + AD_KEY;
 
 export default function AdsterraNative() {
   var ref = useRef(null);
   var [failed, setFailed] = useState(false);
-  var [containerId] = useState(function() {
-    return 'container-' + AD_KEY + '-' + Math.random().toString(36).substr(2, 9);
-  });
 
   useEffect(function() {
     if (!ref.current || failed) return;
@@ -28,7 +26,7 @@ export default function AdsterraNative() {
           format: 'iframe',
           height: 250,
           width: 300,
-          container: containerId,
+          container: CONTAINER_ID,
           params: {},
           async: true,
         },
@@ -49,11 +47,11 @@ export default function AdsterraNative() {
       clearTimeout(timeout);
       if (cleanup) cleanup();
     };
-  }, [failed, containerId]);
+  }, [failed]);
 
   return (
     <div className="relative flex justify-center my-6 overflow-hidden">
-      <div ref={ref} id={containerId} className="w-full max-w-[300px] h-[250px] overflow-hidden relative" />
+      <div ref={ref} id={CONTAINER_ID} className="w-full max-w-[300px] h-[250px] overflow-hidden relative" />
       {failed && (
         <div className="absolute inset-0 mx-auto w-full max-w-[300px] h-[250px] bg-gray-100 flex items-center justify-center text-gray-600 text-sm rounded overflow-hidden">
           Advertisement

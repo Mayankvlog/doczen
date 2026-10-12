@@ -19,7 +19,7 @@ export default function AdLeftSidebar() {
         format: 'iframe',
         height: 600,
         width: 160,
-        container: 'sbLeft-' + AD_KEY,
+        container: 'atContainer-' + AD_KEY,
         params: {},
         async: true,
       },
@@ -47,7 +47,7 @@ export default function AdLeftSidebar() {
       <div className="relative w-full" style={{ minHeight: '600px' }}>
         <div
           ref={ref}
-          id={'sbLeft-' + AD_KEY}
+          id={'atContainer-' + AD_KEY}
           className="flex justify-center items-center w-full"
           style={{ minHeight: '600px' }}
         />

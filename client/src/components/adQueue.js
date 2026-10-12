@@ -1,6 +1,10 @@
 var pendingAds = [];
 var activeAd = null;
 var globalConfigLock = null;
+// Give the ad network enough time to resolve invoke.js -> watch script -> creative.
+// Rendered creatives are detected immediately (MutationObserver / load handler);
+// this timer only guards the genuine no-fill case.
+var RENDER_TIMEOUT = 20000;
 
 function finishAd(request, error, noFill) {
   if (request.finished) return;
@@ -94,17 +98,25 @@ function startAdAttempt(request) {
     if (request.finished || request.attempt !== attempt) return;
     clearTimeout(request.timeout);
 
+    var isSized = function(el) {
+      var rect = el.getBoundingClientRect();
+      var width = rect.width || parseFloat(el.getAttribute('width')) || parseFloat(el.style.width) || 0;
+      var height = rect.height || parseFloat(el.getAttribute('height')) || parseFloat(el.style.height) || 0;
+      return width > 1 && height > 1;
+    };
+
     var hasRenderedCreative = function() {
-      var frames = request.container.querySelectorAll('iframe');
+      var container = request.container;
+      if (!container) return false;
+
+      // iframe creative (banner / sidebar / iframe format)
+      var frames = container.querySelectorAll('iframe');
       for (var i = 0; i < frames.length; i++) {
-        var frame = frames[i];
-        var rect = frame.getBoundingClientRect();
-        var width = rect.width || parseFloat(frame.getAttribute('width')) || parseFloat(frame.style.width);
-        var height = rect.height || parseFloat(frame.getAttribute('height')) || parseFloat(frame.style.height);
-        if (width > 1 && height > 1) return true;
+        if (isSized(frames[i])) return true;
       }
 
-      var images = request.container.querySelectorAll('img');
+      // image creative
+      var images = container.querySelectorAll('img');
       for (var j = 0; j < images.length; j++) {
         var image = images[j];
         var imageRect = image.getBoundingClientRect();
@@ -119,12 +131,20 @@ function startAdAttempt(request) {
         }
       }
 
-      if (request.container.textContent.trim()) {
-        var links = request.container.querySelectorAll('a');
-        for (var k = 0; k < links.length; k++) {
-          var linkRect = links[k].getBoundingClientRect();
-          if (linkRect.width > 1 && linkRect.height > 1) return true;
-        }
+      // clickable (anchor) creative
+      var links = container.querySelectorAll('a');
+      for (var k = 0; k < links.length; k++) {
+        if (isSized(links[k])) return true;
+      }
+
+      // Adsterra injects node-based creatives (e.g. native <div class="container-KEY__bn">
+      // or banner wrappers). Treat any sized non-script node as a rendered creative so
+      // such fills are not mis-reported as "no fill".
+      var children = container.children;
+      for (var m = 0; m < children.length; m++) {
+        var child = children[m];
+        if (child.tagName === 'SCRIPT') continue;
+        if (child.tagName === 'INS' || isSized(child)) return true;
       }
 
       return false;
@@ -155,7 +175,7 @@ function startAdAttempt(request) {
         return;
       }
       finishAd(request, null, true);
-    }, 15000);
+    }, RENDER_TIMEOUT);
   };
 
   script.onerror = function() {
