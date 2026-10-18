@@ -1,10 +1,28 @@
 var pendingAds = [];
 var activeAd = null;
 var globalConfigLock = null;
+// These provider-rejected tags must not be probed; preflight would still emit 403s.
+var DISABLED_AD_PLACEMENTS = {
+  'www.highrevenueformat.com/b11a753fbb1e311a5b2734272ab5edda/invoke.js': true,
+  'www.highrevenueformat.com/8727e64117c88455f41910d02f27827d/invoke.js': true,
+  'pl29568432.profitableratecpmnetwork.com/466be459b6a86595592eb7b4c62c5b3c/invoke.js': true,
+};
 // Give the ad network enough time to resolve invoke.js -> watch script -> creative.
 // Rendered creatives are detected immediately (MutationObserver / load handler);
 // this timer only guards the genuine no-fill case.
 var RENDER_TIMEOUT = 20000;
+
+function isDisabledPlacement(src) {
+  try {
+    var url = new URL(src, location.href);
+    return Object.prototype.hasOwnProperty.call(
+      DISABLED_AD_PLACEMENTS,
+      url.hostname + url.pathname
+    );
+  } catch (e) {
+    return false;
+  }
+}
 
 // ---- Preflight ---------------------------------------------------------------
 // The ad network answers 403 (empty body) for placements it has revoked or
@@ -328,6 +346,10 @@ export function loadAd(options) {
   var dataCfasync = options.dataCfasync !== undefined ? options.dataCfasync : options['data-cfasync'];
 
   if (!src || !container) return undefined;
+  if (isDisabledPlacement(src)) {
+    if (options.onempty) options.onempty();
+    return undefined;
+  }
   if (process.env.REACT_APP_ADS_ENABLED === 'false') {
     if (options.onempty) options.onempty();
     return undefined;
