@@ -259,8 +259,11 @@
       gtag('js', new Date());
 
       // Pin the GA cookie to this registrable domain so gtag.js does not probe
-      // public suffixes such as "co.in".
-      var gtagConfig = {};
+      // public suffixes such as "co.in". cookie_update:false stops gtag from
+      // rewriting the cookie's expires attribute on every hit, which Chrome
+      // reports as: The value of the attribute "expires" for the cookie
+      // "_ga_J0V79VJ0JH" has been overwritten.
+      var gtagConfig = { cookie_update: false };
       if (/(^|\.)doczen\.co\.in$/.test(location.hostname)) {
         gtagConfig.cookie_domain = 'doczen.co.in';
         gtagConfig.cookie_flags = 'SameSite=Lax;Secure';

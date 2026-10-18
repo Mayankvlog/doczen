@@ -6,6 +6,101 @@ var globalConfigLock = null;
 // this timer only guards the genuine no-fill case.
 var RENDER_TIMEOUT = 20000;
 
+// ---- Preflight ---------------------------------------------------------------
+// The ad network answers 403 (empty body) for placements it has revoked or
+// geo/bot-blocked. Injecting a <script> for those produces a browser-level
+// "Loading failed for the <script>" error plus a pointless retry, and the
+// placeholder only appears after the retry chain burns ~20s. Probe the src
+// through the same-origin /adx/ nginx relay first (status is passed through);
+// on a non-2xx answer treat the slot as no-fill without ever injecting the
+// script. Verdicts are cached per src so each placement is probed at most once
+// per TTL window. Fail-open: on relay timeout/network error inject anyway, so
+// a relay hiccup never silently kills a fill.
+var PREFLIGHT_TTL = 10 * 60 * 1000;
+var PREFLIGHT_TIMEOUT = 5000;
+var PREFLIGHT_STORE_KEY = 'ad_preflight_verdicts';
+var preflightCache = null;
+
+function loadPreflightCache() {
+  if (preflightCache) return preflightCache;
+  preflightCache = {};
+  try {
+    var raw = window.localStorage.getItem(PREFLIGHT_STORE_KEY);
+    if (!raw) return preflightCache;
+    var parsed = JSON.parse(raw);
+    var now = Date.now();
+    for (var src in parsed) {
+      if (
+        Object.prototype.hasOwnProperty.call(parsed, src) &&
+        parsed[src] &&
+        typeof parsed[src].ok === 'boolean' &&
+        now - parsed[src].ts < PREFLIGHT_TTL
+      ) {
+        preflightCache[src] = parsed[src];
+      }
+    }
+  } catch (e) {
+    preflightCache = {};
+  }
+  return preflightCache;
+}
+
+function savePreflightVerdict(src, ok) {
+  var cache = loadPreflightCache();
+  cache[src] = { ts: Date.now(), ok: ok };
+  try {
+    window.localStorage.setItem(PREFLIGHT_STORE_KEY, JSON.stringify(cache));
+  } catch (e) {}
+}
+
+function preflightSrc(src, callback) {
+  var canRelay =
+    typeof window.fetch === 'function' &&
+    /(^|\.)doczen\.co\.in$/.test(location.hostname);
+  if (!canRelay) {
+    callback(true);
+    return;
+  }
+
+  var cache = loadPreflightCache();
+  var now = Date.now();
+  var hit = cache[src];
+  if (hit && now - hit.ts < PREFLIGHT_TTL) {
+    callback(hit.ok);
+    return;
+  }
+
+  var settled = false;
+  function done(ok) {
+    if (settled) return;
+    settled = true;
+    callback(ok);
+  }
+
+  try {
+    var u = new URL(src, location.href);
+    var relay = '/adx/' + u.hostname + u.pathname + u.search;
+    var timer = setTimeout(function() { done(true); }, PREFLIGHT_TIMEOUT);
+
+    window.fetch(relay, { method: 'GET', credentials: 'omit', cache: 'no-store' })
+      .then(function(res) {
+        clearTimeout(timer);
+        var ok = res.status >= 200 && res.status < 300;
+        savePreflightVerdict(src, ok);
+        if (res.body && typeof res.body.cancel === 'function') {
+          try { res.body.cancel(); } catch (e) {}
+        }
+        done(ok);
+      })
+      .catch(function() {
+        clearTimeout(timer);
+        done(true);
+      });
+  } catch (e) {
+    done(true);
+  }
+}
+
 function finishAd(request, error, noFill) {
   if (request.finished) return;
   request.finished = true;
@@ -76,6 +171,19 @@ function startAdAttempt(request) {
   request.attempts += 1;
   request.attempt += 1;
   var attempt = request.attempt;
+
+  preflightSrc(request.src, function(proceed) {
+    if (request.finished || request.attempt !== attempt) return;
+    if (request.cancelled || activeAd !== request) {
+      finishAd(request);
+      return;
+    }
+    if (!proceed) {
+      // Upstream rejected the placement (e.g. 403 revoked): deterministic
+      // no-fill — do not inject the script and do not retry.
+      finishAd(request, null, true);
+      return;
+    }
 
   // Set atOptions BEFORE script loading - critical for ad rendering
   // Use global lock to prevent race conditions between multiple ads
@@ -192,6 +300,7 @@ function startAdAttempt(request) {
   } catch (error) {
     retryAd(request, error, attempt);
   }
+  });
 }
 
 function runNextAd() {
