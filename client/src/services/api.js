@@ -621,7 +621,7 @@ const GA_MEASUREMENT_ID = process.env.REACT_APP_GA_MEASUREMENT_ID;
 export function gtagPageView(path) {
   try {
     if (typeof window.gtag !== 'function' || !GA_MEASUREMENT_ID) return;
-    window.gtag('config', GA_MEASUREMENT_ID, {
+    window.gtag('event', 'page_view', {
       page_path: path,
     });
   } catch (_) {}

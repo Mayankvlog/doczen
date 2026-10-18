@@ -163,6 +163,11 @@ Edit `client/.env`:
 REACT_APP_API_URL=http://localhost
 ```
 
+Ad scripts are disabled by default because the configured providers can reject
+requests (for example, with HTTP 403). To enable them after confirming the
+provider domains and ad keys work, add `REACT_APP_ADS_ENABLED=true` to
+`client/.env` and rebuild the frontend.
+
 ## Running Locally
 
 ### Development mode (two terminals)
