@@ -219,7 +219,7 @@ export function loadAd(options) {
   var dataCfasync = options.dataCfasync !== undefined ? options.dataCfasync : options['data-cfasync'];
 
   if (!src || !container) return undefined;
-  if (process.env.REACT_APP_ADS_ENABLED !== 'true') {
+  if (process.env.REACT_APP_ADS_ENABLED === 'false') {
     if (options.onempty) options.onempty();
     return undefined;
   }
