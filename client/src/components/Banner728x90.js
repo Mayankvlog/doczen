@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { loadAd } from './adQueue';
 
-const AD_KEY = '20c23d55e0aa2d4c55f69cec04907f2b';
+const AD_SRC =
+  'https://extroverted-election.com/bEXBVosKd.GElb0/YAWacr/kejmb9pulZRUklukCPDTQcG1qNEjbEqxkO/DqkxtSNzzRUm2VMlT_E/5AMpwA';
+const CONTAINER_ID = 'banner-728x90';
 
 export default function Banner728x90() {
   var ref = useRef(null);
@@ -11,16 +13,8 @@ export default function Banner728x90() {
     if (!ref.current || failed) return;
 
     var cleanup = loadAd({
-      src: 'https://growledaccedeswamp.com/' + AD_KEY + '/invoke.js',
+      src: AD_SRC,
       'data-cfasync': "false",
-      config: {
-        key: AD_KEY,
-        format: 'iframe',
-        height: 90,
-        width: 728,
-        container: 'atContainer-' + AD_KEY,
-        params: {},
-      },
       onload: function() {
         // Ad loaded successfully
       },
@@ -46,7 +40,7 @@ export default function Banner728x90() {
     >
       <div
         ref={ref}
-        id={'atContainer-' + AD_KEY}
+        id={CONTAINER_ID}
         className="absolute inset-0 flex items-center justify-center"
       />
       {failed && (
