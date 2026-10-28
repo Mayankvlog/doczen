@@ -1,73 +1,34 @@
-import { useEffect, useRef, useState } from 'react';
-import { loadAd } from './adQueue';
-
-const AD_KEY = '8727e64117c88455f41910d02f27827d';
-const CONTAINER_ID = 'atContainer-' + AD_KEY;
+import { useEffect, useRef } from 'react';
 
 export default function AdRightSidebar() {
-  var ref = useRef(null);
-  var [failed, setFailed] = useState(false);
-  var [loading, setLoading] = useState(true);
+  const containerRef = useRef(null);
 
-  useEffect(function() {
-    if (!ref.current || failed) return;
+  useEffect(() => {
+    if (!containerRef.current) return;
+    if (containerRef.current.querySelector('script[data-ad-right]')) return;
 
-    var cleanup = loadAd({
-      src: 'https://www.highrevenueformat.com/' + AD_KEY + '/invoke.js',
-      'data-cfasync': "false",
-      config: {
-        key: AD_KEY,
-        format: 'iframe',
-        height: 300,
-        width: 160,
-        container: CONTAINER_ID,
-        params: {},
-        async: true,
-      },
-      onload: function() {
-        setLoading(false);
-      },
-      onempty: function() {
-        setFailed(true);
-        setLoading(false);
-      },
-      onerror: function(error) {
-        setFailed(true);
-        setLoading(false);
-      },
-      container: ref.current,
-    });
+    const script = document.createElement('script');
+    script.setAttribute('data-ad-right', 'true');
+    script.type = 'text/javascript';
+    script.async = true;
+    script.referrerPolicy = 'no-referrer-when-downgrade';
+    script.text = `(function(ltqmot){
+var d = document,
+    s = d.createElement('script'),
+    l = d.currentScript || d.scripts[d.scripts.length - 1];
+s.settings = ltqmot || {};
+s.src = "\\/\\/extroverted-election.com\\/bTXTV.sqdJGolX0_Y\\/WacU\\/beJmW9ruEZdUTl\\/kLPzTZcC1ENxj-EbxfNCDMEhtcN\\/zXUC2VMLTuEv0mNOQm";
+s.async = true;
+s.referrerPolicy = 'no-referrer-when-downgrade';
+l.parentNode.insertBefore(s, l);
+})({})`;
 
-    return function() {
-      if (cleanup) cleanup();
-    };
-  }, [failed]);
+    containerRef.current.appendChild(script);
+  }, []);
 
   return (
     <div className="hidden lg:block fixed right-0 top-1/2 -translate-y-1/2 z-40 w-[160px]">
-      <div className="relative w-full" style={{ minHeight: '300px' }}>
-        <div
-          ref={ref}
-          id={CONTAINER_ID}
-          className="flex justify-center items-center w-full"
-          style={{ minHeight: '300px' }}
-        />
-        <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
-          {loading && (
-            <div className="w-[160px] h-[300px] bg-gray-50 flex items-center justify-center text-gray-400 text-xs animate-pulse">
-              Loading ad...
-            </div>
-          )}
-          {failed && (
-            <div className="w-[160px] h-[300px] bg-gray-100 flex items-center justify-center text-gray-500 text-xs border border-gray-200">
-              <div className="text-center p-2">
-                <div className="font-semibold text-gray-600 mb-1">Advertisement</div>
-                <div className="text-gray-400">Ad temporarily unavailable</div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      <div ref={containerRef} className="w-full" style={{ minHeight: '600px' }} />
     </div>
   );
 }
