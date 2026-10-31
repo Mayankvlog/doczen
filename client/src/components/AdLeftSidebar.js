@@ -8,21 +8,7 @@ export default function AdLeftSidebar() {
     if (containerRef.current.querySelector('script[data-ad-left]')) return;
 
     const script = document.createElement('script');
-    script.setAttribute('data-ad-left', 'true');
-    script.type = 'text/javascript';
-    script.async = true;
-    script.referrerPolicy = 'no-referrer-when-downgrade';
-    script.text = `(function(ltqmot){
-var d = document,
-    s = d.createElement('script'),
-    l = d.currentScript || d.scripts[d.scripts.length - 1];
-s.settings = ltqmot || {};
-s.src = "\\/\\/extroverted-election.com\\/bTXTV.sqdJGolX0_Y\\/WacU\\/beJmW9ruEZdUTl\\/kLPzTZcC1ENxj-EbxfNCDMEhtcN\\/zXUC2VMLTuEv0mNOQm";
-s.async = true;
-s.referrerPolicy = 'no-referrer-when-downgrade';
-l.parentNode.insertBefore(s, l);
-})({})`;
-
+ 
     containerRef.current.appendChild(script);
   }, []);
 
