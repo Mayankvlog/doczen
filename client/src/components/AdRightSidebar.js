@@ -8,7 +8,10 @@ export default function AdRightSidebar() {
     if (containerRef.current.querySelector('script[data-ad-right]')) return;
 
     const script = document.createElement('script');
- 
+    script.dataset.adRight = 'true';
+    script.dataset.zone = '12159852';
+    script.src = 'https://n6wxm.com/vignette.min.js';
+
     containerRef.current.appendChild(script);
   }, []);
 
