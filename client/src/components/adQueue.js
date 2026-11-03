@@ -39,6 +39,40 @@ var PREFLIGHT_TIMEOUT = 5000;
 var PREFLIGHT_STORE_KEY = 'ad_preflight_verdicts';
 var preflightCache = null;
 
+// Hosts the /adx/ nginx relay is allowed to proxy. Mirrors the /adx/ allowlist
+// in nginx.conf and RELAY_HOSTS in client/public/index.html. Only these hosts
+// can be probed: requesting /adx/ for any other host hits the SPA fallback and
+// returns 404, which must never be treated as a genuine no-fill.
+var RELAY_HOSTS = [
+  'penguinsincequalify.com',
+  'zoologyfibre.com',
+  'workdeadlinededicate.com',
+  'realizationnewestfangs.com',
+  'spendsdetachment.com',
+  'kettledroopingcontinuation.com',
+  'furiousexpansion.com',
+  'consumeririssalary.com',
+  'spondsdetachment.com',
+  'fizzyacerbitymellow.com',
+  'highrevenueformat.com',
+  'profitableratecpmnetwork.com',
+  'growledaccedeswamp.com',
+];
+
+function isRelayHost(hostname) {
+  if (!hostname) return false;
+  for (var i = 0; i < RELAY_HOSTS.length; i++) {
+    var allowed = RELAY_HOSTS[i];
+    if (
+      hostname === allowed ||
+      hostname.slice(-allowed.length - 1) === '.' + allowed
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function loadPreflightCache() {
   if (preflightCache) return preflightCache;
   preflightCache = {};
@@ -80,6 +114,23 @@ function preflightSrc(src, callback) {
     return;
   }
 
+  var u;
+  try {
+    u = new URL(src, location.href);
+  } catch (e) {
+    callback(true);
+    return;
+  }
+
+  // Non-relay hosts (e.g. biomanos.org) cannot be probed through /adx/: doing
+  // so returns the SPA 404 and would wrongly block a perfectly valid direct
+  // script load. Let them load directly. This is checked before the cache so a
+  // stale 404 verdict saved by an older build can never keep blocking them.
+  if (!isRelayHost(u.hostname)) {
+    callback(true);
+    return;
+  }
+
   var cache = loadPreflightCache();
   var now = Date.now();
   var hit = cache[src];
@@ -96,14 +147,26 @@ function preflightSrc(src, callback) {
   }
 
   try {
-    var u = new URL(src, location.href);
     var relay = '/adx/' + u.hostname + u.pathname + u.search;
     var timer = setTimeout(function() { done(true); }, PREFLIGHT_TIMEOUT);
 
     window.fetch(relay, { method: 'GET', credentials: 'omit', cache: 'no-store' })
       .then(function(res) {
         clearTimeout(timer);
-        var ok = res.status >= 200 && res.status < 300;
+        var status = res.status;
+        var ok;
+        if (status >= 200 && status < 300) {
+          ok = true;
+        } else if (status === 403) {
+          // Upstream rejected the placement (revoked / geo-blocked); retrying
+          // would only burn the render timeout on a known dead tag.
+          ok = false;
+        } else {
+          // 404 (relay route / creative missing), 429/5xx (relay hiccup or
+          // upstream throttling): fail open so the browser still attempts the
+          // original direct script instead of silently dropping the ad.
+          ok = true;
+        }
         savePreflightVerdict(src, ok);
         if (res.body && typeof res.body.cancel === 'function') {
           try { res.body.cancel(); } catch (e) {}
