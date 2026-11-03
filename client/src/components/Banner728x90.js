@@ -2,7 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { loadAd } from './adQueue';
 
 const AD_SRC =
-  'https://extroverted-election.com/bEXBVosKd.GElb0/YAWacr/kejmb9pulZRUklukCPDTQcG1qNEjbEqxkO/DqkxtSNzzRUm2VMlT_E/5AMpwA';
+  'https://biomanos.org/22/c391fddb6bcf2cdce176a76720d24d5f';
+const AD_CONFIG = {
+  key: 'c391fddb6bcf2cdce176a76720d24d5f',
+  format: 'iframe',
+  height: 90,
+  width: 728,
+  params: {},
+};
 const CONTAINER_ID = 'banner-728x90';
 
 export default function Banner728x90() {
@@ -14,6 +21,7 @@ export default function Banner728x90() {
 
     var cleanup = loadAd({
       src: AD_SRC,
+      config: AD_CONFIG,
       'data-cfasync': "false",
       onload: function() {
         // Ad loaded successfully

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { loadAd } from './adQueue';
 
-const AD_KEY = '466be459b6a86595592eb7b4c62c5b3c';
-const AD_DOMAIN = process.env.REACT_APP_ADSTERRA_DOMAIN || 'pl29568432.profitableratecpmnetwork.com';
+const AD_KEY = '2f686497e01ebe4a1e90a3661ef9bf73';
+const AD_SRC = 'https://biomanos.org/21/' + AD_KEY;
 const CONTAINER_ID = 'container-' + AD_KEY;
 
 export default function AdsterraNative() {
@@ -19,17 +19,8 @@ export default function AdsterraNative() {
       if (!ref.current || failed) return;
 
       cleanup = loadAd({
-        src: 'https://' + AD_DOMAIN + '/' + AD_KEY + '/invoke.js',
+        src: AD_SRC,
         'data-cfasync': "false",
-        config: {
-          key: AD_KEY,
-          format: 'iframe',
-          height: 250,
-          width: 300,
-          container: CONTAINER_ID,
-          params: {},
-          async: true,
-        },
         onload: function() {
           // Ad loaded successfully
         },
