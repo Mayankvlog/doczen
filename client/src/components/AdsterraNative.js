@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { loadAd } from './adQueue';
 
-const AD_KEY = '2f686497e01ebe4a1e90a3661ef9bf73';
-const AD_SRC = 'https://biomanos.org/21/' + AD_KEY;
+const AD_KEY = 'fa27a4d706e0837766689bed67c17636';
+const AD_SRC = 'https://bauval.org/21/' + AD_KEY;
 const CONTAINER_ID = 'container-' + AD_KEY;
 
 export default function AdsterraNative() {

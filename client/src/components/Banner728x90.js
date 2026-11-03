@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { loadAd } from './adQueue';
 
 const AD_SRC =
-  'https://biomanos.org/22/c391fddb6bcf2cdce176a76720d24d5f';
+  'https://bauval.org/22/df30bffc3e5d0abf5e577ba342604da8';
 const AD_CONFIG = {
-  key: 'c391fddb6bcf2cdce176a76720d24d5f',
+  key: 'df30bffc3e5d0abf5e577ba342604da8',
   format: 'iframe',
   height: 90,
   width: 728,
