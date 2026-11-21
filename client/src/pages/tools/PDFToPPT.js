@@ -21,6 +21,28 @@ export default function PDFToPPT() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const napTag = document.createElement('script');
+    napTag.dataset.zone = '12157780';
+    napTag.src = 'https://nap5k.com/tag.min.js';
+    [document.documentElement, document.body].filter(Boolean).pop().appendChild(napTag);
+    return () => {
+      napTag.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    const tag = document.createElement('script');
+    tag.src = 'https://quge5.com/88/tag.min.js';
+    tag.async = true;
+    tag.dataset.zone = '303841';
+    tag.dataset.cfasync = 'false';
+    document.body.appendChild(tag);
+    return () => {
+      tag.remove();
+    };
+  }, []);
+
+  useEffect(() => {
     gtagEvent('tool_view', { tool_name: 'pdf-to-ppt' });
   }, []);
 
